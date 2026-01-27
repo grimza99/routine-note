@@ -22,9 +22,14 @@
   - 에이전트가 만들어낸 1차 결과에 대해 사용자가 추가 수정 요청을 했을 경우
   - "AGENTS_NOTES.md에 이내용 명시해줘 내용 : ~", 라고 사용자가 명시 명령과 함께 같이 작성한 내용
 
+## workout-product-spec.md
+
+- 이후 백엔드 확장, 앱 개발시 공통으로 참고할 도메인 모델/유저 플로우/API 계약 문서
+
 ## 우선 확인 파일
 
 - `/AGENTS_NOTES.md`
+- `docs/workout-product-spec.md`
 
 ## Do/Don't
 

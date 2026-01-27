@@ -18,3 +18,8 @@
   - 관련 파일/링크 (선택):
 
 ## 노트
+
+- [2026-01-27] [doc] `docs/workout-product-spec.md` 신규 작성.
+  - 영향/증상/개요 (필수): 운동 기록 서비스의 도메인 모델, 유저 플로우, API 계약, 기능 설명을 한 문서로 정리.
+  - 결정/조치 (필수): User/Workout/WorkoutExercise/Set/ExerciseCatalog/Routine/RoutineItem 및 리포트·챌린지 관련 엔티티 정의, 월간 리포트/인바디/챌린지 랭킹 API 상세 포함.
+  - 관련 파일/링크 (선택): `docs/workout-product-spec.md`

@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getSupabaseAdmin } from "@/shared/libs/supabase";
+import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
 
 const json = (status: number, body: unknown) =>
   NextResponse.json(body, { status });
 
 export async function GET(request: NextRequest) {
   const date = request.nextUrl.searchParams.get("date");
-  const userId = request.nextUrl.searchParams.get("userId");
+  const userId = await getAuthUserId(request);
 
-  if (!date || !userId) {
-    return json(400, { error: { code: "VALIDATION_ERROR", message: "date and userId are required" } });
+  if (!date) {
+    return json(400, { error: { code: "VALIDATION_ERROR", message: "date is required" } });
+  }
+
+  if (!userId) {
+    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
   }
 
   const supabase = getSupabaseAdmin();
@@ -47,16 +51,21 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as { date?: string; userId?: string };
+  const body = (await request.json()) as { date?: string };
+  const userId = await getAuthUserId(request);
 
-  if (!body?.date || !body?.userId) {
-    return json(400, { error: { code: "VALIDATION_ERROR", message: "date and userId are required" } });
+  if (!body?.date) {
+    return json(400, { error: { code: "VALIDATION_ERROR", message: "date is required" } });
+  }
+
+  if (!userId) {
+    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
   }
 
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("workouts")
-    .insert({ workout_date: body.date, user_id: body.userId })
+    .insert({ workout_date: body.date, user_id: userId })
     .select("id, workout_date")
     .single();
 

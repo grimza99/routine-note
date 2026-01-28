@@ -20,3 +20,19 @@ export const useSignupMutation = () => {
     },
   });
 };
+
+interface LoginPayload {
+  email: string;
+  password: string;
+}
+//로그인
+
+export const useLoginMutation = () => {
+  return useMutation({
+    mutationFn: async (payload: LoginPayload) => {
+      const res = await api.post(API.AUTH.LOGIN, { ...payload });
+
+      return res.data;
+    },
+  });
+};

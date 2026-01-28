@@ -1,8 +1,7 @@
 'use client';
-import { Button, InputField, PATHS } from '@/shared';
+import { Button, InputField } from '@/shared';
 import { FormEvent, useState } from 'react';
 import { useSignupMutation } from '../model/auth.mutation';
-import { useRouter } from 'next/router';
 
 export default function SignupForm() {
   const [payload, setPayload] = useState({
@@ -14,7 +13,6 @@ export default function SignupForm() {
     policy_policy: false,
   });
   const { mutateAsync: signup, isPending } = useSignupMutation();
-  const router = useRouter();
 
   //handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,9 +27,8 @@ export default function SignupForm() {
     try {
       e.preventDefault();
       await signup(payload);
-      router.push(PATHS.ROUTINE.CAL);
     } catch (error) {
-      console.error('Signup failed:', error);
+      //todo: error handling
     }
   };
 

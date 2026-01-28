@@ -9,18 +9,25 @@ export default function LoginForm() {
     password: '',
   });
 
-  const { mutateAsync: login } = useLoginMutation();
+  const { mutateAsync: login, isPending } = useLoginMutation();
+
+  //handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setPayload((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    await login(payload);
+    try {
+      e.preventDefault();
+      await login(payload);
+    } catch (error) {
+      //todo: error handling
+    }
   };
 
-  const isButtonDisabeld = !payload.email || !payload.password;
+  const isButtonDisabeld = !payload.email || !payload.password || isPending;
+
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <InputField

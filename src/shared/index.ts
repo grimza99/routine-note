@@ -6,6 +6,8 @@ export { Button } from './ui/buttons/Button';
 
 // constants
 export { PROJECT } from './constants/d';
+export { default as API } from './constants/api';
+export { default as PATHS } from './constants/paths';
 
 //hooks
 export { useOnClickOutside } from './hooks/useOnClickOutside';

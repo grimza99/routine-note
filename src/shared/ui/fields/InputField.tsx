@@ -11,8 +11,8 @@ export function InputField({ label, helperText, ...props }: InputFieldProps) {
   return (
     <label className="flex flex-col gap-2">
       {label ? (
-        <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-          {label}
+        <span className="text-sm font-semibold text-(--text-primary)">
+          {label} <span>{props.required && '*'}</span>
         </span>
       ) : null}
       <input

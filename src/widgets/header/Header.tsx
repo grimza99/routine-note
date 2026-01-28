@@ -57,7 +57,7 @@ export default function Header() {
           aria-expanded={isMenuOpen}
           onClick={handleToggleMenu}
         >
-          <img src="icons/bars.svg" alt="Menu" className="h-5 w-5" />
+          <img src="/icons/bars.svg" alt="Menu" className="h-5 w-5" />
         </button>
       </div>
 

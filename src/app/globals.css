@@ -8,7 +8,8 @@
   --text-primary: #1a1a1a;
   --text-secondary: #868484;
   --border: #c6c3c3;
-  --primary: #e60023;
+  --primary: rgb(230, 0, 35);
+  --secondary: rgba(230, 0, 35, 0.246);
   --disabled: #e0e0e0;
   --radius-base: 8px;
   --focus-ring: rgba(230, 0, 35, 0.3);
@@ -23,7 +24,10 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-border: var(--border);
+
   --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+
   --color-disabled: var(--disabled);
   --color-error: var(--error);
   --color-focus-ring: var(--focus-ring);

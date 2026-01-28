@@ -25,6 +25,7 @@
 - `NOT_FOUND`: 리소스 없음
 - `VALIDATION_ERROR`: 필수 값 누락/형식 오류
 - `CONFLICT`: 중복 생성(예: 동일 날짜 Workout)
+- `NICKNAME_TAKEN`: 닉네임 중복
 
 ### 유효성 규칙 (핵심)
 
@@ -52,7 +53,11 @@
 ```json
 {
   "email": "user@example.com",
-  "password": "password123"
+  "password": "password123",
+  "username": "유선향",
+  "nickname": null, // 이 경우 username이 닉네임으로 설정됨
+  "age": 0,
+  "policy": false
 }
 ```
 
@@ -60,10 +65,20 @@
 
 ```json
 {
-  "token": "jwt-token",
-  "user": { "id": "u1", "email": "user@example.com" }
+  "id": "u1",
+  "email": "user@example.com",
+  "username": "유선향",
+  "nickname": "유선향",
+  "age": 0,
+  "privacy_policy": true,
+  "token": "jwt-token"
 }
 ```
+
+에러
+
+- 닉네임 중복: `409` + `{ "error": { "code": "NICKNAME_TAKEN", "message": "nickname already exists" } }`
+- 이메일 인증 설정에 따라 `token`이 `null`일 수 있음
 
 #### POST /auth/login
 
@@ -519,7 +534,7 @@
 CREATE TABLE users (
   id UUID PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
-  password_hash TEXT NOT NULL,
+  username TEXT
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -646,9 +661,9 @@ CREATE UNIQUE INDEX challenge_rankings_month_rank_uq
 
 - 랭킹 기준: 월간 운동한 일자수 내림차순
 - 동점 처리(우선순위)
-  1) 월간 세트수 내림차순
-  2) 마지막 운동일이 더 최근인 유저
-  3) userId 사전순
+  1. 월간 세트수 내림차순
+  2. 마지막 운동일이 더 최근인 유저
+  3. userId 사전순
 
 ### 집계 방식
 

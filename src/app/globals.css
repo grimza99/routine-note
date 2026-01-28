@@ -6,7 +6,7 @@
   --background: #ffffff;
   --surface: #f7f7f7;
   --text-primary: #1a1a1a;
-  --text-secondary: #666666;
+  --text-secondary: #868484;
   --border: #c6c3c3;
   --primary: #e60023;
   --disabled: #e0e0e0;
@@ -15,6 +15,21 @@
   --error: #a5041c;
 }
 
+@theme {
+  --color-black: var(--black);
+  --color-white: var(--white);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-disabled: var(--disabled);
+  --color-error: var(--error);
+  --color-focus-ring: var(--focus-ring);
+
+  --radius-base: var(--radius-base);
+}
 body {
   background: var(--background);
   color: var(--text-primary);

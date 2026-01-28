@@ -1,5 +1,6 @@
 'use client';
 import { useMemo, useState } from 'react';
+import { Button, cn } from '@/shared';
 
 type CalendarProps = {
   value?: Date | null;
@@ -64,75 +65,64 @@ export function Calendar({ value, onSelectDate, className }: CalendarProps) {
   };
 
   return (
-    <section className={`w-full rounded-xl border bg-white p-10 border-(--primary)`}>
+    <section className={cn('w-full max-w-200 rounded-xl border bg-white p-4 md:p-10 border-primary', className)}>
       <header className="flex items-center justify-center w-full relative">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={handlePrevMonth}
-            className="flex p-2 items-center justify-center rounded border-(--primary) border"
+            className={cn('flex p-1 items-center justify-center rounded border-primary border')}
             aria-label="이전 달"
           >
-            <img src="/icons/craft.left.svg" alt="이전 달" className="w-6 h-6" />
+            <img src="/icons/craft.left.svg" alt="이전 달" className="w-4 h-4 md:w-7 md:h-7" />
           </button>
-          <span className="font-semibold text-3xl text-(--primary)">{monthLabel}</span>
+          <span className="font-semibold text-xl md:text-3xl text-primary">{monthLabel}</span>
           <button
             type="button"
             onClick={handleNextMonth}
-            className="flex p-2 items-center justify-center rounded border-(--primary) border"
+            className={cn('flex p-1 items-center justify-center rounded border-primary border')}
             aria-label="다음 달"
           >
-            <img src="/icons/craft.right.svg" alt="다음 달" className="w-6 h-6" />
+            <img src="/icons/craft.right.svg" alt="다음 달" className="w-4 h-4 md:w-7 md:h-7" />
           </button>
         </div>
-        <button
+
+        <Button
+          label="오늘"
           type="button"
           onClick={handleToday}
-          className="rounded px-3 py-1 text-sm font-semibold absolute right-0 border-(--primary) border text-(--white) bg-(--primary)"
-        >
-          오늘
-        </button>
+          variant="primary"
+          className={cn('absolute right-0 w-fit')}
+        />
       </header>
 
-      <div
-        className="mt-4 grid grid-cols-7 gap-2 text-center text-xs font-semibold"
-        style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '8px' }}
-      >
+      <div className="mt-4 grid grid-cols-7 text-center text-xs font-semibold">
         {WEEK_DAYS.map((day) => (
-          <div key={day} style={{ color: 'var(--text-secondary)' }}>
+          <div key={day} className="text-primary">
             {day}
           </div>
         ))}
       </div>
 
       <div
-        className="mt-3 grid grid-cols-7 gap-2"
-        style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '8px' }}
+        className="mt-3 grid grid-cols-7 "
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))' }}
       >
         {days.map(({ date, isCurrentMonth }) => {
           const isSelected = value ? isSameDay(value, date) : false;
-          const isToday = isSameDay(today, date);
-          const textColor = isSelected
-            ? 'var(--white)'
-            : isCurrentMonth
-              ? 'var(--text-primary)'
-              : 'var(--text-secondary)';
-
+          const key = `${date.getMonth()}-${date.getDate()}`;
           return (
-            <button
-              key={date.toISOString()}
-              type="button"
-              className="flex h-10 w-full items-center justify-center rounded text-sm"
+            <Button
+              key={key}
               onClick={() => onSelectDate?.(date)}
-              style={{
-                background: isSelected ? 'var(--primary)' : 'transparent',
-                color: textColor,
-                border: isToday && !isSelected ? '1px solid var(--primary)' : '1px solid transparent',
-                borderRadius: 'var(--radius-base)',
-              }}
-            >
-              {date.getDate()}
-            </button>
+              type="button"
+              label={date.getDate().toString()}
+              variant={isSelected ? 'primary' : 'secondary'}
+              className={cn(
+                'text-sm border-none',
+                isSelected ? 'text-white bg-primary' : isCurrentMonth ? 'text-primary' : 'text-text-secondary',
+              )}
+            />
           );
         })}
       </div>

@@ -9,3 +9,6 @@ export { PROJECT } from './constants/d';
 
 //hooks
 export { useOnClickOutside } from './hooks/useOnClickOutside';
+
+// libs
+export { QueryProvider } from './libs/query/QueryProvider';

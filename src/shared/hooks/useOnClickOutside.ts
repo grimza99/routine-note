@@ -1,3 +1,4 @@
+'use client';
 import { useEffect } from 'react';
 
 type UseOnClickOutsideOptions = {
@@ -7,7 +8,7 @@ type UseOnClickOutsideOptions = {
 export function useOnClickOutside<T extends HTMLElement>(
   ref: React.RefObject<T | null>,
   onClickOutside: () => void,
-  options: UseOnClickOutsideOptions = {}
+  options: UseOnClickOutsideOptions = {},
 ) {
   const { enabled = true } = options;
 

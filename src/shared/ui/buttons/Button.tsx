@@ -5,7 +5,7 @@ type ButtonVariant = 'primary' | 'secondary';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
-  label?: string;
+  label?: string | React.ReactNode;
 };
 
 export function Button({ variant = 'primary', className, type, style, label, ...props }: ButtonProps) {

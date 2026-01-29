@@ -1,15 +1,17 @@
+import { cn } from '@/shared/libs/cn';
 import type { InputHTMLAttributes } from 'react';
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   helperText?: string;
+  className?: string;
 };
 
-export function InputField({ label, helperText, ...props }: InputFieldProps) {
+export function InputField({ label, helperText, className, ...props }: InputFieldProps) {
   const isDisabled = Boolean(props.disabled);
 
   return (
-    <label className="flex flex-col gap-2">
+    <label className={cn('flex flex-col gap-2', className)}>
       {label ? (
         <span className="text-sm font-semibold text-(--text-primary)">
           {label} <span>{props.required && '*'}</span>

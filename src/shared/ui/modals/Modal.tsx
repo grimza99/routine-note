@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 import { cn } from '../../libs/cn';
+import { useOnClickOutside } from '@/shared/hooks/useOnClickOutside';
 
 type ModalProps = {
   modalId: string;
@@ -13,22 +14,13 @@ type ModalProps = {
   children: ReactNode;
   className?: string;
   overlayClassName?: string;
-  closeOnOverlayClick?: boolean;
-  closeOnEscape?: boolean;
 };
 
-export function Modal({
-  modalId,
-  isOpen,
-  onClose,
-  children,
-  className,
-  overlayClassName,
-  closeOnOverlayClick = true,
-  closeOnEscape = true,
-}: ModalProps) {
+export function Modal({ modalId, isOpen, onClose, children, className, overlayClassName }: ModalProps) {
   const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  useOnClickOutside(modalRef, onClose);
 
   useEffect(() => {
     setIsMounted(true);
@@ -59,7 +51,7 @@ export function Modal({
   }, [isMounted, modalId]);
 
   useEffect(() => {
-    if (!isOpen || !closeOnEscape) {
+    if (!isOpen) {
       return undefined;
     }
 
@@ -73,7 +65,7 @@ export function Modal({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, closeOnEscape, onClose]);
+  }, [isOpen, onClose]);
 
   const overlayStyle = useMemo(
     () => ({
@@ -98,18 +90,14 @@ export function Modal({
 
   return createPortal(
     <div className={cn('fixed inset-0 z-50', overlayClassName)}>
-      <div
-        className="absolute inset-0"
-        style={overlayStyle}
-        onClick={closeOnOverlayClick ? onClose : undefined}
-        aria-hidden
-      />
+      <div className="absolute inset-0" style={overlayStyle} aria-hidden />
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-8">
         <div
           role="dialog"
           aria-modal="true"
           className={cn('w-full max-w-lg border', className)}
           style={panelStyle}
+          ref={modalRef}
         >
           {children}
         </div>

@@ -37,6 +37,23 @@ const applyAccessTokenCookieFromResponse = (payload: unknown) => {
   setCookieValue('sb_access_token', accessToken);
 };
 
+const refreshAccessToken = async () => {
+  const response = await fetch('/api/auth/refresh', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const json = (await response.json().catch(() => null)) as AuthSessionPayload | { error?: ApiError } | null;
+
+  if (!response.ok) {
+    return { ok: false, error: json && typeof json === 'object' && 'error' in json ? json.error : null };
+  }
+
+  applyAccessTokenCookieFromResponse(json);
+  return { ok: true, error: null };
+};
+
 const getAccessToken = async () => {
   const cookieToken = getCookieValue('sb_access_token');
   if (cookieToken) return cookieToken;
@@ -46,9 +63,9 @@ const getAccessToken = async () => {
 
 export const apiFetch = async <TResponse>(
   input: string,
-  init: RequestInit & { auth?: boolean } = {},
+  init: RequestInit & { auth?: boolean; retry?: boolean } = {},
 ): Promise<ApiEnvelope<TResponse>> => {
-  const { auth = true, headers, ...rest } = init;
+  const { auth = true, retry = false, headers, ...rest } = init;
   const token = auth ? await getAccessToken() : null;
 
   const response = await fetch(input, {
@@ -63,6 +80,14 @@ export const apiFetch = async <TResponse>(
   const json = (await response.json().catch(() => null)) as TResponse | { error?: ApiError } | null;
 
   if (!response.ok) {
+    if (response.status === 401 && auth && !retry) {
+      const refreshResult = await refreshAccessToken();
+
+      if (refreshResult.ok) {
+        return apiFetch<TResponse>(input, { ...init, retry: true });
+      }
+    }
+
     const serverError =
       json && typeof json === 'object' && 'error' in json ? (json.error as ApiError | undefined) : undefined;
 

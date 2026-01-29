@@ -95,10 +95,18 @@ export function Modal({ modalId, isOpen, onClose, children, className, overlayCl
         <div
           role="dialog"
           aria-modal="true"
-          className={cn('w-full max-w-lg border', className)}
+          className={cn('relative w-full max-w-lg border', className)}
           style={panelStyle}
           ref={modalRef}
         >
+          <button
+            type="button"
+            aria-label="닫기"
+            onClick={onClose}
+            className="absolute right-4 top-4 flex items-center justify-center focus-visible:outline-focus-ring"
+          >
+            <img src="/icons/x.mark.svg" alt="close icon" className="w-4 h-4" />
+          </button>
           {children}
         </div>
       </div>

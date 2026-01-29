@@ -1,15 +1,16 @@
+import { IExercise } from '@/shared/types/domain.type';
 import { cn } from '../../libs/cn';
 
-type RoutineExercise = {
+interface Exercise {
   id: string;
-  name: string;
-  sets: number;
-};
-
+  exerciseId: string;
+  note?: string;
+  exerciseName: string;
+}
 type RoutineCardProps = {
   title: string;
   description?: string;
-  exercises: RoutineExercise[];
+  exercises: Exercise[];
   className?: string;
   descriptionPlaceholder?: string;
 };
@@ -38,9 +39,11 @@ export function RoutineCard({
 
       <ul className="mt-2 flex flex-col gap-2 text-sm font-semibold">
         {exercises.map((exercise) => (
-          <li key={exercise.id} className={cn('flex items-center justify-between rounded px-3 py-2 bg-gray-50')}>
-            <span>{exercise.name}</span>
-            <span className="text-xs">{exercise.sets}세트</span>
+          <li
+            key={exercise.exerciseId}
+            className={cn('flex items-center justify-between rounded px-3 py-2 bg-gray-50')}
+          >
+            <span>{exercise.exerciseName}</span>
           </li>
         ))}
       </ul>

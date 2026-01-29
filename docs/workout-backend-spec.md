@@ -41,6 +41,8 @@
   - `name` 필수, 유저 내 중복 불가
 - Routine
   - `name` 필수, `items`는 1개 이상 권장
+- RoutineItem
+  - `setCount`는 1 이상 정수
 - Set
   - `weight`는 0 이상 숫자, `reps`는 1 이상 정수
 - InbodyRecord
@@ -198,8 +200,8 @@
     "routineId": "r1",
     "routineName": "상체 루틴",
     "exercises": [
-      { "id": "ri1", "exerciseId": "ex1", "order": 1 },
-      { "id": "ri2", "exerciseId": "ex2", "order": 2 }
+      { "id": "ri1", "exerciseId": "ex1", "exerciseName": "벤치프레스", "order": 1 },
+      { "id": "ri2", "exerciseId": "ex2", "exerciseName": "풀다운", "order": 2 }
     ]
   }
 ]
@@ -211,11 +213,8 @@
 
 ```json
 {
-  "name": "하체 루틴",
-  "items": [
-    { "exerciseId": "ex2", "order": 1 },
-    { "exerciseId": "ex3", "order": 2 }
-  ]
+  "routineName": "하체 루틴",
+  "exercises": ["스쿼트", "레그프레스"]
 }
 ```
 
@@ -234,8 +233,8 @@
   "routineId": "r1",
   "routineName": "상체 루틴",
   "exercises": [
-    { "id": "ri1", "exerciseId": "ex1", "order": 1 },
-    { "id": "ri2", "exerciseId": "ex2", "order": 2 }
+    { "id": "ri1", "exerciseId": "ex1", "exerciseName": "벤치프레스", "order": 1, "setCount": 4 },
+    { "id": "ri2", "exerciseId": "ex2", "exerciseName": "풀다운", "order": 2, "setCount": 3 }
   ]
 }
 ```
@@ -246,10 +245,10 @@
 
 ```json
 {
-  "name": "상체 루틴 v2",
-  "items": [
-    { "exerciseId": "ex1", "order": 1 },
-    { "exerciseId": "ex4", "order": 2 }
+  "routineName": "상체 루틴 v2",
+  "exercises": [
+    { "exerciseName": "벤치프레스", "setCount": 4 },
+    { "exerciseName": "딥스", "setCount": 3 }
   ]
 }
 ```
@@ -646,7 +645,8 @@ CREATE TABLE routine_items (
   id UUID PRIMARY KEY,
   routine_id UUID NOT NULL REFERENCES routines(id) ON DELETE CASCADE,
   exercise_id UUID NOT NULL REFERENCES exercise_catalogs(id),
-  item_order INT NOT NULL
+  item_order INT NOT NULL,
+  set_count INT NOT NULL DEFAULT 1
 );
 
 CREATE INDEX routine_items_routine_id_idx ON routine_items (routine_id);

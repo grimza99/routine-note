@@ -13,7 +13,12 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
   }
 
-  const body = (await request.json()) as { exerciseId?: string; order?: number; note?: string };
+  const body = (await request.json()) as {
+    exerciseId?: string;
+    order?: number;
+    note?: string;
+    workoutRoutineId?: string;
+  };
 
   if (!body?.exerciseId || !body?.order) {
     return json(400, { error: { code: "VALIDATION_ERROR", message: "exerciseId and order are required" } });
@@ -35,15 +40,33 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     return json(404, { error: { code: "NOT_FOUND", message: "workout not found" } });
   }
 
+  if (body.workoutRoutineId) {
+    const { data: workoutRoutine, error: workoutRoutineError } = await supabase
+      .from("workout_routines")
+      .select("id, workout_id, workouts!inner(user_id)")
+      .eq("id", body.workoutRoutineId)
+      .eq("workouts.user_id", userId)
+      .maybeSingle();
+
+    if (workoutRoutineError) {
+      return json(500, { error: { code: "DB_ERROR", message: workoutRoutineError.message } });
+    }
+
+    if (!workoutRoutine || workoutRoutine.workout_id !== context.params.workoutId) {
+      return json(404, { error: { code: "NOT_FOUND", message: "workout routine not found" } });
+    }
+  }
+
   const { data, error } = await supabase
     .from("workout_exercises")
     .insert({
       workout_id: context.params.workoutId,
+      workout_routine_id: body.workoutRoutineId ?? null,
       exercise_id: body.exerciseId,
       item_order: body.order,
       note: body.note ?? null,
     })
-    .select("id, workout_id, exercise_id, item_order, note")
+    .select("id, workout_id, workout_routine_id, exercise_id, item_order, note")
     .single();
 
   if (error) {

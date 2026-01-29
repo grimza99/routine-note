@@ -35,6 +35,8 @@
   - `order`: 1 이상 정수
 - Workout
   - `date` 필수, 유저별 하루 1개 제한
+- WorkoutRoutine
+  - `routineId` 필수
 - ExerciseCatalog
   - `name` 필수, 유저 내 중복 불가
 - Routine
@@ -276,15 +278,31 @@
 {
   "id": "w1",
   "date": "2026-01-27",
+  "routines": [
+    {
+      "id": "wr1",
+      "routineId": "r1",
+      "routineName": "상체 루틴",
+      "order": 1,
+      "exercises": [
+        {
+          "id": "we1",
+          "exerciseId": "ex1",
+          "note": "컨디션 좋음",
+          "sets": [
+            { "id": "s1", "weight": 80, "reps": 8, "note": "" },
+            { "id": "s2", "weight": 80, "reps": 8, "note": "" }
+          ]
+        }
+      ]
+    }
+  ],
   "exercises": [
     {
-      "id": "we1",
-      "exerciseId": "ex1",
-      "note": "컨디션 좋음",
-      "sets": [
-        { "id": "s1", "weight": 80, "reps": 8, "note": "" },
-        { "id": "s2", "weight": 80, "reps": 8, "note": "" }
-      ]
+      "id": "we2",
+      "exerciseId": "ex3",
+      "note": "",
+      "sets": []
     }
   ]
 } ||null
@@ -312,6 +330,7 @@
 {
   "id": "w1",
   "date": "2026-01-27",
+  "routines": [],
   "exercises": []
 }
 ```
@@ -338,6 +357,46 @@
 { "ok": true }
 ```
 
+### 하루 루틴 기록
+
+#### POST /workouts/{workoutId}/routines
+
+설명: 하루 기록에 루틴 실행 단위를 추가
+
+요청
+
+```json
+{ "routineId": "r1", "order": 1, "note": "" }
+```
+
+응답
+
+```json
+{ "id": "wr1", "routineId": "r1", "order": 1, "note": "" }
+```
+
+#### PATCH /workout-routines/{workoutRoutineId}
+
+요청
+
+```json
+{ "order": 2, "note": "후반 루틴" }
+```
+
+응답
+
+```json
+{ "id": "wr1", "order": 2, "note": "후반 루틴" }
+```
+
+#### DELETE /workout-routines/{workoutRoutineId}
+
+응답
+
+```json
+{ "ok": true }
+```
+
 ### 운동 종목 기록
 
 #### POST /workouts/{workoutId}/exercises
@@ -345,13 +404,13 @@
 요청
 
 ```json
-{ "exerciseId": "ex1", "order": 1, "note": "" }
+{ "exerciseId": "ex1", "order": 1, "note": "", "workoutRoutineId": "wr1" }
 ```
 
 응답
 
 ```json
-{ "id": "we1", "exerciseId": "ex1", "order": 1, "note": "" }
+{ "id": "we1", "exerciseId": "ex1", "order": 1, "note": "", "workoutRoutineId": "wr1" }
 ```
 
 #### PATCH /workout-exercises/{workoutExerciseId}
@@ -429,9 +488,10 @@
 ```json
 {
   "workoutId": "w1",
+  "workoutRoutineId": "wr1",
   "createdExercises": [
-    { "id": "we1", "exerciseId": "ex1", "order": 1 },
-    { "id": "we2", "exerciseId": "ex2", "order": 2 }
+    { "id": "we1", "exerciseId": "ex1", "order": 1, "workoutRoutineId": "wr1" },
+    { "id": "we2", "exerciseId": "ex2", "order": 2, "workoutRoutineId": "wr1" }
   ]
 }
 ```
@@ -602,15 +662,27 @@ CREATE TABLE workouts (
 
 CREATE UNIQUE INDEX workouts_user_id_date_uq ON workouts (user_id, workout_date);
 
+CREATE TABLE workout_routines (
+  id UUID PRIMARY KEY,
+  workout_id UUID NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
+  routine_id UUID NOT NULL REFERENCES routines(id),
+  item_order INT NOT NULL,
+  note TEXT
+);
+
+CREATE INDEX workout_routines_workout_id_idx ON workout_routines (workout_id);
+
 CREATE TABLE workout_exercises (
   id UUID PRIMARY KEY,
   workout_id UUID NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
+  workout_routine_id UUID REFERENCES workout_routines(id) ON DELETE CASCADE,
   exercise_id UUID NOT NULL REFERENCES exercise_catalogs(id),
   item_order INT NOT NULL,
   note TEXT
 );
 
 CREATE INDEX workout_exercises_workout_id_idx ON workout_exercises (workout_id);
+CREATE INDEX workout_exercises_workout_routine_id_idx ON workout_exercises (workout_routine_id);
 
 CREATE TABLE sets (
   id UUID PRIMARY KEY,

@@ -12,6 +12,7 @@
 
 - User
 - Workout (하루 운동 기록)
+- WorkoutRoutine (하루 기록 내 실행한 루틴 단위)
 - WorkoutExercise (그날 수행한 종목)
 - Set (세트 기록)
 - ExerciseCatalog (유저가 만든 운동 종목 사전)
@@ -26,9 +27,12 @@
 - User 1—N Workout
 - User 1—N ExerciseCatalog
 - User 1—N Routine
-- Workout 1—N WorkoutExercise
+- Workout 1—N WorkoutRoutine
+- Workout 1—N WorkoutExercise (루틴 미지정 종목)
+- WorkoutRoutine 1—N WorkoutExercise
 - WorkoutExercise 1—N Set
 - Routine 1—N RoutineItem
+- WorkoutExercise N—1 ExerciseCatalog
 - RoutineItem N—1 ExerciseCatalog
 - User 1—N InbodyRecord
 - User 1—N MonthlyReport
@@ -56,9 +60,13 @@ Workout
 
 - id, userId, date(YYYY-MM-DD), createdAt, updatedAt
 
+WorkoutRoutine
+
+- id, workoutId, routineId, order, note
+
 WorkoutExercise
 
-- id, workoutId, exerciseId, order, note
+- id, workoutId, workoutRoutineId?, exerciseId, order, note
 
 Set
 
@@ -78,7 +86,9 @@ ChallengeRanking
 
 ### 설계 원칙
 
-- 루틴 불러오기: RoutineItem을 기반으로 WorkoutExercise/Set 틀을 복사 생성
+- 루틴 불러오기: RoutineItem을 기반으로 WorkoutRoutine + WorkoutExercise/Set 틀을 복사 생성
+- 하루 기록은 여러 루틴을 포함할 수 있음
+- 루틴에 속하지 않은 종목은 WorkoutExercise에 workoutRoutineId 없이 저장
 - 루틴 수정: 기록 중 변경은 WorkoutExercise/Set에만 반영, Routine은 불변
 - 메모: 종목 단위로 기록 (WorkoutExercise.note)
 - 리포트는 월 단위 집계이며, 조회는 계산형(실시간 집계) 또는 캐시형(MonthlyReport 저장) 중 택 1

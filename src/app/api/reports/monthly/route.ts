@@ -20,9 +20,20 @@ export async function GET(request: NextRequest) {
   const end = `${month}-31`;
 
   const supabase = getSupabaseAdmin();
+  const { data: goal, error: goalError } = await supabase
+    .from("monthly_goals")
+    .select("goal_workout_days")
+    .eq("user_id", userId)
+    .eq("report_month", start)
+    .maybeSingle();
+
+  if (goalError) {
+    return json(500, { error: { code: "DB_ERROR", message: goalError.message } });
+  }
+
   const { data: workouts, error: workoutsError } = await supabase
     .from("workouts")
-    .select("id")
+    .select("id, workout_date")
     .eq("user_id", userId)
     .gte("workout_date", start)
     .lte("workout_date", end);
@@ -33,6 +44,13 @@ export async function GET(request: NextRequest) {
 
   const workoutIds = workouts?.map((workout) => workout.id) ?? [];
   const workoutDays = workouts?.length ?? 0;
+  const workoutDates = workouts?.map((workout) => workout.workout_date).filter(Boolean) ?? [];
+  const maxConsecutiveWorkoutDays = getMaxConsecutiveDays(workoutDates);
+  const goalWorkoutDays = goal?.goal_workout_days ?? null;
+  const goalAchievementRate =
+    goalWorkoutDays && goalWorkoutDays > 0
+      ? Number(((workoutDays / goalWorkoutDays) * 100).toFixed(1))
+      : null;
 
   let totalSets = 0;
   if (workoutIds.length) {
@@ -87,8 +105,40 @@ export async function GET(request: NextRequest) {
     month,
     workoutDays,
     totalSets,
+    maxConsecutiveWorkoutDays,
+    goalWorkoutDays,
+    goalAchievementRate,
     weightChange,
     skeletalMuscleMassChange,
     bodyFatMassChange,
   });
+}
+
+function getMaxConsecutiveDays(dates: string[]) {
+  if (!dates.length) return 0;
+
+  const uniqueDates = Array.from(new Set(dates));
+  const dayNumbers = uniqueDates
+    .map((date) => Date.parse(`${date}T00:00:00Z`))
+    .filter((value) => Number.isFinite(value))
+    .sort((a, b) => a - b)
+    .map((value) => Math.floor(value / 86400000));
+
+  if (!dayNumbers.length) return 0;
+
+  let maxStreak = 1;
+  let currentStreak = 1;
+
+  for (let i = 1; i < dayNumbers.length; i += 1) {
+    if (dayNumbers[i] - dayNumbers[i - 1] === 1) {
+      currentStreak += 1;
+    } else {
+      currentStreak = 1;
+    }
+    if (currentStreak > maxStreak) {
+      maxStreak = currentStreak;
+    }
+  }
+
+  return maxStreak;
 }

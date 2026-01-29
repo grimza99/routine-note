@@ -447,9 +447,33 @@
   "month": "2026-01",
   "workoutDays": 12,
   "totalSets": 210,
-  "weightChange": -1.2,
-  "skeletalMuscleMassChange": 0.6,
-  "bodyFatMassChange": -0.8
+  "maxConsecutiveWorkoutDays": 5, // 해당 월 내 최대 연속 운동 일수
+  "goalWorkoutDays": 20, // 해당 월 목표 운동 일수 (없으면 null)
+  "goalAchievementRate": 60.0, // 목표 달성률(%) (목표 없으면 null)
+  "weightChange": -1.2, // 해당 월 첫/마지막 인바디 체중 변화
+  "skeletalMuscleMassChange": 0.6, // 해당 월 첫/마지막 인바디 골격근량 변화
+  "bodyFatMassChange": -0.8 // 해당 월 첫/마지막 인바디 체지방량 변화
+}
+```
+
+#### POST /reports/monthly-goal
+
+요청
+
+```json
+{
+  "month": "2026-01",
+  "goalWorkoutDays": 20
+}
+```
+
+응답
+
+```json
+{
+  "id": "mg1",
+  "month": "2026-01",
+  "goalWorkoutDays": 20
 }
 ```
 
@@ -612,6 +636,19 @@ CREATE TABLE inbody_records (
 
 CREATE INDEX inbody_records_user_id_measured_at_idx
   ON inbody_records (user_id, measured_at);
+
+-- monthly goals
+CREATE TABLE monthly_goals (
+  id UUID PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id),
+  report_month DATE NOT NULL,
+  goal_workout_days INT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE UNIQUE INDEX monthly_goals_user_id_month_uq
+  ON monthly_goals (user_id, report_month);
 
 -- optional cache tables
 CREATE TABLE monthly_reports (

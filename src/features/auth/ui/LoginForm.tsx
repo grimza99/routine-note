@@ -48,9 +48,7 @@ export default function LoginForm() {
         name="password"
         onChange={handleChange}
       />
-      <Button type="submit" disabled={isButtonDisabeld}>
-        로그인
-      </Button>
+      <Button type="submit" disabled={isButtonDisabeld} label="로그인" />
     </form>
   );
 }

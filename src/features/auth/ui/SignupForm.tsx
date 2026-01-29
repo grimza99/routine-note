@@ -90,9 +90,7 @@ export default function SignupForm() {
         />
         개인정보 수집 및 이용에 동의합니다.
       </label>
-      <Button type="submit" disabled={isButtonDisabeld}>
-        회원가입
-      </Button>
+      <Button type="submit" disabled={isButtonDisabeld} label="회원가입" />
     </form>
   );
 }

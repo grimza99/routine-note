@@ -9,8 +9,7 @@ type RoutineItem = {
   id: string;
   exercise_id: string;
   item_order: number;
-  set_count: number | null;
-  exercise_catalogs: { name: string } | null;
+  exercise_name?: string;
 };
 
 type RoutineResponse = {
@@ -20,10 +19,8 @@ type RoutineResponse = {
 };
 
 type RoutineExerciseRequest = {
-  exerciseId?: string;
   exerciseName?: string;
   order?: number;
-  setCount?: number;
 };
 
 const mapRoutine = (routine: RoutineResponse) => ({
@@ -33,8 +30,7 @@ const mapRoutine = (routine: RoutineResponse) => ({
     id: item.id,
     exerciseId: item.exercise_id,
     order: item.item_order,
-    exerciseName: item.exercise_catalogs?.name ?? '',
-    setCount: item.set_count ?? 1,
+    exerciseName: item?.exercise_name ?? '',
   })),
 });
 
@@ -60,6 +56,7 @@ const isRoutineResponse = (value: unknown): value is RoutineResponse => {
   return Array.isArray(candidate.routine_items);
 };
 
+//------------------ GET /api/routines -routines list
 export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
@@ -73,9 +70,10 @@ export async function GET(request: NextRequest) {
       name,
       routine_items (
         id,
+        routine_id,
         exercise_id,
         item_order,
-        exercise_catalogs ( name )
+        exercise_name
       )
       `;
 
@@ -95,6 +93,8 @@ export async function GET(request: NextRequest) {
   return json(200, routines);
 }
 
+// ---------------------------------POST /api/routines -create routine
+
 export async function POST(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
   };
 
   if (!body.routineName || !body.exercises || body.exercises.length === 0) {
-    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routineName is required' } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routineName &exercises is required' } });
   }
 
   const supabase = getSupabaseAdmin();
@@ -123,54 +123,20 @@ export async function POST(request: NextRequest) {
   }
 
   if (body.exercises.length) {
-    const exerciseNames = body.exercises.map((exercise) => exercise.exerciseName as string);
-
-    let nameToId = new Map<string, string>();
-
-    if (exerciseNames.length) {
-      const uniqueNames = Array.from(new Set(exerciseNames));
-      const { data: existing, error: existingError } = await supabase
-        .from('exercise_catalogs')
-        .select('id, name')
-        .eq('user_id', userId)
-        .in('name', uniqueNames);
-
-      if (existingError) {
-        return json(500, { error: { code: 'DB_ERROR', message: existingError.message } });
-      }
-
-      const existingMap = new Map((existing ?? []).map((exercise) => [exercise.name, exercise.id]));
-      const missingNames = uniqueNames.filter((name) => !existingMap.has(name));
-
-      if (missingNames.length) {
-        const { data: inserted, error: insertError } = await supabase
-          .from('exercise_catalogs')
-          .insert(missingNames.map((name) => ({ id: randomUUID(), user_id: userId, name })))
-          .select('id, name');
-
-        if (insertError) {
-          return json(500, { error: { code: 'DB_ERROR', message: insertError.message } });
-        }
-
-        for (const exercise of inserted ?? []) {
-          existingMap.set(exercise.name, exercise.id);
-        }
-      }
-
-      nameToId = existingMap;
-    }
-    const items = body.exercises.map((exercise) => ({
+    const items = body.exercises.map((exercise, index) => ({
       id: randomUUID(),
       routine_id: routine.id,
-      exercise_id: nameToId.get(exercise.exerciseName ?? '') ?? '',
-      exercise_name: exercise.exerciseName?.trim() || '',
-      item_order: exercise.order || 0,
+      exercise_id: randomUUID(),
+      item_order: Number(exercise.order) > 0 ? Number(exercise.order) : index + 1,
+      exercise_name: exercise.exerciseName?.trim(),
     }));
 
-    const invalidExercise = items.find((item) => !item.exercise_id);
+    const invalidExercise = items.find((item) => !item.exercise_name);
 
     if (invalidExercise) {
-      return json(400, { error: { code: 'VALIDATION_ERROR', message: 'exerciseName is required' } });
+      return json(400, {
+        error: { code: 'VALIDATION_ERROR', message: 'exerciseName is required' },
+      });
     }
 
     const { error: itemsError } = await supabase.from('routine_items').insert(items);

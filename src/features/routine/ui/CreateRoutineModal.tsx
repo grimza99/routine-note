@@ -19,6 +19,10 @@ export default function CreateRoutineModal() {
   };
 
   const handleRemoveExercise = (targetId: number) => {
+    if (exercises.length <= 1) {
+      // todo 최소 하나의 운동은 남아있어야 함
+      return;
+    }
     setExercises((prev) => prev.filter((exercise) => exercise.id !== targetId));
   };
 
@@ -29,6 +33,10 @@ export default function CreateRoutineModal() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    if (exercises.length <= 1) {
+      // todo 최소 하나의 운동은 남아있어야 함
+      return;
+    }
     event.preventDefault();
 
     await createRoutine({
@@ -41,6 +49,8 @@ export default function CreateRoutineModal() {
     setExercises([{ id: 1, name: '' }]);
     nextIdRef.current = 1;
   };
+
+  const isButtonDisabled = routineName.trim() === '' || exercises.some((ex) => !ex.name.trim()) || isPending;
 
   return (
     <form className="flex flex-col gap-6 p-6" onSubmit={handleSubmit}>
@@ -98,7 +108,7 @@ export default function CreateRoutineModal() {
       </section>
 
       <div className="flex justify-end gap-3">
-        <Button label="루틴 저장" className="w-auto" type="submit" />
+        <Button label="루틴 저장" className="w-auto" type="submit" disabled={isButtonDisabled} />
       </div>
     </form>
   );

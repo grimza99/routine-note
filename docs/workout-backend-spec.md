@@ -233,8 +233,8 @@
   "routineId": "r1",
   "routineName": "상체 루틴",
   "exercises": [
-    { "id": "ri1", "exerciseId": "ex1", "exerciseName": "벤치프레스", "order": 1, "setCount": 4 },
-    { "id": "ri2", "exerciseId": "ex2", "exerciseName": "풀다운", "order": 2, "setCount": 3 }
+    { "id": "ri1", "exerciseId": "ex1", "exerciseName": "벤치프레스", "order": 1 },
+    { "id": "ri2", "exerciseId": "ex2", "exerciseName": "풀다운", "order": 2 }
   ]
 }
 ```
@@ -246,10 +246,7 @@
 ```json
 {
   "routineName": "상체 루틴 v2",
-  "exercises": [
-    { "exerciseName": "벤치프레스", "setCount": 4 },
-    { "exerciseName": "딥스", "setCount": 3 }
-  ]
+  "exercises": [{ "exerciseName": "벤치프레스" }, { "exerciseName": "딥스" }]
 }
 ```
 

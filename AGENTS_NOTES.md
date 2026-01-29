@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-01-29] [backend] catalog 테이블 및 관련 로직 제거 예정 기록.
+  - 영향/증상/개요 (필수): 백엔드 이슈로 catalog 테이블과 연관 로직을 제거하려고 함.
+  - 결정/조치 (필수): 사용자가 catalog 테이블 및 관련 로직을 직접 삭제하기로 했고, 에이전트는 노트에 기록만 수행.
+  - 관련 파일/링크 (선택): `supabase`, `src/app/api`
+
 - [2026-01-27] [impl] Supabase 세팅 및 API 라우트 MVP/챌린지 구현.
   - 영향/증상/개요 (필수): Supabase 서버/클라이언트 초기화 및 인증/데이터 API 라우트 구성.
   - 결정/조치 (필수): `getSupabaseAdmin/getSupabaseAnon/getAuthUserId` 추가, auth/signup/login/refresh/logout 및 운동/루틴/세트/인바디/리포트/챌린지 API 라우트 생성.

@@ -8,8 +8,10 @@ const API = {
     BY_DATE: (date: string) => `/api/workouts?date=${date}`,
   },
   ROUTINE: {
+    DETAIL: (routineId: string) => `/api/routines/${routineId}`,
     LIST: '/api/routines',
     CREATE: '/api/routines',
+    EDIT: (routineId: string) => `/api/routines/${routineId}`,
   },
 };
 

@@ -4,6 +4,7 @@ const QUERY_KEYS = {
 
   ROUTINE: {
     LIST: 'routine-list',
+    DETAIL: 'routine-detail',
   },
 };
 export default QUERY_KEYS;

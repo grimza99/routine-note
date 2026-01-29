@@ -1,4 +1,4 @@
-import { API, QUERY_KEYS } from '@/shared';
+import { API, IExercise, IRoutine, QUERY_KEYS } from '@/shared';
 import { api } from '@/shared/libs/api';
 import { useQuery } from '@tanstack/react-query';
 
@@ -34,18 +34,13 @@ export function useWorkoutQuery(params: TWorkoutReportParams) {
   });
 }
 
-interface Exercise {
-  id: string;
-  exerciseId: string;
-  note: string;
-  sets: [{ id: 's1'; weight: 80; reps: 8; note: '' }, { id: 's2'; weight: 80; reps: 8; note: '' }];
+interface IWorkoutByDateResponse {
+  id: string; // workoutId
+  date: string; // 'YYYY-MM-DD' 형식
+  routines: IRoutine[];
+  exercises: IExercise[]; // 루틴에 속하지 않은 운동들
 }
 
-interface IWorkoutByDateResponse {
-  id: string;
-  date: string; // 'YYYY-MM-DD' 형식
-  exercises: Exercise[];
-}
 export function useWorkoutByDate(params: TWorkoutReportParams) {
   return useQuery({
     queryKey: [QUERY_KEYS.WORKOUT_BY_DATE],

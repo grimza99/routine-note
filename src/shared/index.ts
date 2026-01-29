@@ -24,3 +24,6 @@ export { useOnClickOutside } from './hooks/useOnClickOutside';
 export { QueryProvider } from './libs/query/QueryProvider';
 export { cn } from './libs/cn';
 export { formatMonthDay } from './libs/date/format';
+
+//types
+export type { IExercise, IRoutine } from './types/domain.type';

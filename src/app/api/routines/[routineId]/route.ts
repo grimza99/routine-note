@@ -6,6 +6,28 @@ const json = (status: number, body: unknown) => NextResponse.json(body, { status
 
 type Params = { routineId: string };
 
+type RoutineItem = {
+  id: string;
+  exercise_id: string;
+  item_order: number;
+};
+
+type RoutineResponse = {
+  id: string;
+  name: string;
+  routine_items: RoutineItem[] | null;
+};
+
+const mapRoutine = (routine: RoutineResponse) => ({
+  routineId: routine.id,
+  routineName: routine.name,
+  exercises: (routine.routine_items ?? []).map((item) => ({
+    id: item.id,
+    exerciseId: item.exercise_id,
+    order: item.item_order,
+  })),
+});
+
 export async function GET(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
 
@@ -39,7 +61,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     return json(404, { error: { code: "NOT_FOUND", message: "routine not found" } });
   }
 
-  return json(200, data);
+  return json(200, mapRoutine(data as RoutineResponse));
 }
 
 export async function PATCH(request: NextRequest, context: { params: Params }) {
@@ -98,7 +120,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     }
   }
 
-  return json(200, routine);
+  return json(200, { routineId: routine.id, routineName: routine.name });
 }
 
 export async function DELETE(request: NextRequest, context: { params: Params }) {

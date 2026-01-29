@@ -195,9 +195,9 @@
 ```json
 [
   {
-    "id": "r1",
-    "name": "상체 루틴",
-    "items": [
+    "routineId": "r1",
+    "routineName": "상체 루틴",
+    "exercises": [
       { "id": "ri1", "exerciseId": "ex1", "order": 1 },
       { "id": "ri2", "exerciseId": "ex2", "order": 2 }
     ]
@@ -222,7 +222,7 @@
 응답
 
 ```json
-{ "id": "r2", "name": "하체 루틴" }
+{ "routineId": "r2", "routineName": "하체 루틴" }
 ```
 
 #### GET /routines/{routineId}
@@ -231,9 +231,9 @@
 
 ```json
 {
-  "id": "r1",
-  "name": "상체 루틴",
-  "items": [
+  "routineId": "r1",
+  "routineName": "상체 루틴",
+  "exercises": [
     { "id": "ri1", "exerciseId": "ex1", "order": 1 },
     { "id": "ri2", "exerciseId": "ex2", "order": 2 }
   ]
@@ -257,7 +257,7 @@
 응답
 
 ```json
-{ "id": "r1", "name": "상체 루틴 v2" }
+{ "routineId": "r1", "routineName": "상체 루틴 v2" }
 ```
 
 #### DELETE /routines/{routineId}

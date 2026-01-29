@@ -4,6 +4,28 @@ import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
+type RoutineItem = {
+  id: string;
+  exercise_id: string;
+  item_order: number;
+};
+
+type RoutineResponse = {
+  id: string;
+  name: string;
+  routine_items: RoutineItem[] | null;
+};
+
+const mapRoutine = (routine: RoutineResponse) => ({
+  routineId: routine.id,
+  routineName: routine.name,
+  exercises: (routine.routine_items ?? []).map((item) => ({
+    id: item.id,
+    exerciseId: item.exercise_id,
+    order: item.item_order,
+  })),
+});
+
 export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
@@ -32,7 +54,7 @@ export async function GET(request: NextRequest) {
     return json(500, { error: { code: "DB_ERROR", message: error.message } });
   }
 
-  return json(200, data ?? []);
+  return json(200, (data ?? []).map((routine) => mapRoutine(routine as RoutineResponse)));
 }
 
 export async function POST(request: NextRequest) {
@@ -76,5 +98,5 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return json(201, routine);
+  return json(201, { routineId: routine.id, routineName: routine.name });
 }

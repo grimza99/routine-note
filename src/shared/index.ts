@@ -22,3 +22,4 @@ export { useOnClickOutside } from './hooks/useOnClickOutside';
 // libs
 export { QueryProvider } from './libs/query/QueryProvider';
 export { cn } from './libs/cn';
+export { formatMonthDay } from './libs/date/format';

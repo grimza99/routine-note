@@ -4,6 +4,7 @@ export { InputField } from './ui/fields/InputField';
 export { TextareaField } from './ui/fields/TextareaField';
 export { Button } from './ui/buttons/Button';
 export { Calendar } from './ui/calendar/Calendar';
+export { Modal } from './ui/modals/Modal';
 
 //ui - cards
 export { RoutineCard } from './ui/cards/RoutineCard';

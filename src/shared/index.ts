@@ -14,6 +14,7 @@ export { LastMonthReportCard } from './ui/cards/LastMonthReportCard';
 export { PROJECT } from './constants/d';
 export { default as API } from './constants/api';
 export { default as PATHS } from './constants/paths';
+export { default as QUERY_KEYS } from './constants/query';
 
 //hooks
 export { useOnClickOutside } from './hooks/useOnClickOutside';

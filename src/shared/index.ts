@@ -5,6 +5,8 @@ export { TextareaField } from './ui/fields/TextareaField';
 export { Button } from './ui/buttons/Button';
 export { Calendar } from './ui/calendar/Calendar';
 export { Modal } from './ui/modals/Modal';
+export { Spinner } from './ui/loaders/Spinner';
+export { BouncingDots } from './ui/loaders/BouncingDots';
 
 //ui - cards
 export { RoutineCard } from './ui/cards/RoutineCard';

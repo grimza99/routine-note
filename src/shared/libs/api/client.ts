@@ -1,4 +1,4 @@
-import { supabaseClient } from "@/shared/libs/supabase";
+import { supabaseClient } from '@/shared/libs/supabase';
 
 type ApiError = {
   code: string;
@@ -10,14 +10,43 @@ type ApiEnvelope<T> = {
   error: ApiError | null;
 };
 
+type AuthSessionPayload = {
+  access_token?: string | null;
+  token?: string | null;
+};
+
+const getCookieValue = (name: string) => {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.split('; ').find((cookie) => cookie.startsWith(`${name}=`));
+  if (!match) return null;
+  return decodeURIComponent(match.split('=').slice(1).join('='));
+};
+
+const setCookieValue = (name: string, value: string) => {
+  if (typeof document === 'undefined') return;
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; SameSite=Lax${secure}`;
+};
+
+const applyAccessTokenCookieFromResponse = (payload: unknown) => {
+  if (!payload || typeof payload !== 'object') return;
+
+  const data = payload as AuthSessionPayload;
+  const accessToken = data.access_token ?? data.token ?? null;
+  if (!accessToken) return;
+  setCookieValue('sb_access_token', accessToken);
+};
+
 const getAccessToken = async () => {
+  const cookieToken = getCookieValue('sb_access_token');
+  if (cookieToken) return cookieToken;
   const { data } = await supabaseClient.auth.getSession();
   return data.session?.access_token ?? null;
 };
 
 export const apiFetch = async <TResponse>(
   input: string,
-  init: RequestInit & { auth?: boolean } = {}
+  init: RequestInit & { auth?: boolean } = {},
 ): Promise<ApiEnvelope<TResponse>> => {
   const { auth = true, headers, ...rest } = init;
   const token = auth ? await getAccessToken() : null;
@@ -25,7 +54,7 @@ export const apiFetch = async <TResponse>(
   const response = await fetch(input, {
     ...rest,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(headers ?? {}),
     },
@@ -35,16 +64,18 @@ export const apiFetch = async <TResponse>(
 
   if (!response.ok) {
     const serverError =
-      json && typeof json === "object" && "error" in json ? (json.error as ApiError | undefined) : undefined;
+      json && typeof json === 'object' && 'error' in json ? (json.error as ApiError | undefined) : undefined;
 
     return {
       data: null,
       error: serverError ?? {
-        code: "HTTP_ERROR",
-        message: response.statusText || "Request failed",
+        code: 'HTTP_ERROR',
+        message: response.statusText || 'Request failed',
       },
     };
   }
+
+  applyAccessTokenCookieFromResponse(json);
 
   return {
     data: json as TResponse | null,
@@ -52,7 +83,7 @@ export const apiFetch = async <TResponse>(
   };
 };
 
-type ApiOptions = Omit<RequestInit, "body" | "method"> & { auth?: boolean };
+type ApiOptions = Omit<RequestInit, 'body' | 'method'> & { auth?: boolean };
 
 const withQuery = (url: string, query?: Record<string, string | number | boolean | null | undefined>) => {
   if (!query) {
@@ -79,25 +110,24 @@ const withQuery = (url: string, query?: Record<string, string | number | boolean
 };
 
 export const api = {
-  get: <TResponse>(url: string, options: ApiOptions = {}) =>
-    apiFetch<TResponse>(url, { ...options, method: "GET" }),
+  get: <TResponse>(url: string, options: ApiOptions = {}) => apiFetch<TResponse>(url, { ...options, method: 'GET' }),
   getWithQuery: <TResponse>(
     url: string,
     query?: Record<string, string | number | boolean | null | undefined>,
-    options: ApiOptions = {}
-  ) => apiFetch<TResponse>(withQuery(url, query), { ...options, method: "GET" }),
+    options: ApiOptions = {},
+  ) => apiFetch<TResponse>(withQuery(url, query), { ...options, method: 'GET' }),
   post: <TResponse, TBody = unknown>(url: string, body?: TBody, options: ApiOptions = {}) =>
     apiFetch<TResponse>(url, {
       ...options,
-      method: "POST",
+      method: 'POST',
       body: body === undefined ? undefined : JSON.stringify(body),
     }),
   patch: <TResponse, TBody = unknown>(url: string, body?: TBody, options: ApiOptions = {}) =>
     apiFetch<TResponse>(url, {
       ...options,
-      method: "PATCH",
+      method: 'PATCH',
       body: body === undefined ? undefined : JSON.stringify(body),
     }),
   delete: <TResponse>(url: string, options: ApiOptions = {}) =>
-    apiFetch<TResponse>(url, { ...options, method: "DELETE" }),
+    apiFetch<TResponse>(url, { ...options, method: 'DELETE' }),
 };

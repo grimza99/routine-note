@@ -5,6 +5,7 @@ const API = {
   },
   WORKOUT: {
     REPORT: (month: string) => `/api/reports/monthly?month=${month}`,
+    BY_DATE: (date: string) => `/api/workouts?date=${date}`,
   },
 };
 

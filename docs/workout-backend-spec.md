@@ -287,7 +287,7 @@
       ]
     }
   ]
-}
+} ||null
 ```
 
 #### POST /workouts

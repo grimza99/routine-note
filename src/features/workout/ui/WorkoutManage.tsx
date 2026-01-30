@@ -3,6 +3,7 @@ import { useWorkoutByDate } from '@/entities';
 import { Button, formatDate, formatMonthDay, Modal } from '@/shared';
 import { useState } from 'react';
 import RecordWorkoutModal from './RecordWorkoutModal';
+import { RecordedRoutineCard } from '@/shared/ui/cards/RecordedRoutineCard';
 
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,7 +25,17 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
           className="w-fit"
         />
       </header>
-      <>{workoutByDateData ? <></> : <p className="mt-4 text-text-secondary">운동 기록이 없습니다.</p>}</>
+      <>
+        {workoutByDateData ? (
+          <div>
+            {workoutByDateData.routines.map((routine) => (
+              <RecordedRoutineCard key={routine.id} title={routine.routineName} exercises={routine.exercises} />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 text-text-secondary">운동 기록이 없습니다.</p>
+        )}
+      </>
       <Modal modalId="workout-manage-modal" isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <RecordWorkoutModal
           date={selectedDate}

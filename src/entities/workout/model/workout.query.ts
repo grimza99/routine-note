@@ -2,7 +2,7 @@ import { API, IExercise, IRoutine, QUERY_KEYS } from '@/shared';
 import { api } from '@/shared/libs/api';
 import { useQuery } from '@tanstack/react-query';
 
-type TWorkoutReportParams = string; // 'YYYY-MM' 형식
+type TWorkoutReportParams = string; // 'YYYY-MM-DD' 형식
 
 interface IWorkoutReportResponse {
   month: string; // 'YYYY-MM' 형식
@@ -43,11 +43,10 @@ interface IWorkoutByDateResponse {
 
 export function useWorkoutByDate(params: TWorkoutReportParams) {
   return useQuery({
-    queryKey: [QUERY_KEYS.WORKOUT_BY_DATE],
+    queryKey: [QUERY_KEYS.WORKOUT_BY_DATE, params],
     queryFn: async () => {
       try {
         const res = await api.get<IWorkoutByDateResponse>(API.WORKOUT.BY_DATE(params));
-
         return res.data;
       } catch (error) {
         //todo 에러 처리

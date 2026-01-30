@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
@@ -96,6 +97,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   }
 
   const insertPayload = items.map((item) => ({
+    id: randomUUID(),
     workout_id: context.params.workoutId,
     workout_routine_id: workoutRoutine.id,
     exercise_id: item.exercise_id,

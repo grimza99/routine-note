@@ -4,6 +4,7 @@ const API = {
     LOGIN: '/api/auth/login',
   },
   WORKOUT: {
+    CREATE: '/api/workouts',
     REPORT: (month: string) => `/api/reports/monthly?month=${month}`,
     BY_DATE: (date: string) => `/api/workouts?date=${date}`,
   },

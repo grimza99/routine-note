@@ -1,13 +1,12 @@
 'use client';
 import { useWorkoutByDate } from '@/entities';
-import { Button, formatMonthDay, Modal } from '@/shared';
+import { Button, formatDate, formatMonthDay, Modal } from '@/shared';
 import { useState } from 'react';
 import RecordWorkoutModal from './RecordWorkoutModal';
 
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const { data: workoutByDateData } = useWorkoutByDate(selectedDate.toISOString().slice(0, 10));
+  const { data: workoutByDateData } = useWorkoutByDate(formatDate(selectedDate));
 
   const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.id) || [];
   const currentExercises = workoutByDateData?.exercises || [];
@@ -28,13 +27,8 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
       <>{workoutByDateData ? <></> : <p className="mt-4 text-text-secondary">운동 기록이 없습니다.</p>}</>
       <Modal modalId="workout-manage-modal" isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <RecordWorkoutModal
+          date={selectedDate}
           onClose={() => setIsModalOpen(false)}
-          onSelectRoutines={(ids) => {
-            console.log(ids);
-          }}
-          onSelectExercise={(exercises) => {
-            console.log(exercises);
-          }}
           currentRoutineIds={currentRoutineIds}
           currentExercises={currentExercises}
         />

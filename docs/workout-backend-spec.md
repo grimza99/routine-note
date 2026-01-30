@@ -309,13 +309,34 @@
 요청
 
 ```json
-{ "date": "2026-01-27" }
+{
+  "date": "2026-01-27",
+  "routines": [{ "routineId": "r1", "order": 1, "note": "" }], //order optional
+  "exercises": [
+    { "exerciseName": "ex1", "order": 1, "note": "" }, //order optional
+    { "exerciseName": "ex2", "order": 2, "note": "" }
+  ]
+}
 ```
 
 응답
 
 ```json
-{ "id": "w1", "date": "2026-01-27" }
+{
+  "id": "w1",
+  "date": "2026-01-27",
+  "routines": [
+    {
+      "id": "wr1",
+      "routineId": "r1",
+      "routineName": "루틴 A",
+      "order": 1,
+      "note": "",
+      "exercises": [{ "id": "we1", "exerciseId": "ex1", "order": 1, "note": "", "sets": [] }]
+    }
+  ],
+  "exercises": [{ "id": "we2", "exerciseId": "ex2", "order": 2, "note": "", "sets": [] }]
+}
 ```
 
 #### GET /workouts/{workoutId}

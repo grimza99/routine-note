@@ -1,7 +1,7 @@
 'use client';
 import { useWorkoutQuery } from '@/entities';
 import WorkoutManage from '@/features/workout/ui/WorkoutManage';
-import { Calendar, formatMonthDay, SummaryCard } from '@/shared';
+import { Calendar, SummaryCard } from '@/shared';
 import { useState } from 'react';
 
 //todo monthlyReportData.goalWorkoutDays 가 null일때 모달로 월 목표 설정 유도

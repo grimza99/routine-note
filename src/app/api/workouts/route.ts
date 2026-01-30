@@ -16,6 +16,7 @@ type WorkoutSet = {
 type WorkoutExercise = {
   id: string;
   exercise_id: string;
+  exercise_name?: string | null;
   note: string | null;
   item_order: number;
   workout_routine_id: string | null;
@@ -34,6 +35,7 @@ type WorkoutRoutine = {
 type RoutineItem = {
   exercise_id: string;
   exercise_name: string | null;
+  item_order: number;
 };
 
 type WorkoutResponse = {
@@ -51,6 +53,7 @@ type RoutineRequest = {
 
 type ExerciseRequest = {
   exerciseId?: string;
+  exerciseName?: string;
   order?: number;
   note?: string;
   routineIndex?: number;
@@ -62,9 +65,23 @@ type RequestBody = {
   exercises?: ExerciseRequest[];
 };
 
-const mapWorkoutExercise = (exercise: WorkoutExercise, name: string | null = null) => ({
+const mapRoutineExercise = (exercise: WorkoutExercise, name: string | null = null) => ({
   id: exercise.exercise_id,
   name,
+  note: exercise.note,
+  order: exercise.item_order,
+  sets: (exercise.sets ?? []).map((set) => ({
+    id: set.id,
+    weight: set.weight,
+    reps: set.reps,
+    note: set.note,
+    order: set.set_order,
+  })),
+});
+
+const mapStandaloneExercise = (exercise: WorkoutExercise) => ({
+  id: exercise.id,
+  name: exercise.exercise_name ?? '',
   note: exercise.note,
   order: exercise.item_order,
   sets: (exercise.sets ?? []).map((set) => ({
@@ -81,9 +98,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
   date: workout.workout_date,
   routines: (workout.workout_routines ?? []).map((routine) => {
     const routineItems = routine.routines?.routine_items ?? [];
-    const routineItemMap = new Map(
-      routineItems.map((item) => [item.exercise_id, item.exercise_name ?? null]),
-    );
+    const routineItemMap = new Map(routineItems.map((item) => [item.exercise_id, item.exercise_name ?? null]));
 
     return {
       id: routine.routine_id,
@@ -91,13 +106,11 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
       order: routine.item_order,
       note: routine.note,
       exercises: (routine.workout_exercises ?? []).map((exercise) =>
-        mapWorkoutExercise(exercise, routineItemMap.get(exercise.exercise_id) ?? null),
+        mapRoutineExercise(exercise, routineItemMap.get(exercise.exercise_id) ?? null),
       ),
     };
   }),
-  exercises: (workout.workout_exercises ?? [])
-    .filter((exercise) => !exercise.workout_routine_id)
-    .map((exercise) => mapWorkoutExercise(exercise, null)),
+  exercises: (workout.workout_exercises ?? []).map(mapStandaloneExercise),
 });
 const workoutSelect = `
   id,
@@ -112,6 +125,7 @@ const workoutSelect = `
       id,
       workout_routine_id,
       exercise_id,
+      exercise_name,
       note,
       item_order,
       workout_routine_id,
@@ -127,6 +141,7 @@ const workoutSelect = `
   workout_exercises (
     id,
     exercise_id,
+    exercise_name,
     note,
     item_order,
     workout_routine_id,
@@ -196,6 +211,14 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  for (const exercise of exercises) {
+    if (exercise.routineIndex === undefined && !exercise.exerciseName?.trim()) {
+      return json(400, {
+        error: { code: 'VALIDATION_ERROR', message: 'exerciseName is required for standalone exercises' },
+      });
+    }
+  }
+
   const supabase = getSupabaseAdmin();
 
   if (routines.length) {
@@ -250,7 +273,7 @@ export async function POST(request: NextRequest) {
 
     const { data: routineItems, error: routineItemsError } = await supabase
       .from('routine_items')
-      .select('exercise_id, item_order')
+      .select('exercise_id, exercise_name, item_order')
       .eq('routine_id', routine.routineId)
       .order('item_order', { ascending: true });
 
@@ -264,6 +287,7 @@ export async function POST(request: NextRequest) {
         workout_id: workoutId,
         workout_routine_id: createdRoutine.id,
         exercise_id: item.exercise_id,
+        exercise_name: item.exercise_name ?? null,
         item_order: item.item_order,
       }));
 
@@ -294,6 +318,7 @@ export async function POST(request: NextRequest) {
       workout_id: workoutId,
       workout_routine_id: workoutRoutineId,
       exercise_id: randomUUID(),
+      exercise_name: exercise.exerciseName?.trim() ?? null,
       item_order: order,
       note: exercise.note ?? '',
     });

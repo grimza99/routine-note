@@ -6,7 +6,8 @@ const json = (status: number, body: unknown) => NextResponse.json(body, { status
 
 export async function POST() {
   const supabase = getSupabaseAnon();
-  const refreshToken = (await import('next/headers')).cookies().get('sb_refresh_token')?.value;
+  const cookieStore = await (await import('next/headers')).cookies();
+  const refreshToken = cookieStore.get('sb_refresh_token')?.value;
 
   if (!refreshToken) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing refresh token' } });

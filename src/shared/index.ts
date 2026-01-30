@@ -12,6 +12,8 @@ export { BouncingDots } from './ui/loaders/BouncingDots';
 export { RoutineCard } from './ui/cards/RoutineCard';
 export { SummaryCard } from './ui/cards/SummaryCard';
 export { LastMonthReportCard } from './ui/cards/LastMonthReportCard';
+//ui - badges
+export { NoteBadge } from './ui/badges/NoteBadge';
 
 // constants
 export { PROJECT } from './constants/d';

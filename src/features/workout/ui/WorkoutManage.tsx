@@ -1,6 +1,6 @@
 'use client';
 import { useWorkoutByDate } from '@/entities';
-import { Button, formatDate, formatMonthDay, Modal } from '@/shared';
+import { Button, formatDate, formatMonthDay, Modal, NoteBadge } from '@/shared';
 import { useState } from 'react';
 import RecordWorkoutModal from './RecordWorkoutModal';
 import { RecordedRoutineCard } from '@/shared/ui/cards/RecordedRoutineCard';
@@ -25,17 +25,27 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
           className="w-fit"
         />
       </header>
-      <>
-        {workoutByDateData ? (
-          <div>
-            {workoutByDateData.routines.map((routine) => (
-              <RecordedRoutineCard key={routine.id} title={routine.routineName} exercises={routine.exercises} />
-            ))}
-          </div>
-        ) : (
-          <p className="mt-4 text-text-secondary">운동 기록이 없습니다.</p>
-        )}
-      </>
+      {workoutByDateData ? (
+        <div className="flex gap-4 w-full">
+          {workoutByDateData.routines.map((routine) => (
+            <div key={routine.id} className="flex items-center gap-2">
+              <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} />
+              <NoteBadge note={routine.note} />
+            </div>
+          ))}
+          {currentExercises.length > 0 && (
+            <div className="flex items-center gap-2">
+              <RecordedRoutineCard
+                key="additional-exercises"
+                title="루틴외에 추가된 운동"
+                exercises={currentExercises}
+              />
+            </div>
+          )}
+        </div>
+      ) : (
+        <p className="mt-4 text-text-secondary">운동 기록이 없습니다.</p>
+      )}
       <Modal modalId="workout-manage-modal" isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <RecordWorkoutModal
           date={selectedDate}

@@ -533,6 +533,83 @@
 }
 ```
 
+#### GET /reports/monthly-all
+
+설명: 지난 달까지의 월간 리포트를 전체 조회 (이번 달 제외)
+
+응답
+
+```json
+[
+  {
+    "month": "2025-12",
+    "workoutDays": 10,
+    "totalSets": 180,
+    "maxConsecutiveWorkoutDays": 4,
+    "goalWorkoutDays": 20,
+    "goalAchievementRate": 50.0,
+    "weightChange": -0.8,
+    "skeletalMuscleMassChange": 0.4,
+    "bodyFatMassChange": -0.6
+  },
+  {
+    "month": "2026-01",
+    "workoutDays": 12,
+    "totalSets": 210,
+    "maxConsecutiveWorkoutDays": 5,
+    "goalWorkoutDays": 20,
+    "goalAchievementRate": 60.0,
+    "weightChange": -1.2,
+    "skeletalMuscleMassChange": 0.6,
+    "bodyFatMassChange": -0.8
+  }
+]
+```
+
+#### GET /reports/monthly-trends
+
+설명: 지난 달까지의 월간 목표 달성률 추이 조회 (라인 차트용)
+
+응답
+
+```json
+[
+  {
+    "id": "goalAchievementRate",
+    "data": [
+      { "x": "2025-12", "y": 50.0 },
+      { "x": "2026-01", "y": 60.0 }
+    ]
+  }
+]
+```
+
+#### GET /reports/routine-distribution?month=YYYY-MM
+
+설명: 해당 월 루틴 분포 조회 (파이 차트용)
+
+응답
+
+```json
+[
+  { "id": "r1", "label": "상체 루틴", "value": 8 },
+  { "id": "r2", "label": "하체 루틴", "value": 5 }
+]
+```
+
+#### GET /reports/weekly-volume?month=YYYY-MM
+
+설명: 해당 월 주간 운동량 조회 (월~일 기준, 바 차트용)
+
+응답
+
+```json
+[
+  { "week": "2026-01-01~2026-01-07", "volume": 4200 },
+  { "week": "2026-01-08~2026-01-14", "volume": 3800 }
+]
+```
+
 #### POST /reports/monthly-goal
 
 요청

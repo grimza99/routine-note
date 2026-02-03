@@ -16,8 +16,15 @@ export async function GET(request: NextRequest) {
     return json(400, { error: { code: "VALIDATION_ERROR", message: "month is required" } });
   }
 
+  const [yearText, monthText] = month.split("-");
+  const yearNumber = Number(yearText);
+  const monthNumber = Number(monthText);
+  if (!Number.isInteger(yearNumber) || !Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) {
+    return json(400, { error: { code: "VALIDATION_ERROR", message: "month must be in YYYY-MM format" } });
+  }
+
   const start = `${month}-01`;
-  const end = `${month}-31`;
+  const end = new Date(Date.UTC(yearNumber, monthNumber, 0)).toISOString().slice(0, 10);
 
   const supabase = getSupabaseAdmin();
   const { data: goal, error: goalError } = await supabase

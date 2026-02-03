@@ -29,18 +29,33 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const { year, month, weeksInMonth } = getCurrentMonthInfo();
+    const emptySeries: LineSeries[] = [
+      {
+        id: "goalAchievementRate",
+        data: Array.from({ length: weeksInMonth }, (_, index) => ({
+          x: `${index + 1}주차`,
+          y: null,
+        })),
+      },
+    ];
+
     const reports = await getMonthlyReports(userId);
-    const sortedReports = reports.sort((a, b) => a.month.localeCompare(b.month));
+    const report = reports.find((item) => item.month === `${year}-${month}`);
 
-    const metricMap = [{ id: "goalAchievementRate", accessor: (report: MonthReport) => report.goalAchievementRate }];
+    if (!report) {
+      return json(200, emptySeries);
+    }
 
-    const series: LineSeries[] = metricMap.map((metric) => ({
-      id: metric.id,
-      data: sortedReports.map((report) => ({
-        x: report.month,
-        y: metric.accessor(report),
-      })),
-    }));
+    const series: LineSeries[] = [
+      {
+        id: "goalAchievementRate",
+        data: Array.from({ length: weeksInMonth }, (_, index) => ({
+          x: `${index + 1}주차`,
+          y: report.goalAchievementRate,
+        })),
+      },
+    ];
 
     return json(200, series);
   } catch (error) {
@@ -220,4 +235,17 @@ function getMaxConsecutiveDays(dates: string[]) {
   }
 
   return maxStreak;
+}
+
+function getCurrentMonthInfo() {
+  const today = new Date();
+  const year = today.getUTCFullYear();
+  const monthNumber = today.getUTCMonth() + 1;
+  const daysInMonth = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
+  const weeksInMonth = Math.ceil(daysInMonth / 7);
+  return {
+    year: String(year),
+    month: String(monthNumber).padStart(2, "0"),
+    weeksInMonth,
+  };
 }

@@ -14,6 +14,11 @@ const API = {
       ROUTINE: (workoutRoutineId: string) => `/api/workout-routines/${workoutRoutineId}`,
     },
   },
+  REPORT: {
+    MONTHLY_TRENDS: '/api/reports/monthly-trends',
+    ROUTINE_DISTRIBUTION: (month: string) => `/api/reports/routine-distribution?month=${month}`,
+    WEEKLY_VOLUME: (month: string) => `/api/reports/weekly-volume?month=${month}`,
+  },
   ROUTINE: {
     DETAIL: (routineId: string) => `/api/routines/${routineId}`,
     LIST: '/api/routines',

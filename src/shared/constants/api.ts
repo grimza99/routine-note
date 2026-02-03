@@ -7,6 +7,9 @@ const API = {
     CREATE: '/api/workouts',
     REPORT: (month: string) => `/api/reports/monthly?month=${month}`,
     BY_DATE: (date: string) => `/api/workouts?date=${date}`,
+    SETS: {
+      CREATE: (exerciseId: string) => `/workout-exercises/${exerciseId}/sets`,
+    },
   },
   ROUTINE: {
     DETAIL: (routineId: string) => `/api/routines/${routineId}`,

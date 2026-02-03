@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button, IExercise, NumberStepper, TextareaField, cn } from '@/shared';
 import SetManageBox from './SetManageBox';
+import { useSetsCreateMutation } from '../model/sets.mutation';
 
 type RoutineRecordModalContentProps = {
   title: string;
@@ -14,6 +15,8 @@ type RoutineRecordModalContentProps = {
 export function WorkoutManageModal({ title, exercises, initialNote = '', onClose }: RoutineRecordModalContentProps) {
   const [note, setNote] = useState(initialNote);
   const [exerciseState, setExerciseState] = useState(exercises);
+
+  const { mutateAsync: createSets } = useSetsCreateMutation();
 
   if (!exercises) return;
 
@@ -61,12 +64,20 @@ export function WorkoutManageModal({ title, exercises, initialNote = '', onClose
     );
   };
 
-  const handleSubmit = () => {
-    console.log('routine record submit', {
-      title,
-      note: note.trim(),
-      exercises: exerciseState,
-    });
+  const handleSubmit = async () => {
+    if (!exerciseState) return;
+    for (const exercise of exerciseState) {
+      for (const set of exercise.sets) {
+        await createSets({
+          id: exercise.id,
+          weight: set.weight,
+          reps: set.reps,
+        });
+      }
+    }
+    onClose();
+    //note
+    //todo toast}
   };
 
   return (

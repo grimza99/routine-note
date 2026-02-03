@@ -8,6 +8,8 @@ export { Modal } from './ui/modals/Modal';
 export { Spinner } from './ui/loaders/Spinner';
 export { BouncingDots } from './ui/loaders/BouncingDots';
 export { NumberStepper } from './ui/steppers/NumberStepper';
+//ui - tabs
+export { Tabs } from './ui/tabs/Tabs';
 
 //ui - cards
 export { RoutineCard } from './ui/cards/RoutineCard';

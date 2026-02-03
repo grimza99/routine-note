@@ -20,6 +20,7 @@
   --color-black: var(--black);
   --color-white: var(--white);
   --color-background: var(--background);
+  --color-gray900: #1a1a1a;
   --color-surface: var(--surface);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);

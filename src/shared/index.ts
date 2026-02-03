@@ -7,6 +7,7 @@ export { Calendar } from './ui/calendar/Calendar';
 export { Modal } from './ui/modals/Modal';
 export { Spinner } from './ui/loaders/Spinner';
 export { BouncingDots } from './ui/loaders/BouncingDots';
+export { NumberStepper } from './ui/steppers/NumberStepper';
 
 //ui - cards
 export { RoutineCard } from './ui/cards/RoutineCard';

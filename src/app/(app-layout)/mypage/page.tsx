@@ -1,3 +1,5 @@
+'use client';
+import AccountInfoSection from '@/features/auth/ui/AccountInfoSection';
 import MyPageProfile from '@/features/auth/ui/MyPageProfile';
 import { SummaryCard } from '@/shared';
 
@@ -34,6 +36,7 @@ export default function MyPage() {
           />
         ))}
       </section>
+      <AccountInfoSection email="gbtmxlf@namver.com" nickname="닉네임" onSaveNickname={() => {}} />
     </div>
   );
 }

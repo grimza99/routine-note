@@ -9,9 +9,14 @@ import { WorkoutManageModal } from './WorkoutManageModal';
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isWorkoutManageModalOpen, setIsWorkoutManageModalOpen] = useState(false);
-  const [targetWorkout, setTargetWorkout] = useState<{ title: string; exercises: IExercise[] | null }>({
+  const [targetWorkout, setTargetWorkout] = useState<{
+    title: string;
+    exercises: IExercise[] | null;
+    routineId: string;
+  }>({
     title: '',
     exercises: null,
+    routineId: '',
   });
 
   const { data: workoutByDateData } = useWorkoutByDate(formatDate(selectedDate));
@@ -19,8 +24,8 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
   const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.id) || [];
   const currentExercises = workoutByDateData?.exercises || [];
 
-  const handleCardClick = (title: string, target: IExercise[]) => {
-    setTargetWorkout({ title, exercises: target });
+  const handleCardClick = (title: string, target: IExercise[], routineId?: string) => {
+    setTargetWorkout({ title, exercises: target, routineId: routineId || '' });
     setIsWorkoutManageModalOpen(true);
   };
 
@@ -43,7 +48,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
             <div
               key={routine.id}
               className="flex items-center gap-2"
-              onClick={() => handleCardClick(routine.routineName, routine.exercises)}
+              onClick={() => handleCardClick(routine.routineName, routine.exercises, routine.id)}
             >
               <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} />
               <NoteBadge note={routine.note} />
@@ -82,6 +87,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
           title={targetWorkout.title}
           exercises={targetWorkout.exercises}
           onClose={() => setIsWorkoutManageModalOpen(false)}
+          routineId={targetWorkout.routineId}
         />
       </Modal>
     </section>

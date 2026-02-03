@@ -4,19 +4,28 @@ import { useState } from 'react';
 import { Button, IExercise, NumberStepper, TextareaField, cn } from '@/shared';
 import SetManageBox from './SetManageBox';
 import { useSetsCreateMutation } from '../model/sets.mutation';
+import { useNoteMutation } from '../model/note.mutation';
 
 type RoutineRecordModalContentProps = {
   title: string;
   exercises: IExercise[] | null;
   initialNote?: string;
+  routineId?: string;
   onClose: () => void;
 };
 
-export function WorkoutManageModal({ title, exercises, initialNote = '', onClose }: RoutineRecordModalContentProps) {
+export function WorkoutManageModal({
+  title,
+  exercises,
+  initialNote = '',
+  routineId,
+  onClose,
+}: RoutineRecordModalContentProps) {
   const [note, setNote] = useState(initialNote);
   const [exerciseState, setExerciseState] = useState(exercises);
 
   const { mutateAsync: createSets } = useSetsCreateMutation();
+  const { mutateAsync: manageNote } = useNoteMutation(routineId || '');
 
   if (!exercises) return;
 
@@ -75,8 +84,12 @@ export function WorkoutManageModal({ title, exercises, initialNote = '', onClose
         });
       }
     }
+    if (note.trim() !== '') {
+      await manageNote({
+        note,
+      });
+    }
     onClose();
-    //note
     //todo toast}
   };
 

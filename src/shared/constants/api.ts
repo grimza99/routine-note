@@ -10,6 +10,9 @@ const API = {
     SETS: {
       CREATE: (exerciseId: string) => `/workout-exercises/${exerciseId}/sets`,
     },
+    NOTE: {
+      ROUTINE: (workoutRoutineId: string) => `/api/workout-routines/${workoutRoutineId}`,
+    },
   },
   ROUTINE: {
     DETAIL: (routineId: string) => `/api/routines/${routineId}`,

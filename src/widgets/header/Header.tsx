@@ -38,12 +38,14 @@ export default function Header() {
     await logout();
   };
   return (
-    <header
-      className="sticky top-0 z-10 w-full border-b"
-      style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
-    >
+    <header className="sticky top-0 z-10 w-full bg-background">
       <div className="mx-auto flex w-full max-w-300 items-center justify-between px-6 py-4">
-        <Link href="/" className="text-lg font-bold" style={{ color: 'var(--text-primary)' }} onClick={handleCloseMenu}>
+        <Link
+          href="/"
+          className="text-2xl font-bold"
+          style={{ color: 'var(--text-primary)' }}
+          onClick={handleCloseMenu}
+        >
           <img src="/icons/bolt.svg" alt="Logo" className="inline h-6 w-6 mr-2" />
           {PROJECT.NAME}
         </Link>

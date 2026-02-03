@@ -1,4 +1,4 @@
 export const PROJECT = {
-  NAME: 'Workout Routine Note',
+  NAME: 'Workout Note',
   DESCRIPTION: '나만의 운동 루틴 관리',
 };

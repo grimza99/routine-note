@@ -53,3 +53,22 @@ export const useLoginMutation = () => {
     },
   });
 };
+
+// 로그아웃
+export const useLogoutMutation = () => {
+  const router = useRouter();
+  return useMutation({
+    mutationFn: async () => {
+      const res = await api.post(API.AUTH.LOGOUT);
+
+      if (res.error) {
+        throw res.error;
+      }
+
+      return res.data;
+    },
+    onSuccess: () => {
+      router.push('/auth');
+    },
+  });
+};

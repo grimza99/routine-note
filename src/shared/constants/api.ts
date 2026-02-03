@@ -2,6 +2,7 @@ const API = {
   AUTH: {
     SIGNUP: '/api/auth/signup',
     LOGIN: '/api/auth/login',
+    LOGOUT: '/api/auth/logout',
   },
   WORKOUT: {
     CREATE: '/api/workouts',

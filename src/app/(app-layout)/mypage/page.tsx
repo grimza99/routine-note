@@ -22,7 +22,7 @@ export default function MyPage() {
     },
   ];
   return (
-    <div>
+    <div className="flex flex-col gap-8">
       <MyPageProfile nickname="닉네임 테스트" imageUrl="jkj" workoutDays={20} />
       <section className="flex flex-wrap gap-4">
         {summaryData.map((data) => (

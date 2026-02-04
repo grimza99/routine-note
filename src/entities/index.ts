@@ -5,3 +5,7 @@ export { POLICIES } from './auth/model/policies';
 
 // challenge
 export { Rank } from './challenge/ui/Rank';
+
+//report
+export { MonthReport } from './report/ui/MonthReport';
+export { PrevMonthReports } from './report/ui/PrevMonthReports';

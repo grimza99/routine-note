@@ -1,16 +1,16 @@
 'use client';
-import { Rank } from '@/entities';
-import { SummaryCard, Tabs } from '@/shared';
+import { LeaderBoard } from '@/entities';
+import { PreparingCard, SummaryCard, Tabs } from '@/shared';
 import { useState } from 'react';
 
-type TabItem = 'dashboard' | 'challengeList';
+type TabItem = 'leaderBoard' | 'challengeList';
 const tabItems = [
-  { id: 'dashboard', label: '대시 보드' },
+  { id: 'leaderBoard', label: '리더 보드' },
   { id: 'challengeList', label: '진행 중인 챌린지' },
 ];
 
 export default function ChallengePage() {
-  const [activeTab, setActiveTab] = useState<TabItem>('dashboard');
+  const [activeTab, setActiveTab] = useState<TabItem>('leaderBoard');
 
   const summaryData = [
     {
@@ -47,9 +47,7 @@ export default function ChallengePage() {
       <section>
         <Tabs items={tabItems} activeId={activeTab} onChange={(id) => setActiveTab(id as TabItem)} />
       </section>
-      <section>
-        <Rank imageUrl="" nickname="닉네임 테스트" experience="2000" rank={1} streakDays={20} />
-      </section>
+      <section>{activeTab === 'leaderBoard' ? <LeaderBoard /> : <PreparingCard />}</section>
     </div>
   );
 }

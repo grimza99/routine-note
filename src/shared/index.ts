@@ -15,6 +15,7 @@ export { Tabs } from './ui/tabs/Tabs';
 export { RoutineCard } from './ui/cards/RoutineCard';
 export { SummaryCard } from './ui/cards/SummaryCard';
 export { LastMonthReportCard } from './ui/cards/LastMonthReportCard';
+export { PreparingCard } from './ui/cards/PreparingCard';
 //ui - badges
 export { NoteBadge } from './ui/badges/NoteBadge';
 export { ConsecutiveWorkoutDaysBadge } from './ui/badges/ConsecutiveWorkoutDaysBadge';

@@ -26,7 +26,6 @@ export default function ReportPage() {
 
   const { data: monthlyTrends = [], isLoading: isMonthlyTrendLoading } = useMonthlyTrendQuery();
 
-  console.log(selectedMonth);
   const summaryData = [
     {
       title: '완료 일수',

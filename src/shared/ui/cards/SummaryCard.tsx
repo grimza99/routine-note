@@ -13,7 +13,7 @@ type SummaryCardProps = {
 
 const VARIANT_CLASSES: Record<SummaryCardVariant, string> = {
   primary: 'bg-primary border-primary text-white',
-  secondary: 'bg-white border-primary text-text-primary',
+  secondary: 'bg-white border-secondary text-text-primary',
 };
 
 export function SummaryCard({
@@ -27,9 +27,9 @@ export function SummaryCard({
   const variantClassName = VARIANT_CLASSES[variant];
 
   return (
-    <section
+    <div
       className={cn(
-        'flex flex-col gap-3 rounded-xl border px-5 py-4 border-secondary justify-center items-center',
+        'flex flex-col gap-3 rounded-xl border-2 px-5 py-4 justify-center items-center',
         variantClassName,
         className,
       )}
@@ -37,6 +37,6 @@ export function SummaryCard({
       {iconSrc && <img src={iconSrc} alt="화살표 아이콘" className={cn('w-9 h-9', iconClassName)} />}
       <div className="text-3xl font-bold text-primary">{value}</div>
       <div className={cn('text-sm', variant === 'primary' ? 'text-white' : 'text-text-secondary')}>{title}</div>
-    </section>
+    </div>
   );
 }

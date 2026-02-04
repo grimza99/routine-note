@@ -18,15 +18,11 @@ export default function LoginForm() {
   };
 
   const handleSubmit = async (e: FormEvent) => {
-    try {
-      e.preventDefault();
-      await login(payload);
-    } catch (error) {
-      //todo: error handling
-    }
+    e.preventDefault();
+    await login(payload);
   };
 
-  const isButtonDisabeld = !payload.email || !payload.password || isPending;
+  const isButtonDisabeld = !payload.email || payload.password.length < 6 || isPending;
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -47,6 +43,7 @@ export default function LoginForm() {
         required
         name="password"
         onChange={handleChange}
+        helperText="6자 이상의 비밀번호를 입력하세요."
       />
       <Button type="submit" disabled={isButtonDisabeld} label="로그인" />
     </form>

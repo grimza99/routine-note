@@ -59,9 +59,11 @@
   "email": "user@example.com",
   "password": "password123",
   "username": "유선향",
-  "nickname": null, // 이 경우 username이 닉네임으로 설정됨
-  "age": 0,
-  "policy": false
+  "nickname?": "유선향" || null, // null일 경우 username이 닉네임으로 설정됨
+  "age?": 20, //최소 20 ~ 100세
+  "policy": false,
+  "profile_image": null,
+
 }
 ```
 
@@ -81,8 +83,8 @@
 
 에러
 
-- 닉네임 중복: `409` + `{ "error": { "code": "NICKNAME_TAKEN", "message": "nickname already exists" } }`
-- 이메일 인증 설정에 따라 `token`이 `null`일 수 있음
+- 닉네임 중복: `409` + `{ "error": { "code": "NICKNAME_TAKEN", "message": "이미 존재하는 닉네임 입니다." } }`
+- 이메일 중복 (409, { error: { code: 'EMAIL_TAKEN', message: '이미 존재하는 이메일 입니다.' } });
 
 #### POST /auth/login
 
@@ -99,8 +101,15 @@
 
 ```json
 {
+  "id": "u1",
+  "email": "user@example.com",
+  "username": "유선향",
+  "nickname": "유선향",
+  "age": 0,
+  "privacy_policy": true,
   "token": "jwt-token",
-  "user": { "id": "u1", "email": "user@example.com" }
+  "profile_image": "" || null,
+
 }
 ```
 

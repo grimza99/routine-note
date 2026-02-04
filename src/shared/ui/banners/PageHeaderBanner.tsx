@@ -37,7 +37,7 @@ export default function PageHeaderBanner() {
   const { title, subtitle } = PAGE_HEADER_BANNER_CONTENT[variant];
 
   return (
-    <section className="w-full hidden md:flex h-40 lg:h-50 bg-primary text-white px-8 lg:px-16 flex-col justify-center gap-3 font-bold">
+    <section className="w-full hidden md:flex h-40 lg:h-48 bg-primary text-white px-8 lg:px-16 flex-col justify-center gap-3 font-bold">
       <h1 className="text-4xl">{title}</h1>
       <p className="text-xl">{subtitle}</p>
     </section>

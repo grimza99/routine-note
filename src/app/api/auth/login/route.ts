@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   const body = (await request.json()) as { email?: string; password?: string };
 
   if (!body?.email || !body?.password) {
-    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'email and password are required' } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: '이메일과 비밀번호는 필수 입니다.' } });
   }
 
   const supabase = getSupabaseAnon();
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    return json(401, { error: { code: 'AUTH_ERROR', message: error.message } });
+    return json(401, { error: { code: 'AUTH_ERROR', message: '이메일, 혹은 비밀번호가 일치하지 않습니다.' } });
   }
 
   const response = NextResponse.json(
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 3,
+      maxAge: 60 * 60 * 24 * 3, // 3 days
     });
   }
 

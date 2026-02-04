@@ -9,7 +9,7 @@ export default function SignupForm() {
     username: '',
     nickname: '',
     password: '',
-    age: 15,
+    age: 20,
     policy_policy: false,
   });
   const { mutateAsync: signup, isPending } = useSignupMutation();
@@ -24,12 +24,8 @@ export default function SignupForm() {
   };
 
   const handleSubmit = async (e: FormEvent) => {
-    try {
-      e.preventDefault();
-      await signup(payload);
-    } catch (error) {
-      //todo: error handling
-    }
+    e.preventDefault();
+    await signup(payload);
   };
 
   const isButtonDisabeld = isPending || !payload.email || !payload.username || !payload.password || !payload.age;
@@ -73,9 +69,9 @@ export default function SignupForm() {
       <InputField
         label="나이"
         type="number"
-        min={1}
+        min={15}
+        max={100}
         placeholder="나이를 입력하세요"
-        required
         value={payload.age}
         onChange={handleChange}
         name="age"

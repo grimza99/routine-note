@@ -15,10 +15,7 @@ type TabsProps = {
 
 export function Tabs({ items, activeId, onChange, className }: TabsProps) {
   return (
-    <div
-      className={cn('flex w-full gap-2 rounded-lg border p-1', className)}
-      style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}
-    >
+    <div className={cn('flex w-full gap-2 rounded-lg border p-1 border-border bg-gray-100', className)}>
       {items.map((item) => {
         const isActive = item.id === activeId;
         return (

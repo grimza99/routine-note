@@ -62,8 +62,6 @@
   "nickname?": "유선향" || null, // null일 경우 username이 닉네임으로 설정됨
   "age?": 20, //최소 20 ~ 100세
   "policy": false,
-  "profile_image": null,
-
 }
 ```
 
@@ -77,7 +75,8 @@
   "nickname": "유선향",
   "age": 0,
   "privacy_policy": true,
-  "token": "jwt-token"
+  "token": "jwt-token",
+  "profile_image": null
 }
 ```
 
@@ -109,7 +108,6 @@
   "privacy_policy": true,
   "token": "jwt-token",
   "profile_image": "" || null,
-
 }
 ```
 

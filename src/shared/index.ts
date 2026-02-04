@@ -17,6 +17,7 @@ export { SummaryCard } from './ui/cards/SummaryCard';
 export { LastMonthReportCard } from './ui/cards/LastMonthReportCard';
 //ui - badges
 export { NoteBadge } from './ui/badges/NoteBadge';
+export { ConsecutiveWorkoutDaysBadge } from './ui/badges/ConsecutiveWorkoutDaysBadge';
 
 // ui - profile
 export { DefaultProfile } from './ui/profile/DefaultProfile';

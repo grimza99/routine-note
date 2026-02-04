@@ -18,6 +18,9 @@ export { LastMonthReportCard } from './ui/cards/LastMonthReportCard';
 //ui - badges
 export { NoteBadge } from './ui/badges/NoteBadge';
 
+// ui - profile
+export { DefaultProfile } from './ui/profile/DefaultProfile';
+
 // constants
 export { PROJECT } from './constants/d';
 export { default as API } from './constants/api';

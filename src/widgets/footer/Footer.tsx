@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Modal } from '@/shared';
+import { Modal, PROJECT } from '@/shared';
 import { POLICIES } from '@/entities';
 
 type PolicyKey = keyof typeof POLICIES;
@@ -13,22 +13,28 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray900 text-white">
-      <div className="mx-auto flex w-full max-w-300 flex-col gap-4 px-6 py-8 md:flex-row md:items-center md:justify-between">
-        <div className="text-sm">© 2026 Routine Note. All rights reserved.</div>
-        <div className="flex flex-wrap gap-3 text-sm font-semibold">
-          <button type="button" onClick={() => setActivePolicy('terms')}>
-            이용약관
-          </button>
-          <button type="button" onClick={() => setActivePolicy('privacy')}>
-            개인정보 처리방침
-          </button>
-          <button type="button" onClick={() => setActivePolicy('cookie')}>
-            쿠키 정책
-          </button>
-          <button type="button" onClick={() => setActivePolicy('contact')}>
-            문의
-          </button>
+      <div className="mx-auto flex w-full max-w-300 flex-col items-center gap-10 px-6 py-15 md:py-20 ">
+        <div className="flex md:justify-between w-full flex-col md:flex-row gap-6 items-center">
+          <h1 className="text-2xl font-bold flex items-center gap-3">
+            <img src="/icons/bolt.white.svg" alt="logo-icon" className="h-7 w-7" />
+            {PROJECT.NAME}
+          </h1>
+          <div className="flex flex-wrap gap-3 text-sm font-semibold text-text-secondary">
+            <button type="button" onClick={() => setActivePolicy('terms')}>
+              이용약관
+            </button>
+            <button type="button" onClick={() => setActivePolicy('privacy')}>
+              개인정보 처리방침
+            </button>
+            <button type="button" onClick={() => setActivePolicy('cookie')}>
+              쿠키 정책
+            </button>
+            <button type="button" onClick={() => setActivePolicy('contact')}>
+              문의
+            </button>
+          </div>
         </div>
+        <div className="text-sm text-text-secondary">© 2026 {PROJECT.NAME}. All rights reserved.</div>
       </div>
 
       <Modal modalId="footer-policy-modal" isOpen={Boolean(modalData)} onClose={() => setActivePolicy(null)}>

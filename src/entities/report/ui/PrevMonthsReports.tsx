@@ -5,7 +5,7 @@ const items = [
   { label: '총 운동 세트', value: '0세트' },
   { label: '총 운동 시간', value: '0시간' },
 ];
-export function PrevMonthReports() {
+export function PrevMonthsReports() {
   return (
     <div className="flex flex-col gap-8 lg:gap-15 items-center">
       <h2 className="text-3xl font-bold">지난 리포트</h2>

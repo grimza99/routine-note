@@ -1,6 +1,6 @@
 'use client';
 
-import { MonthReport, PrevMonthReports } from '@/entities';
+import { MonthReport, PrevMonthsReports } from '@/entities';
 import { Tabs } from '@/shared';
 import { useState } from 'react';
 const tabItems = [
@@ -14,7 +14,7 @@ export default function ReportPage() {
   return (
     <div className="flex flex-col gap-8">
       <Tabs items={tabItems} activeId={activeTab} onChange={(id) => setActiveTab(id as 'prev' | 'current')} />
-      {activeTab === 'current' ? <MonthReport /> : <PrevMonthReports />}
+      {activeTab === 'current' ? <MonthReport /> : <PrevMonthsReports />}
     </div>
   );
 }

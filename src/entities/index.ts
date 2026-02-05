@@ -10,4 +10,4 @@ export { useMyChallengeRank, useChallengeRankList } from './challenge/model/chel
 
 //report
 export { MonthReport } from './report/ui/MonthReport';
-export { PrevMonthReports } from './report/ui/PrevMonthReports';
+export { PrevMonthsReports } from './report/ui/PrevMonthsReports';

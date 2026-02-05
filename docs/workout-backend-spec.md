@@ -33,6 +33,9 @@
   - `date`: `YYYY-MM-DD` 형식
   - `month`: `YYYY-MM` 형식
   - `order`: 1 이상 정수
+- 내 정보
+  - `nickname`: 공백 불가
+  - `goalWorkoutDays`: 1 이상 정수
 - Workout
   - `date` 필수, 유저별 하루 1개 제한
 - WorkoutRoutine
@@ -144,6 +147,69 @@
 
 ```json
 { "ok": true }
+```
+
+#### POST /auth/password-reset/request
+
+설명: 비밀번호 재설정 이메일 발송 (로그인 상태면 email 생략 가능)
+
+요청
+
+```json
+{
+  "email?": "user@example.com",
+  "redirectTo?": "https://app.example.com/reset-password"
+}
+```
+
+응답
+
+```json
+{ "ok": true }
+```
+
+#### POST /auth/password-reset/confirm
+
+설명: 이메일 인증 링크의 accessToken으로 비밀번호 변경
+
+요청
+
+```json
+{
+  "accessToken": "token-from-email-link",
+  "newPassword": "newPassword123"
+}
+```
+
+응답
+
+```json
+{ "ok": true }
+```
+
+### 내 정보
+
+#### PATCH /account/profile
+
+설명: 닉네임과 이번달 목표를 함께 수정 (둘 중 하나 이상 필수)
+
+요청
+
+```json
+{
+  "nickname?": "새로운닉네임",
+  "goalWorkoutDays?": 12
+}
+```
+
+응답
+
+```json
+{
+  "nickname": "새로운닉네임",
+  "month": "2026-02",
+  "goalWorkoutDays": 12
+}
 ```
 
 ### 운동 종목(사전)
@@ -713,6 +779,21 @@
   { "rank": 1, "userId": "u1", "workoutDays": 20 },
   { "rank": 2, "userId": "u2", "workoutDays": 18 }
 ]
+```
+
+#### GET /challenges/my-rank?month=YYYY-MM
+
+설명: 현재 로그인 유저의 월간 챌린지 등수 조회 (month 생략 시 현재 월)
+
+응답
+
+```json
+{
+  "month": "2026-02",
+  "rank": 4,
+  "workoutDays": 12,
+  "totalParticipants": 24
+}
 ```
 
 ## 2) DB 스키마 (Postgres 초안)

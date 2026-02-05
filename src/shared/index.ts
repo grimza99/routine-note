@@ -41,5 +41,8 @@ export { QueryProvider } from './libs/query/QueryProvider';
 export { cn } from './libs/cn';
 export { formatMonthDay, formatDate } from './libs/date/format';
 
+//libs-api-route
+export { getMonthRange } from './libs/api-route/date/getMonthRange';
+
 //types
 export type { IExercise, IRoutine } from './types/domain.type';

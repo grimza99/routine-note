@@ -1,32 +1,31 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
-import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
+import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
+import { getMonthRange } from '@/shared';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
 const getCurrentMonth = () => new Date().toISOString().slice(0, 7);
 
+// 내 챌린지 랭킹 조회 API (테스트 완료)
 export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
   if (!userId) {
-    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
+    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
-
-  const month = request.nextUrl.searchParams.get("month") ?? getCurrentMonth();
-
-  const start = `${month}-01`;
-  const end = `${month}-31`;
+  const year_month = request.nextUrl.searchParams.get('month') ?? getCurrentMonth();
+  const { start, end } = getMonthRange(year_month);
 
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
-    .from("workouts")
-    .select("user_id, workout_date")
-    .gte("workout_date", start)
-    .lte("workout_date", end);
+    .from('workouts')
+    .select('user_id, workout_date')
+    .gte('workout_date', start)
+    .lte('workout_date', end);
 
   if (error) {
-    return json(500, { error: { code: "DB_ERROR", message: error.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: error.message } });
   }
 
   const counts = new Map<string, Set<string>>();
@@ -45,7 +44,7 @@ export async function GET(request: NextRequest) {
   const me = ranking.find((entry) => entry.userId === userId) ?? null;
 
   return json(200, {
-    month,
+    year_month,
     rank: me?.rank ?? null,
     workoutDays: me?.workoutDays ?? 0,
     totalParticipants: ranking.length,

@@ -14,7 +14,14 @@ export default function ReportPage() {
   return (
     <div className="flex flex-col gap-8">
       <Tabs items={tabItems} activeId={activeTab} onChange={(id) => setActiveTab(id as 'prev' | 'current')} />
-      {activeTab === 'current' ? <MonthReport /> : <PrevMonthsReports />}
+      {activeTab === 'current' ? (
+        <MonthReport />
+      ) : (
+        <div className="flex flex-col gap-8 lg:gap-15 items-center">
+          <h2 className="text-3xl font-bold">지난 리포트</h2>
+          <PrevMonthsReports />
+        </div>
+      )}
     </div>
   );
 }

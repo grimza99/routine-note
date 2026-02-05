@@ -7,7 +7,7 @@ type LastMonthReportItem = {
 
 type LastMonthReportCardProps = {
   monthLabel: string;
-  achievementRate: string;
+  achievementRate: number;
   items: LastMonthReportItem[];
   className?: string;
   achievementLabel?: string;
@@ -31,7 +31,7 @@ export function LastMonthReportCard({
       <header className="flex items-start justify-between">
         <h3 className="text-2xl font-bold text-text-primary">{monthLabel}</h3>
         <div className="flex flex-col items-end">
-          <span className="text-3xl font-bold text-primary">{achievementRate}</span>
+          <span className="text-3xl font-bold text-primary">{achievementRate}%</span>
           <span className="text-sm font-bold text-text-secondary">{achievementLabel}</span>
         </div>
       </header>

@@ -1,19 +1,25 @@
-import { LastMonthReportCard } from '@/shared';
+import { LastMonthReportCard, Spinner } from '@/shared';
+import { useAllMonthReportsQuery } from '../model/report.query';
 
-const items = [
-  { label: '운동한 날', value: '0일' },
-  { label: '총 운동 세트', value: '0세트' },
-  { label: '총 운동 시간', value: '0시간' },
-];
 export function PrevMonthsReports() {
+  const { data: prevReportsData } = useAllMonthReportsQuery();
+  if (!prevReportsData) {
+    return <Spinner />;
+  }
   return (
-    <div className="flex flex-col gap-8 lg:gap-15 items-center">
-      <h2 className="text-3xl font-bold">지난 리포트</h2>
-      <section className="w-full flex flex-col gap-4 md:gap-6">
-        <LastMonthReportCard monthLabel="라벨" achievementRate={'0%'} items={items} />{' '}
-        <LastMonthReportCard monthLabel="라벨" achievementRate={'0%'} items={items} />
-        <LastMonthReportCard monthLabel="라벨" achievementRate={'0%'} items={items} />
-      </section>
-    </div>
+    <section className="w-full flex flex-col gap-4 md:gap-6">
+      {prevReportsData.map((report) => (
+        <LastMonthReportCard
+          key={report.month}
+          monthLabel={report.month}
+          achievementRate={report.goalAchievementRate || 0}
+          items={[
+            { label: '운동한 날', value: `${report.workoutDays}일` },
+            { label: '총 운동 세트', value: `${report.totalSets}세트` },
+            { label: '최대 연속 운동', value: `${report.maxConsecutiveWorkoutDays}일` },
+          ]}
+        />
+      ))}
+    </section>
   );
 }

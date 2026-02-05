@@ -21,6 +21,7 @@ const API = {
     },
   },
   REPORT: {
+    MONTHLY_ALL: '/api/reports/monthly-all',
     MONTHLY_TRENDS: '/api/reports/monthly-trends',
     ROUTINE_DISTRIBUTION: (month: string) => `/api/reports/routine-distribution?month=${month}`,
     WEEKLY_VOLUME: (month: string) => `/api/reports/weekly-volume?month=${month}`,

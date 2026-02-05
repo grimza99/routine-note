@@ -1,6 +1,6 @@
 export const TOAST_MESSAGE = {
   //auth
-  SUCCESS_SIGNUP: '회원가입이 완료되었습니다. 로그인해주세요.',
+  SUCCESS_SIGNUP: '회원가입이 완료되었습니다.',
   SUCCESS_LOGIN: '로그인에 성공했습니다.',
   SUCCESS_LOGOUT: '로그아웃되었습니다.',
 

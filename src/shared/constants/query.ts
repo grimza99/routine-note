@@ -7,6 +7,9 @@ const QUERY_KEYS = {
     WEEKLY_VOLUME: 'report-weekly-volume',
   },
 
+  CHALLENGE: {
+    MY_RANK: 'challenge-my-rank',
+  },
   ROUTINE: {
     LIST: 'routine-list',
     DETAIL: 'routine-detail',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, InputField } from '@/shared';
 
 type AccountInfoSectionProps = {
@@ -15,6 +15,10 @@ export default function AccountInfoSection({ email, nickname, onSaveNickname }: 
   const handleChangeNickname = (value: string) => {
     setCurrentNickname(value);
   };
+
+  useEffect(() => {
+    setCurrentNickname(nickname);
+  }, [nickname]);
 
   return (
     <section className="flex flex-col gap-4 rounded-lg border p-4" style={{ borderColor: 'var(--border)' }}>

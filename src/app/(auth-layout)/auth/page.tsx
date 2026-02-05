@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { LoginForm, SignupForm } from '@/features/auth';
 import { AUTH } from '@/entities/auth/model/constants';
-import { cn, Tabs } from '@/shared';
+import { Tabs } from '@/shared';
 
 type AuthTab = 'login' | 'signup';
 const tabItems = [

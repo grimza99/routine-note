@@ -6,6 +6,7 @@ export { POLICIES } from './auth/model/policies';
 // challenge
 export { Rank } from './challenge/ui/Rank';
 export { LeaderBoard } from './challenge/ui/LeaderBoard';
+export { useMyChallengeRank } from './challenge/model/chellenge.query';
 
 //report
 export { MonthReport } from './report/ui/MonthReport';

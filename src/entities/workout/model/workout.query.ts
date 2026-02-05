@@ -9,7 +9,7 @@ interface IWorkoutReportResponse {
   workoutDays: number;
   totalSets: number;
   maxConsecutiveWorkoutDays: number;
-  goalWorkoutDays: null;
+  goalWorkoutDays: null | number;
   goalAchievementRate: null;
   weightChange: null; //todo
   skeletalMuscleMassChange: null; //todl

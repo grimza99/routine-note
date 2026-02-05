@@ -1,6 +1,7 @@
 'use client';
 import { useMyChallengeRank, useRoutineList, useWorkoutQuery } from '@/entities';
 import useAuthStore from '@/entities/auth/model/useAuthStore';
+import { useMyInfoMutation } from '@/features/auth';
 import AccountInfoSection from '@/features/auth/ui/AccountInfoSection';
 import MyPageProfile from '@/features/auth/ui/MyPageProfile';
 import { SummaryCard } from '@/shared';
@@ -10,6 +11,9 @@ export default function MyPage() {
 
   const { data: routineListData } = useRoutineList();
   const { data: challengeData } = useMyChallengeRank(new Date().toISOString().slice(0, 7));
+  const { data: goalArchivement } = useWorkoutQuery(new Date().toISOString().slice(0, 7));
+
+  const { mutateAsync: updateMyInfo } = useMyInfoMutation();
 
   const summaryData = [
     {
@@ -44,7 +48,12 @@ export default function MyPage() {
           />
         ))}
       </section>
-      <AccountInfoSection email={email} nickname={nickname} onSaveNickname={() => {}} />
+      <AccountInfoSection
+        email={email}
+        nickname={nickname}
+        goalWorkoutDays={goalArchivement?.goalWorkoutDays}
+        onSaveInfo={updateMyInfo}
+      />
     </div>
   );
 }

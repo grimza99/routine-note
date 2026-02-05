@@ -4,8 +4,6 @@ import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-const getCurrentMonth = () => new Date().toISOString().slice(0, 7);
-
 export async function PATCH(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
@@ -93,8 +91,7 @@ export async function PATCH(request: NextRequest) {
       });
     }
 
-    month = getCurrentMonth();
-    const reportMonth = `${month}-01`;
+    const date = new Date().toISOString().slice(0, 7) + '-01'; // 'YYYY-MM-01';
     const normalizedGoal = Math.trunc(goalValue);
 
     const { data: goalData, error: goalError } = await supabase
@@ -102,7 +99,7 @@ export async function PATCH(request: NextRequest) {
       .upsert(
         {
           user_id: userId,
-          report_month: reportMonth,
+          report_month: date,
           goal_workout_days: normalizedGoal,
         },
         { onConflict: 'user_id,report_month' },

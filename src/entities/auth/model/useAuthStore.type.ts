@@ -18,6 +18,8 @@ export const INITIAL_STATE: IAuthStoreState = {
 interface IAuthAction {
   actions: {
     setAuth: (auth: IAuthStoreState) => void;
+    setNickname: (nickname: string) => void;
+    setProfileImage: (profileImage: string | null) => void;
     clearAuth: () => void;
   };
 }

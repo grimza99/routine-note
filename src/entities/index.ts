@@ -12,3 +12,5 @@ export { useMyChallengeRank, useChallengeRankList } from './challenge/model/chel
 export { MonthReport } from './report/ui/MonthReport';
 export { PrevMonthsReports } from './report/ui/PrevMonthsReports';
 export { useAllMonthReportsQuery } from './report/model/report.query';
+export { useMonthlyTrendQuery, useRoutineDistributionQuery, useWeeklyVolumeQuery } from './report/model/report.query';
+export type { MonthlyTrendSeries, RoutineDistributionItem, WeeklyVolumeItem } from './report/model/report.query';

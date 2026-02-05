@@ -1,15 +1,7 @@
 'use client';
 
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
-import type { WeeklyVolumeItem } from '../model/report.query';
+import { WeeklyVolumeItem } from '@/entities';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 type WeeklyVolumeBarChartProps = {
   data: WeeklyVolumeItem[];

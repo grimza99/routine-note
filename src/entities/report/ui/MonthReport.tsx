@@ -1,23 +1,17 @@
 'use client';
 import { useWorkoutQuery } from '@/entities/workout/model/workout.query';
-import {
-  MonthlyTrendLineChart,
-  RoutineDistributionPieChart,
-  useMonthlyTrendQuery,
-  useRoutineDistributionQuery,
-  useWeeklyVolumeQuery,
-  WeeklyVolumeBarChart,
-} from '@/features/report';
+import { MonthlyTrendLineChart, RoutineDistributionPieChart, WeeklyVolumeBarChart } from '@/features/report';
 import { Spinner, SummaryCard } from '@/shared';
 import { useEffect, useMemo, useState } from 'react';
+import { useMonthlyTrendQuery, useRoutineDistributionQuery, useWeeklyVolumeQuery } from '../model/report.query';
 
 export function MonthReport() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const [selectedMonth, setSelectedMonth] = useState('');
 
   const { data: monthlyReportData } = useWorkoutQuery(currentMonth);
-  const { data: routineDistribution = [], isLoading: isRoutineLoading } = useRoutineDistributionQuery(currentMonth);
   const { data: weeklyVolume = [], isLoading: isWeeklyLoading } = useWeeklyVolumeQuery(selectedMonth);
+  const { data: routineDistribution = [], isLoading: isRoutineLoading } = useRoutineDistributionQuery(currentMonth);
   const { data: monthlyTrends = [], isLoading: isMonthlyTrendLoading } = useMonthlyTrendQuery();
 
   const summaryData = [
@@ -55,7 +49,7 @@ export function MonthReport() {
 
   return (
     <>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full">
         {summaryData.map((data) => (
           <SummaryCard
             key={data.title}
@@ -66,11 +60,29 @@ export function MonthReport() {
             className="flex-1"
           />
         ))}
-      </div>
+      </section>
       <section className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-lg font-semibold text-text-primary">월간 목표 달성률 추이</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-text-primary">주간 운동량</h2>
+          <span className="text-sm text-text-secondary">세트수 × 무게 기준</span>
         </div>
+        {isWeeklyLoading ? (
+          <div
+            className="flex items-center justify-center rounded-lg border p-8"
+            style={{ borderColor: 'var(--border)' }}
+          >
+            <Spinner size={20} />
+          </div>
+        ) : weeklyVolume.length ? (
+          <WeeklyVolumeBarChart data={weeklyVolume} />
+        ) : (
+          <div className="rounded-lg border p-8 text-sm text-text-secondary" style={{ borderColor: 'var(--border)' }}>
+            표시할 주간 운동량 데이터가 없어요.
+          </div>
+        )}
+      </section>
+      <section className="flex flex-col gap-4">
+        <h2 className="text-lg font-semibold text-text-primary">월간 목표 달성률 추이</h2>
         {isMonthlyTrendLoading ? (
           <div
             className="flex items-center justify-center rounded-lg border p-8"
@@ -98,27 +110,6 @@ export function MonthReport() {
         ) : (
           <div className="rounded-lg border p-8 text-sm text-text-secondary" style={{ borderColor: 'var(--border)' }}>
             표시할 루틴 분포 데이터가 없어요.
-          </div>
-        )}
-      </section>
-
-      <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-text-primary">주간 운동량</h2>
-          <span className="text-sm text-text-secondary">월~일 기준 · 세트수 × 무게</span>
-        </div>
-        {isWeeklyLoading ? (
-          <div
-            className="flex items-center justify-center rounded-lg border p-8"
-            style={{ borderColor: 'var(--border)' }}
-          >
-            <Spinner size={20} />
-          </div>
-        ) : weeklyVolume.length ? (
-          <WeeklyVolumeBarChart data={weeklyVolume} />
-        ) : (
-          <div className="rounded-lg border p-8 text-sm text-text-secondary" style={{ borderColor: 'var(--border)' }}>
-            표시할 주간 운동량 데이터가 없어요.
           </div>
         )}
       </section>

@@ -19,6 +19,16 @@
 
 ## 노트
 
+- [2026-02-04] [env] pnpm add 실패 (네트워크/스토어 위치 충돌) [done]
+  - 영향/증상/개요 (필수): `pnpm add -D @playwright/test` 실행 시 registry 접근 실패(ENOTFOUND)와 pnpm store location 불일치 오류 발생.
+  - 결정/조치 (필수): 에스컬레이션 승인 후 `pnpm add -D @playwright/test` 성공적으로 설치 완료.
+  - 관련 파일/링크 (선택): `package.json`
+
+- [2026-02-04] [env] Playwright webServer EPERM listen 오류
+  - 영향/증상/개요 (필수): `pnpm test:e2e` 실행 시 Next dev 서버가 `0.0.0.0:3000`에 바인딩하며 EPERM 발생.
+  - 결정/조치 (필수): Playwright webServer를 `127.0.0.1`로 바인딩하도록 변경.
+  - 관련 파일/링크 (선택): `playwright.config.ts`
+
 - [2026-02-03] [process] 라우트 변경 시 백엔드 스펙 문서 반영 규칙 추가.
   - 영향/증상/개요 (필수): API 라우트 변경/추가 누락으로 문서 최신성 저하 위험.
   - 결정/조치 (필수): 라우트가 바뀔 때마다 `docs/workout-backend-spec.md`에 즉시 반영.

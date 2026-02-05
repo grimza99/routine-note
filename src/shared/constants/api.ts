@@ -26,7 +26,7 @@ const API = {
     WEEKLY_VOLUME: (month: string) => `/api/reports/weekly-volume?month=${month}`,
   },
   CHALLENGE: {
-    MONTHLY_ATTENDANCE: (month: string) => `/api/challenges/monthly-attendance?month=${month}`,
+    MONTHLY_RANK: (month: string) => `/api/challenges/monthly-rank?month=${month}`,
     MY_RANK: (month?: string) => `/api/challenges/my-rank${month ? `?month=${month}` : ''}`,
   },
   ROUTINE: {

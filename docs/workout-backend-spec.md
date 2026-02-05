@@ -770,7 +770,7 @@
 
 ### 챌린지
 
-#### GET /challenges/monthly-attendance?month=YYYY-MM
+#### GET /challenges/monthly-rank?month=YYYY-MM
 
 응답
 

@@ -13,14 +13,14 @@ interface RankClassNames {
 interface RankProps {
   imageUrl: string;
   nickname: string;
-  experience: number | string;
+  experience?: number | string;
   rank: number | string;
-  streakDays: number;
+  workoutDays: number;
   className?: string;
   classNames?: RankClassNames;
 }
 
-export function Rank({ imageUrl, nickname, experience, rank, streakDays, className, classNames }: RankProps) {
+export function Rank({ imageUrl, nickname, experience, rank, workoutDays, className, classNames }: RankProps) {
   return (
     <div
       className={cn(
@@ -50,11 +50,13 @@ export function Rank({ imageUrl, nickname, experience, rank, streakDays, classNa
           )}
           <div className="flex flex-col">
             <span className={cn('font-bold text-text-primary', classNames?.name)}>{nickname}</span>
-            <span className={cn('text-sm text-text-secondary', classNames?.experience)}>{experience}xp</span>
+            {experience && (
+              <span className={cn('text-sm text-text-secondary', classNames?.experience)}>{experience}xp</span>
+            )}
           </div>
         </div>
       </div>
-      <ConsecutiveWorkoutDaysBadge days={streakDays} />
+      <ConsecutiveWorkoutDaysBadge days={workoutDays} />
     </div>
   );
 }

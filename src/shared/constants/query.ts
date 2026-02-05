@@ -9,6 +9,7 @@ const QUERY_KEYS = {
 
   CHALLENGE: {
     MY_RANK: 'challenge-my-rank',
+    MONTHLY_RANK: 'challenge-monthly-rank',
   },
   ROUTINE: {
     LIST: 'routine-list',

@@ -1,5 +1,5 @@
 'use client';
-import { LeaderBoard } from '@/entities';
+import { LeaderBoard, useMyChallengeRank } from '@/entities';
 import { PreparingCard, SummaryCard, Tabs } from '@/shared';
 import { useState } from 'react';
 
@@ -12,21 +12,23 @@ const tabItems = [
 export default function ChallengePage() {
   const [activeTab, setActiveTab] = useState<TabItem>('leaderBoard');
 
+  const { data: challengeData } = useMyChallengeRank(new Date().toISOString().slice(0, 7));
+
   const summaryData = [
     {
       title: '참가자',
       iconSrc: '/icons/calendar.svg',
-      value: (0).toString(),
+      value: (challengeData?.totalParticipants || 0).toString(),
     },
     {
       title: '진행 중인 챌린지',
       iconSrc: '/icons/flame.svg',
-      value: (0).toString(),
+      value: '준비중',
     },
     {
       title: '내 순위',
       iconSrc: '/icons/graph.svg',
-      value: (0).toString(),
+      value: (challengeData?.rank || 0).toString(),
     },
   ];
 
@@ -47,6 +49,7 @@ export default function ChallengePage() {
       <section>
         <Tabs items={tabItems} activeId={activeTab} onChange={(id) => setActiveTab(id as TabItem)} />
       </section>
+      <span className="text-text-secondary">한달간 가장 활발하게 운동한 유저들 이에요</span>
       <section>{activeTab === 'leaderBoard' ? <LeaderBoard /> : <PreparingCard />}</section>
     </div>
   );

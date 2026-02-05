@@ -7,7 +7,7 @@ interface MyPageProfileProps {
 }
 export default function MyPageProfile({ imageUrl, nickname, workoutDays }: MyPageProfileProps) {
   return (
-    <section className="flex flex-col lg:flex-row items-center border-2 border-border rounded-lg p-6 gap-3">
+    <section className="flex flex-col lg:flex-row items-center border-2 border-secondary rounded-lg p-6 gap-3">
       {imageUrl ? (
         <img
           src={imageUrl || ''}

@@ -34,9 +34,8 @@ export default function AccountInfoSection({ email, nickname, goalWorkoutDays, o
     setInfo({ nickname, goalWorkoutDays });
   }, [nickname, goalWorkoutDays]);
 
-  console.log(info);
   return (
-    <section className="flex flex-col gap-4 rounded-lg border p-4" style={{ borderColor: 'var(--border)' }}>
+    <section className="flex flex-col gap-4 rounded-lg border-2 border-secondary p-4">
       <div className="w-full flex justify-between items-center">
         <h2 className="text-lg font-semibold text-text-primary">계정 정보</h2>
         <Button label="변경" onClick={() => onSaveInfo?.(info)} className="w-fit h-fit" />

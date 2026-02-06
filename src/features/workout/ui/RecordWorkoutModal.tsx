@@ -1,5 +1,5 @@
 import { useRoutineList } from '@/entities';
-import { Button, cn, formatDate, IExercise, InputField, IRoutine, PATHS, RoutineCard } from '@/shared';
+import { Button, cn, formatDate, IExercise, InputField, IRoutine, PATHS, RoutineCard, useToast } from '@/shared';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { useCreateWorkoutMutation, useUpdateWorkoutMutation } from '../model/workout.mutation';
@@ -26,6 +26,8 @@ export default function RecordWorkoutModal({
 }: RecordWorkoutModalProps) {
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(currentRoutineIds);
   const [addedExercises, setAddedExercises] = useState<Exercise[]>(currentExercises);
+
+  const { showToast } = useToast();
 
   const { data: routineTemplate } = useRoutineList();
   const { mutateAsync: createWorkout } = useCreateWorkoutMutation();
@@ -62,6 +64,11 @@ export default function RecordWorkoutModal({
   };
 
   const handleConfirm = async () => {
+    if (selectedRoutineIds.length === 0 && addedExercises.length === 0) {
+      showToast({ message: '최소 하나의 루틴이나 운동을 선택해야 합니다.', variant: 'error' });
+      return;
+    }
+
     if (workoutId) {
       await updateWorkout({
         date: formatDate(date), // YYYY-MM-DD

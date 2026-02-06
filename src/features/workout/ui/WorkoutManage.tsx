@@ -1,14 +1,17 @@
 'use client';
 import { useWorkoutByDate } from '@/entities';
-import { Button, formatDate, formatMonthDay, IExercise, Modal, NoteBadge, Spinner } from '@/shared';
+import { Button, CommonConfirmModal, formatDate, formatMonthDay, IExercise, Modal, NoteBadge, Spinner } from '@/shared';
 import { useState } from 'react';
 import RecordWorkoutModal from './RecordWorkoutModal';
 import { RecordedRoutineCard } from '@/shared/ui/cards/RecordedRoutineCard';
 import { WorkoutManageModal } from './WorkoutManageModal';
+import { useDeleteWorkoutMutation } from '../model/workout.mutation';
 
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isWorkoutManageModalOpen, setIsWorkoutManageModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
   const [targetWorkout, setTargetWorkout] = useState<{
     title: string;
     exercises: IExercise[] | null;
@@ -20,6 +23,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
   });
 
   const { data: workoutByDateData } = useWorkoutByDate(formatDate(selectedDate));
+  const { mutateAsync: deleteWorkout } = useDeleteWorkoutMutation(workoutByDateData?.id || '');
 
   const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.id) || [];
   const currentExercises = workoutByDateData?.exercises || [];
@@ -33,14 +37,26 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
     <section className="border-2 rounded-xl border-primary w-full min-h-50 p-4">
       <header className="flex items-center justify-between">
         <span className="text-primary font-bold text-lg md:text-xl">{formatMonthDay(selectedDate)}</span>
-        <Button
-          label={<img src="/icons/plus.white.svg" alt="운동 기록 추가" className="w-5 h-5" />}
-          aria-label="운동 기록 추가"
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-          className="w-fit"
-        />
+        <div className="flex gap-2">
+          {workoutByDateData && workoutByDateData.routines.length > 0 && (
+            <Button
+              label="삭제"
+              aria-label="운동 기록 추가"
+              onClick={() => {
+                setIsConfirmModalOpen(true);
+              }}
+              className="w-fit"
+            />
+          )}
+          <Button
+            label={<img src="/icons/plus.white.svg" alt="운동 기록 추가" className="w-5 h-5" />}
+            aria-label="운동 기록 추가"
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+            className="w-fit"
+          />
+        </div>
       </header>
       {workoutByDateData ? (
         <>
@@ -95,6 +111,18 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
           exercises={targetWorkout.exercises}
           onClose={() => setIsWorkoutManageModalOpen(false)}
           routineId={targetWorkout.routineId}
+        />
+      </Modal>
+      <Modal
+        modalId="workout-delete-confirm-modal"
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+      >
+        <CommonConfirmModal
+          title="운동 기록 삭제"
+          message={`${formatMonthDay(selectedDate)} 일자의 운동 기록을 삭제하시겠습니까? 삭제 시 복구할 수 없습니다.`}
+          onClose={() => setIsConfirmModalOpen(false)}
+          onConfirm={deleteWorkout}
         />
       </Modal>
     </section>

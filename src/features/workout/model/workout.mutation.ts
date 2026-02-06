@@ -68,3 +68,34 @@ export const useUpdateWorkoutMutation = (workoutId: string | undefined) => {
     },
   });
 };
+
+//-----------------------------------------------workout 삭제---------------------------------------------//
+export const useDeleteWorkoutMutation = (workoutId: string | undefined) => {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!workoutId) {
+        throw new Error('Invalid workout ID');
+      }
+      try {
+        const res = await api.delete(API.WORKOUT.DELETE(workoutId));
+
+        if (res.error) {
+          throw res.error;
+        }
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      showToast({ message: TOAST_MESSAGE.SUCCESS_DELETE_WORKOUT });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
+    },
+    onError: (error) => {
+      showToast({ message: error.message, variant: 'error' });
+    },
+  });
+};

@@ -15,6 +15,6 @@ export const TOAST_MESSAGE = {
 
   //workout
   SUCCESS_CREATE_WORKOUT: '운동 기록이 저장되었습니다.',
-  SUCCESS_UPDATE_WORKOUT: '운동 기록이 저장되었습니다.',
-  SUCCESS_DELETE_WORKOUT: '운동 기록이 저장되었습니다.',
+  SUCCESS_UPDATE_WORKOUT: '운동 기록이 수정되었습니다.',
+  SUCCESS_DELETE_WORKOUT: '운동 기록이 삭제되었습니다.',
 };

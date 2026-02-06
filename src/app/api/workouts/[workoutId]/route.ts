@@ -421,8 +421,11 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
+  const params = await Promise.resolve(context.params);
+  const workoutId = params?.workoutId;
+
   const supabase = getSupabaseAdmin();
-  const { error } = await supabase.from('workouts').delete().eq('id', context.params.workoutId).eq('user_id', userId);
+  const { error } = await supabase.from('workouts').delete().eq('id', workoutId).eq('user_id', userId);
 
   if (error) {
     return json(500, { error: { code: 'DB_ERROR', message: error.message } });

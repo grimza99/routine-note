@@ -3,4 +3,4 @@ export { WorkoutManageModal } from './ui/WorkoutManageModal';
 
 // model
 export { useSetsCreateMutation } from './model/sets.mutation';
-export { useCreateWorkoutMutation, useUpdateWorkoutMutation } from './model/workout.mutation';
+export { useCreateWorkoutMutation, useUpdateWorkoutMutation, useDeleteWorkoutMutation } from './model/workout.mutation';

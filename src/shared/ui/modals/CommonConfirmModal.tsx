@@ -10,13 +10,10 @@ interface CommonConfirmModalProps {
 }
 export function CommonConfirmModal({ title, message, onConfirm, onClose, isPending }: CommonConfirmModalProps) {
   const handleConfirm = () => {
-    try {
-      onConfirm();
-    } catch {
-      return;
-    }
+    onConfirm();
     onClose();
   };
+
   return (
     <div className="flex flex-col gap-6 p-6 items-center">
       <header className="flex flex-col gap-2 text-center">

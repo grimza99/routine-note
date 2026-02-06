@@ -76,12 +76,13 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
       ) : (
         <Spinner />
       )}
-      <Modal modalId="create-workout-modal" isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal modalId="crud-workout-modal" isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <RecordWorkoutModal
           date={selectedDate}
           onClose={() => setIsModalOpen(false)}
           currentRoutineIds={currentRoutineIds}
           currentExercises={currentExercises}
+          workoutId={workoutByDateData?.id}
         />
       </Modal>
       <Modal

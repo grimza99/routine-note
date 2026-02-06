@@ -8,7 +8,8 @@ interface IWorkoutPayload {
   exercises: { exerciseName: string; note?: '' }[];
 }
 
-//workout 생성
+//-----------------------------------------------workout 생성---------------------------------------------//
+
 export const useCreateWorkoutMutation = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
@@ -28,6 +29,38 @@ export const useCreateWorkoutMutation = () => {
     },
     onSuccess: () => {
       showToast({ message: TOAST_MESSAGE.SUCCESS_CREATE_WORKOUT });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
+    },
+    onError: (error) => {
+      showToast({ message: error.message, variant: 'error' });
+    },
+  });
+};
+
+//-----------------------------------------------workout 수정---------------------------------------------//
+export const useUpdateWorkoutMutation = (workoutId: string | undefined) => {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation({
+    mutationFn: async (payload: IWorkoutPayload) => {
+      if (!workoutId) {
+        throw new Error('Invalid workout ID');
+      }
+      try {
+        const res = await api.put(API.WORKOUT.UPDATE(workoutId), payload);
+
+        if (res.error) {
+          throw res.error;
+        }
+
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      showToast({ message: TOAST_MESSAGE.SUCCESS_UPDATE_WORKOUT });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
     },
     onError: (error) => {

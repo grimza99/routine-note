@@ -11,6 +11,8 @@ const API = {
   },
   WORKOUT: {
     CREATE: '/api/workouts',
+    UPDATE: (workoutId: string) => `/api/workouts/${workoutId}`,
+    DELETE: (workoutId: string) => `/api/workouts/${workoutId}`,
     REPORT: (month: string) => `/api/reports/monthly?month=${month}`,
     BY_DATE: (date: string) => `/api/workouts?date=${date}`,
     SETS: {

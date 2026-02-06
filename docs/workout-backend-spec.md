@@ -429,18 +429,41 @@
 }
 ```
 
-#### PATCH /workouts/{workoutId}
+#### PUT /workouts/{workoutId}
+
+설명: 동일한 바디로 하루 운동 기록을 전체 교체 (하위 데이터 삭제 후 재삽입)
 
 요청
 
 ```json
-{ "date": "2026-01-26" }
+{
+  "date": "2026-01-27",
+  "routines": [{ "routineId": "r1", "order": 1, "note": "" }],
+  "exercises": [
+    { "exerciseName": "ex1", "order": 1, "note": "" },
+    { "exerciseName": "ex2", "order": 2, "note": "" }
+  ]
+}
 ```
 
 응답
 
 ```json
-{ "id": "w1", "date": "2026-01-26" }
+{
+  "id": "w1",
+  "date": "2026-01-27",
+  "routines": [
+    {
+      "id": "wr1",
+      "routineId": "r1",
+      "routineName": "루틴 A",
+      "order": 1,
+      "note": "",
+      "exercises": [{ "id": "ex1", "name": "벤치프레스", "order": 1, "note": null, "sets": [] }]
+    }
+  ],
+  "exercises": [{ "id": "we2", "name": "ex2", "order": 2, "note": "", "sets": [] }]
+}
 ```
 
 #### DELETE /workouts/{workoutId}

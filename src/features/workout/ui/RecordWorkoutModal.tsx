@@ -2,13 +2,14 @@ import { useRoutineList } from '@/entities';
 import { Button, cn, formatDate, IExercise, InputField, IRoutine, PATHS, RoutineCard } from '@/shared';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
-import { useCreateWorkoutMutation } from '../model/workout.mutation';
+import { useCreateWorkoutMutation, useUpdateWorkoutMutation } from '../model/workout.mutation';
 
 interface RecordWorkoutModalProps {
   date: Date;
   currentRoutineIds: string[];
   currentExercises: IExercise[];
   onClose: () => void;
+  workoutId?: string;
 }
 
 interface Exercise {
@@ -21,12 +22,14 @@ export default function RecordWorkoutModal({
   currentRoutineIds,
   currentExercises,
   onClose,
+  workoutId,
 }: RecordWorkoutModalProps) {
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(currentRoutineIds);
   const [addedExercises, setAddedExercises] = useState<Exercise[]>(currentExercises);
 
   const { data: routineTemplate } = useRoutineList();
   const { mutateAsync: createWorkout } = useCreateWorkoutMutation();
+  const { mutateAsync: updateWorkout } = useUpdateWorkoutMutation(workoutId);
 
   const nextIdRef = useRef(1);
   const router = useRouter();
@@ -59,12 +62,19 @@ export default function RecordWorkoutModal({
   };
 
   const handleConfirm = async () => {
-    await createWorkout({
-      date: formatDate(date), // YYYY-MM-DD
-      routines: selectedRoutineIds.map((id) => ({ routineId: id })),
-      exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.name })),
-    });
-
+    if (workoutId) {
+      await updateWorkout({
+        date: formatDate(date), // YYYY-MM-DD
+        routines: selectedRoutineIds.map((id) => ({ routineId: id })),
+        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.name })),
+      });
+    } else {
+      await createWorkout({
+        date: formatDate(date), // YYYY-MM-DD
+        routines: selectedRoutineIds.map((id) => ({ routineId: id })),
+        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.name })),
+      });
+    }
     onClose();
   };
 

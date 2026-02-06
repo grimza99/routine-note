@@ -147,6 +147,12 @@ export const api = {
       method: 'POST',
       body: body === undefined ? undefined : JSON.stringify(body),
     }),
+  put: <TResponse, TBody = unknown>(url: string, body?: TBody, options: ApiOptions = {}) =>
+    apiFetch<TResponse>(url, {
+      ...options,
+      method: 'PUT',
+      body: body === undefined ? undefined : JSON.stringify(body),
+    }),
   patch: <TResponse, TBody = unknown>(url: string, body?: TBody, options: ApiOptions = {}) =>
     apiFetch<TResponse>(url, {
       ...options,
@@ -155,4 +161,10 @@ export const api = {
     }),
   delete: <TResponse>(url: string, options: ApiOptions = {}) =>
     apiFetch<TResponse>(url, { ...options, method: 'DELETE' }),
+  put: <TResponse, TBody = unknown>(url: string, body?: TBody, options: ApiOptions = {}) =>
+    apiFetch<TResponse>(url, {
+      ...options,
+      method: 'PUT',
+      body: body === undefined ? undefined : JSON.stringify(body),
+    }),
 };

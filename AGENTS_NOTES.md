@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-02-06] [backend] workout 루틴 아이템 저장 구조 변경
+  - 영향/증상/개요 (필수): 루틴 기반 운동은 `workout_exercises`가 아닌 `workout_routine_items`에 저장하도록 구조 변경 필요.
+  - 결정/조치 (필수): `workouts` POST에서 루틴 아이템을 `workout_routine_items`로 insert, `workoutSelect`/응답 매핑 변경, `workout_exercises`는 standalone만 저장하도록 문서 반영.
+  - 관련 파일/링크 (선택): `src/app/api/workouts/route.ts`, `docs/workout-backend-spec.md`
+
 - [2026-02-06] [e2e] auth 이후 routine 관리 e2e 플로우 구성
   - 영향/증상/개요 (필수): auth.spec.ts 실행 후 로그인 상태를 저장하고, routine 관리 e2e가 해당 상태를 재사용하도록 구성 필요.
   - 결정/조치 (필수): `auth.spec.ts`에서 storageState 저장, `playwright.config.ts`에 `auth`→`e2e` 프로젝트 의존성 추가, `routine.manage.spec.ts`에서 루틴 생성/수정/삭제 플로우 작성.

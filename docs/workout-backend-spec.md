@@ -355,13 +355,11 @@
       "order": 1,
       "exercises": [
         {
-          "id": "we1",
-          "exerciseId": "ex1",
-          "note": "컨디션 좋음",
-          "sets": [
-            { "id": "s1", "weight": 80, "reps": 8, "note": "" },
-            { "id": "s2", "weight": 80, "reps": 8, "note": "" }
-          ]
+          "id": "ex1",
+          "name": "벤치프레스",
+          "order": 1,
+          "note": null,
+          "sets": []
         }
       ]
     }
@@ -369,7 +367,8 @@
   "exercises": [
     {
       "id": "we2",
-      "exerciseId": "ex3",
+      "name": "푸쉬업",
+      "order": 1,
       "note": "",
       "sets": []
     }
@@ -392,6 +391,11 @@
 }
 ```
 
+설명
+
+- `routines`는 해당 루틴의 운동 아이템을 `workout_routine_items`로 복사 저장
+- `exercises`는 루틴과 무관한 standalone 운동만 `workout_exercises`에 저장
+
 응답
 
 ```json
@@ -405,10 +409,10 @@
       "routineName": "루틴 A",
       "order": 1,
       "note": "",
-      "exercises": [{ "id": "we1", "exerciseId": "ex1", "order": 1, "note": "", "sets": [] }]
+      "exercises": [{ "id": "ex1", "name": "벤치프레스", "order": 1, "note": null, "sets": [] }]
     }
   ],
-  "exercises": [{ "id": "we2", "exerciseId": "ex2", "order": 2, "note": "", "sets": [] }]
+  "exercises": [{ "id": "we2", "name": "ex2", "order": 2, "note": "", "sets": [] }]
 }
 ```
 
@@ -860,11 +864,23 @@ CREATE TABLE workout_routines (
 
 CREATE INDEX workout_routines_workout_id_idx ON workout_routines (workout_id);
 
+CREATE TABLE workout_routine_items (
+  id UUID PRIMARY KEY,
+  workout_routine_id UUID NOT NULL REFERENCES workout_routines(id) ON DELETE CASCADE,
+  exercise_id UUID NOT NULL,
+  exercise_name TEXT,
+  item_order INT NOT NULL
+);
+
+CREATE INDEX workout_routine_items_workout_routine_id_idx
+  ON workout_routine_items (workout_routine_id);
+
 CREATE TABLE workout_exercises (
   id UUID PRIMARY KEY,
   workout_id UUID NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
   workout_routine_id UUID REFERENCES workout_routines(id) ON DELETE CASCADE,
   exercise_id UUID NOT NULL REFERENCES exercise_catalogs(id),
+  exercise_name TEXT,
   item_order INT NOT NULL,
   note TEXT
 );

@@ -1,5 +1,5 @@
 import { useRoutineList } from '@/entities';
-import { Button, cn, IExercise, InputField, IRoutine, PATHS, RoutineCard } from '@/shared';
+import { Button, cn, formatDate, IExercise, InputField, IRoutine, PATHS, RoutineCard } from '@/shared';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { useCreateWorkoutMutation } from '../model/workout.mutation';
@@ -60,7 +60,7 @@ export default function RecordWorkoutModal({
 
   const handleConfirm = async () => {
     await createWorkout({
-      date: date.toISOString().slice(0, 10), // YYYY-MM-DD
+      date: formatDate(date), // YYYY-MM-DD
       routines: selectedRoutineIds.map((id) => ({ routineId: id })),
       exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.name })),
     });
@@ -88,12 +88,12 @@ export default function RecordWorkoutModal({
             ))}
           </section>
         ) : (
-          <section className="w-full border-border border-2 rounded-lg flex justify-center items-center min-h-30 text-text-secondary p-4 md:text-xl text-center">
+          <section className="w-full border-border border-2 rounded-lg flex flex-col justify-center items-center min-h-30 text-text-secondary p-4 md:text-xl text-center">
             아직 루틴이 없어요! <br />
             나만의 운동 루틴을 추가 해보세요!
             <Button
               label="루틴 추가하기"
-              className="mt-4"
+              className="mt-4 w-fit"
               onClick={() => {
                 router.push(PATHS.ROUTINE.MANAGE);
               }}

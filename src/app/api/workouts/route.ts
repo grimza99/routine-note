@@ -9,7 +9,6 @@ type WorkoutSet = {
   id: string;
   weight: number | null;
   reps: number | null;
-  note: string | null;
   set_order: number;
 };
 
@@ -28,8 +27,8 @@ type WorkoutRoutine = {
   routine_id: string;
   item_order: number;
   note: string | null;
-  routines: { id: string; name: string; routine_items: RoutineItem[] | null } | null;
-  workout_exercises: WorkoutExercise[] | null;
+  routines: { id: string; name: string } | null;
+  workout_routine_items: RoutineItem[] | null;
 };
 
 type RoutineItem = {
@@ -65,18 +64,11 @@ type RequestBody = {
   exercises?: ExerciseRequest[];
 };
 
-const mapRoutineExercise = (exercise: WorkoutExercise, name: string | null = null) => ({
-  id: exercise.exercise_id,
-  name,
-  note: exercise.note,
-  order: exercise.item_order,
-  sets: (exercise.sets ?? []).map((set) => ({
-    id: set.id,
-    weight: set.weight,
-    reps: set.reps,
-    note: set.note,
-    order: set.set_order,
-  })),
+const mapRoutineItem = (item: RoutineItem) => ({
+  id: item.exercise_id,
+  name: item.exercise_name ?? '',
+  note: null,
+  sets: [],
 });
 
 const mapStandaloneExercise = (exercise: WorkoutExercise) => ({
@@ -88,7 +80,6 @@ const mapStandaloneExercise = (exercise: WorkoutExercise) => ({
     id: set.id,
     weight: set.weight,
     reps: set.reps,
-    note: set.note,
     order: set.set_order,
   })),
 });
@@ -97,17 +88,14 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
   id: workout.id,
   date: workout.workout_date,
   routines: (workout.workout_routines ?? []).map((routine) => {
-    const routineItems = routine.routines?.routine_items ?? [];
-    const routineItemMap = new Map(routineItems.map((item) => [item.exercise_id, item.exercise_name ?? null]));
+    const routineItems = routine.workout_routine_items ?? [];
 
     return {
       id: routine.routine_id,
       routineName: routine.routines?.name ?? null,
       order: routine.item_order,
       note: routine.note,
-      exercises: (routine.workout_exercises ?? []).map((exercise) =>
-        mapRoutineExercise(exercise, routineItemMap.get(exercise.exercise_id) ?? null),
-      ),
+      exercises: routineItems.map(mapRoutineItem),
     };
   }),
   exercises: (workout.workout_exercises ?? []).map(mapStandaloneExercise),
@@ -120,22 +108,10 @@ const workoutSelect = `
     routine_id,
     item_order,
     note,
-    routines ( id, name, routine_items ( exercise_id, exercise_name ) ),
-    workout_exercises (
-      id,
-      workout_routine_id,
+    routines ( id, name ),
+    workout_routine_items (
       exercise_id,
-      exercise_name,
-      note,
-      item_order,
-      workout_routine_id,
-      sets (
-        id,
-        weight,
-        reps,
-        note,
-        set_order
-      )
+      exercise_name
     )
   ),
   workout_exercises (
@@ -180,7 +156,15 @@ export async function GET(request: NextRequest) {
     return json(500, { error: { code: 'DB_ERROR', message: error.message } });
   }
 
-  return json(200, data ? mapWorkoutResponse(data as unknown as WorkoutResponse) : null);
+  return json(
+    200,
+    data
+      ? mapWorkoutResponse(data as unknown as WorkoutResponse)
+      : {
+          routines: [],
+          exercises: [],
+        },
+  );
 }
 
 export async function POST(request: NextRequest) {
@@ -212,9 +196,9 @@ export async function POST(request: NextRequest) {
   }
 
   for (const exercise of exercises) {
-    if (exercise.routineIndex === undefined && !exercise.exerciseName?.trim()) {
+    if (!exercise.exerciseName?.trim()) {
       return json(400, {
-        error: { code: 'VALIDATION_ERROR', message: 'exerciseName is required for standalone exercises' },
+        error: { code: 'VALIDATION_ERROR', message: 'exerciseName is required for exercises' },
       });
     }
   }
@@ -282,20 +266,20 @@ export async function POST(request: NextRequest) {
     }
 
     if (routineItems?.length) {
-      const workoutExercisesPayload = routineItems.map((item) => ({
+      const workoutRoutineItemsPayload = routineItems.map((item) => ({
         id: randomUUID(),
-        workout_id: workoutId,
         workout_routine_id: createdRoutine.id,
         exercise_id: item.exercise_id,
         exercise_name: item.exercise_name ?? null,
-        item_order: item.item_order,
       }));
 
-      const { error: workoutExercisesError } = await supabase.from('workout_exercises').insert(workoutExercisesPayload);
+      const { error: workoutRoutineItemsError } = await supabase
+        .from('workout_routine_items')
+        .insert(workoutRoutineItemsPayload);
 
-      if (workoutExercisesError) {
+      if (workoutRoutineItemsError) {
         return json(500, {
-          error: { code: 'workout_exercises insert DB_ERROR', message: workoutExercisesError.message },
+          error: { code: 'workout_routine_items insert DB_ERROR', message: workoutRoutineItemsError.message },
         });
       }
     }
@@ -310,14 +294,12 @@ export async function POST(request: NextRequest) {
 
   for (const [index, exercise] of exercises.entries()) {
     const order = exercise.order ?? index + 1;
-    const routineIndex = exercise.routineIndex;
-    const workoutRoutineId = routineIndex !== undefined ? (createdRoutines[routineIndex]?.id ?? null) : null;
 
     const { error: exerciseError } = await supabase.from('workout_exercises').insert({
       id: randomUUID(),
       workout_id: workoutId,
-      workout_routine_id: workoutRoutineId,
-      exercise_id: randomUUID(),
+      workout_routine_id: null,
+      exercise_id: exercise.exerciseId ?? randomUUID(),
       exercise_name: exercise.exerciseName?.trim() ?? null,
       item_order: order,
       note: exercise.note ?? '',

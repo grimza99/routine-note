@@ -1,6 +1,6 @@
 'use client';
 import { useWorkoutByDate } from '@/entities';
-import { Button, formatDate, formatMonthDay, IExercise, IRoutine, Modal, NoteBadge } from '@/shared';
+import { Button, formatDate, formatMonthDay, IExercise, Modal, NoteBadge, Spinner } from '@/shared';
 import { useState } from 'react';
 import RecordWorkoutModal from './RecordWorkoutModal';
 import { RecordedRoutineCard } from '@/shared/ui/cards/RecordedRoutineCard';
@@ -34,7 +34,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
       <header className="flex items-center justify-between">
         <span className="text-primary font-bold text-lg md:text-xl">{formatMonthDay(selectedDate)}</span>
         <Button
-          label="+"
+          label={<img src="/icons/plus.white.svg" alt="운동 기록 추가" className="w-5 h-5" />}
           aria-label="운동 기록 추가"
           onClick={() => {
             setIsModalOpen(true);
@@ -43,32 +43,38 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
         />
       </header>
       {workoutByDateData ? (
-        <div className="flex gap-4 w-full">
-          {workoutByDateData.routines.map((routine) => (
-            <div
-              key={routine.id}
-              className="flex items-center gap-2"
-              onClick={() => handleCardClick(routine.routineName, routine.exercises, routine.id)}
-            >
-              <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} />
-              <NoteBadge note={routine.note} />
+        <>
+          {workoutByDateData.routines.length > 0 ? (
+            <div className="flex gap-4 w-full flex-wrap">
+              {workoutByDateData.routines.map((routine) => (
+                <div
+                  key={routine.id}
+                  className="flex items-center gap-2"
+                  onClick={() => handleCardClick(routine.routineName, routine.exercises, routine.id)}
+                >
+                  <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} />
+                  <NoteBadge note={routine.note} />
+                </div>
+              ))}
+              {currentExercises.length > 0 && (
+                <div
+                  className="flex items-center gap-2"
+                  onClick={() => handleCardClick('루틴외에 추가된 운동', currentExercises)}
+                >
+                  <RecordedRoutineCard
+                    key="additional-exercises"
+                    title="루틴외에 추가된 운동"
+                    exercises={currentExercises}
+                  />
+                </div>
+              )}
             </div>
-          ))}
-          {currentExercises.length > 0 && (
-            <div
-              className="flex items-center gap-2"
-              onClick={() => handleCardClick('루틴외에 추가된 운동', currentExercises)}
-            >
-              <RecordedRoutineCard
-                key="additional-exercises"
-                title="루틴외에 추가된 운동"
-                exercises={currentExercises}
-              />
-            </div>
+          ) : (
+            <p className="mt-4 text-text-secondary">운동 기록이 없습니다.</p>
           )}
-        </div>
+        </>
       ) : (
-        <p className="mt-4 text-text-secondary">운동 기록이 없습니다.</p>
+        <Spinner />
       )}
       <Modal modalId="create-workout-modal" isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <RecordWorkoutModal

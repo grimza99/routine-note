@@ -4,27 +4,27 @@ import WorkoutManage from '@/features/workout/ui/WorkoutManage';
 import { Calendar, SummaryCard } from '@/shared';
 import { useState } from 'react';
 
-//todo monthlyReportData.goalWorkoutDays 가 null일때 모달로 월 목표 설정 유도
+//todo monthlyData.goalWorkoutDays 가 null일때 모달로 월 목표 설정 유도
 export default function RoutineCalPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const currentMonth = new Date().toISOString().slice(0, 7);
-  const { data: monthlyReportData } = useWorkoutQuery(currentMonth);
+  const { data: monthlyData } = useWorkoutQuery(currentMonth);
 
   const summaryData = [
     {
-      title: '연속 일수',
+      title: '최대 연속 일수',
       iconSrc: '/icons/flame.svg',
-      value: (monthlyReportData?.maxConsecutiveWorkoutDays || 0) + '일',
+      value: (monthlyData?.maxConsecutiveWorkoutDays || 0) + '일',
     },
     {
-      title: '이번 달 운동 횟수',
+      title: '운동 횟수',
       iconSrc: '/icons/goal.svg',
-      value: (monthlyReportData?.workoutDays || 0) + '회',
+      value: (monthlyData?.workoutDays || 0) + '회',
     },
     {
       title: '월 목표 달성률',
       iconSrc: '/icons/graph.svg',
-      value: (monthlyReportData?.goalAchievementRate || 0) + '%',
+      value: (monthlyData?.goalAchievementRate || 0) + '%',
     },
   ];
 

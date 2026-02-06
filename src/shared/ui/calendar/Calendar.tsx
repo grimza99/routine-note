@@ -42,7 +42,8 @@ export function Calendar({ value, onSelectDate, className }: CalendarProps) {
       cells.push({ date: createDate(year, month, day), isCurrentMonth: true });
     }
 
-    const remaining = 42 - cells.length;
+    const totalCells = Math.ceil((startWeekday + totalDays) / 7) * 7;
+    const remaining = totalCells - cells.length;
     for (let i = 1; i <= remaining; i += 1) {
       cells.push({ date: createDate(year, month + 1, i), isCurrentMonth: false });
     }
@@ -65,8 +66,10 @@ export function Calendar({ value, onSelectDate, className }: CalendarProps) {
   };
 
   return (
-    <section className={cn('w-full max-w-200 rounded-xl border bg-white p-4 md:p-10 border-primary', className)}>
-      <header className="flex items-center justify-center w-full relative">
+    <section
+      className={cn('w-full max-w-200 min-h-100 rounded-xl border bg-white p-4 md:p-10 border-primary', className)}
+    >
+      <header className="flex items-center justify-center w-full relative mb-10">
         <div className="flex items-center gap-4">
           <button
             type="button"
@@ -96,7 +99,7 @@ export function Calendar({ value, onSelectDate, className }: CalendarProps) {
         />
       </header>
 
-      <div className="mt-4 grid grid-cols-7 text-center text-xs font-semibold">
+      <div className="mt-4 grid grid-cols-7 text-center font-bold">
         {WEEK_DAYS.map((day) => (
           <div key={day} className="text-primary">
             {day}
@@ -104,10 +107,7 @@ export function Calendar({ value, onSelectDate, className }: CalendarProps) {
         ))}
       </div>
 
-      <div
-        className="mt-3 grid grid-cols-7 "
-        style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))' }}
-      >
+      <div className="mt-3 grid grid-cols-7 ">
         {days.map(({ date, isCurrentMonth }) => {
           const isSelected = value ? isSameDay(value, date) : false;
           const key = `${date.getMonth()}-${date.getDate()}`;
@@ -122,6 +122,7 @@ export function Calendar({ value, onSelectDate, className }: CalendarProps) {
                 'text-sm border-none',
                 isSelected ? 'text-white bg-primary' : isCurrentMonth ? 'text-primary' : 'text-text-secondary',
               )}
+              disabled={!isCurrentMonth}
             />
           );
         })}

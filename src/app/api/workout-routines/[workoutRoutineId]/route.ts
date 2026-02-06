@@ -92,6 +92,15 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
     return json(404, { error: { code: "NOT_FOUND", message: "workout routine not found" } });
   }
 
+  const { error: deleteRoutineItemsError } = await supabase
+    .from("workout_routine_items")
+    .delete()
+    .eq("workout_routine_id", context.params.workoutRoutineId);
+
+  if (deleteRoutineItemsError) {
+    return json(500, { error: { code: "DB_ERROR", message: deleteRoutineItemsError.message } });
+  }
+
   const { error } = await supabase
     .from("workout_routines")
     .delete()

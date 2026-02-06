@@ -158,7 +158,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     return json(404, { error: { code: 'NOT_FOUND', message: 'workout not found' } });
   }
 
-  return json(200, mapWorkoutResponse(data as WorkoutResponse));
+  return json(200, mapWorkoutResponse(data as unknown as WorkoutResponse));
 }
 
 export async function PUT(request: NextRequest, context: { params: Params }) {
@@ -170,11 +170,10 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
 
   const body = (await request.json()) as RequestBody;
 
-  if (!body?.date) {
-    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'date is required' } });
-  }
-  if (!body?.routines || !body?.exercises) {
-    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routines or exercises is required' } });
+  if (!body?.date || !body?.routines || !body?.exercises) {
+    return json(400, {
+      error: { code: 'VALIDATION_ERROR', message: 'date or routines or exercises is required is required' },
+    });
   }
 
   const routines = body.routines ?? [];
@@ -198,8 +197,10 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     }
   }
 
+  const params = await Promise.resolve(context.params);
+  const workoutId = params?.workoutId;
+
   const supabase = getSupabaseAdmin();
-  const workoutId = context.params.workoutId;
 
   const { data: workoutRow, error: workoutError } = await supabase
     .from('workouts')
@@ -209,7 +210,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     .maybeSingle();
 
   if (workoutError) {
-    return json(500, { error: { code: 'DB_ERROR', message: workoutError.message } });
+    return json(500, { error: { code: 'workouts DB_ERROR', message: workoutError.message } });
   }
 
   if (!workoutRow) {
@@ -255,6 +256,32 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     return json(500, {
       error: { code: 'workout_exercises delete DB_ERROR', message: deleteWorkoutExercisesError.message },
     });
+  }
+
+  const { data: workoutRoutineRows, error: workoutRoutineSelectError } = await supabase
+    .from('workout_routines')
+    .select('id')
+    .eq('workout_id', workoutId);
+
+  if (workoutRoutineSelectError) {
+    return json(500, {
+      error: { code: 'workout_routines select DB_ERROR', message: workoutRoutineSelectError.message },
+    });
+  }
+
+  const workoutRoutineIds = (workoutRoutineRows ?? []).map((row) => row.id);
+
+  if (workoutRoutineIds.length) {
+    const { error: deleteWorkoutRoutineItemsError } = await supabase
+      .from('workout_routine_items')
+      .delete()
+      .in('workout_routine_id', workoutRoutineIds);
+
+    if (deleteWorkoutRoutineItemsError) {
+      return json(500, {
+        error: { code: 'workout_routine_items delete DB_ERROR', message: deleteWorkoutRoutineItemsError.message },
+      });
+    }
   }
 
   const { error: deleteWorkoutRoutinesError } = await supabase
@@ -303,7 +330,6 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
         workout_routine_id: createdRoutine.id,
         exercise_id: item.exercise_id,
         exercise_name: item.exercise_name ?? null,
-        item_order: item.item_order,
       }));
 
       const { error: workoutRoutineItemsError } = await supabase
@@ -357,8 +383,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
         routines ( id, name ),
         workout_routine_items (
           exercise_id,
-          exercise_name,
-          item_order
+          exercise_name
         )
       ),
       workout_exercises (
@@ -386,7 +411,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     return json(500, { error: { code: 'DB_ERROR', message: workoutSelectError.message } });
   }
 
-  return json(200, workout ? mapWorkoutResponse(workout as WorkoutResponse) : null);
+  return json(200, workout ? mapWorkoutResponse(workout as unknown as WorkoutResponse) : null);
 }
 
 export async function DELETE(request: NextRequest, context: { params: Params }) {

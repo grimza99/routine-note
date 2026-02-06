@@ -64,7 +64,14 @@ export default function RoutineManagePage() {
           setIsEditModalOpen(false);
         }}
       >
-        {isEditModalOpen && editingRoutineId ? <EditRoutineModal routineId={editingRoutineId} /> : null}
+        {isEditModalOpen && editingRoutineId ? (
+          <EditRoutineModal
+            routineId={editingRoutineId}
+            onClose={() => {
+              setIsEditModalOpen(false);
+            }}
+          />
+        ) : null}
       </Modal>
     </div>
   );

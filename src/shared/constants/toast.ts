@@ -12,4 +12,9 @@ export const TOAST_MESSAGE = {
   SUCCESS_CREATE_ROUTINE: '루틴이 생성되었습니다.',
   SUCCESS_UPDATE_ROUTINE: '루틴이 수정되었습니다.',
   SUCCESS_DELETE_ROUTINE: '루틴이 삭제되었습니다.',
+
+  //workout
+  SUCCESS_CREATE_WORKOUT: '운동 기록이 저장되었습니다.',
+  SUCCESS_UPDATE_WORKOUT: '운동 기록이 저장되었습니다.',
+  SUCCESS_DELETE_WORKOUT: '운동 기록이 저장되었습니다.',
 };

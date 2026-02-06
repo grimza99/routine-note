@@ -1,4 +1,4 @@
-import { API, QUERY_KEYS } from '@/shared';
+import { API, QUERY_KEYS, TOAST_MESSAGE, useToast } from '@/shared';
 import { api } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -11,7 +11,7 @@ interface IWorkoutPayload {
 //workout 생성
 export const useCreateWorkoutMutation = () => {
   const queryClient = useQueryClient();
-
+  const { showToast } = useToast();
   return useMutation({
     mutationFn: async (payload: IWorkoutPayload) => {
       try {
@@ -23,14 +23,15 @@ export const useCreateWorkoutMutation = () => {
 
         return res.data;
       } catch (error) {
-        //todo 에러 처리
-        console.log('워크아웃 생성 실패:', error);
         throw error;
       }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
+      showToast({ message: TOAST_MESSAGE.SUCCESS_CREATE_WORKOUT });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
-      //todo 생성 후 토스트
+    },
+    onError: (error) => {
+      showToast({ message: error.message, variant: 'error' });
     },
   });
 };

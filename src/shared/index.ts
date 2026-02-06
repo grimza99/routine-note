@@ -25,6 +25,9 @@ export { ConsecutiveWorkoutDaysBadge } from './ui/badges/ConsecutiveWorkoutDaysB
 // ui - profile
 export { DefaultProfile } from './ui/profile/DefaultProfile';
 
+//ui - modals
+export { CommonConfirmModal } from './ui/modals/CommonConfirmModal';
+
 // constants
 export { PROJECT } from './constants/d';
 export { default as API } from './constants/api';

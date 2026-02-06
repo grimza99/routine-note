@@ -1,4 +1,8 @@
 import { expect, test } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const authStatePath = path.resolve(__dirname, '.auth', 'user.json');
 
 test.describe.serial('회원가입, 로그인 테스트', () => {
   const password = 'password123';
@@ -6,6 +10,7 @@ test.describe.serial('회원가입, 로그인 테스트', () => {
   let nickname = '';
 
   test.beforeAll(() => {
+    fs.mkdirSync(path.dirname(authStatePath), { recursive: true });
     email = `e2e+${Date.now()}@example.com`;
     nickname = `e2e-user-${Date.now()}`;
   });
@@ -25,6 +30,7 @@ test.describe.serial('회원가입, 로그인 테스트', () => {
     const submitButton = form.getByRole('button', { name: '회원가입' });
     await submitButton.click();
     await expect(page).toHaveURL(/\/routine\/routine-cal/);
+    await page.context().storageState({ path: authStatePath });
   });
 
   test('login', async ({ page }) => {

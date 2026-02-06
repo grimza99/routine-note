@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-02-06] [e2e] auth 이후 routine 관리 e2e 플로우 구성
+  - 영향/증상/개요 (필수): auth.spec.ts 실행 후 로그인 상태를 저장하고, routine 관리 e2e가 해당 상태를 재사용하도록 구성 필요.
+  - 결정/조치 (필수): `auth.spec.ts`에서 storageState 저장, `playwright.config.ts`에 `auth`→`e2e` 프로젝트 의존성 추가, `routine.manage.spec.ts`에서 루틴 생성/수정/삭제 플로우 작성.
+  - 관련 파일/링크 (선택): `e2e/auth.spec.ts`, `e2e/routine.manage.spec.ts`, `playwright.config.ts`
+
 - [2026-02-04] [env] pnpm add 실패 (네트워크/스토어 위치 충돌) [done]
   - 영향/증상/개요 (필수): `pnpm add -D @playwright/test` 실행 시 registry 접근 실패(ENOTFOUND)와 pnpm store location 불일치 오류 발생.
   - 결정/조치 (필수): 에스컬레이션 승인 후 `pnpm add -D @playwright/test` 성공적으로 설치 완료.

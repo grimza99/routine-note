@@ -14,6 +14,20 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
+  projects: [
+    {
+      name: 'auth',
+      testMatch: /auth\.spec\.ts/,
+    },
+    {
+      name: 'e2e',
+      dependencies: ['auth'],
+      testIgnore: /auth\.spec\.ts/,
+      use: {
+        storageState: 'e2e/.auth/user.json',
+      },
+    },
+  ],
   webServer: process.env.PLAYWRIGHT_WEB_SERVER
     ? {
         command: 'pnpm dev',

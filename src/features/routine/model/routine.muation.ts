@@ -7,7 +7,7 @@ interface IRoutinePayload {
   exercises: { exerciseName: string }[];
 }
 
-//루틴 생성
+//-----------------------------------------------루틴 생성---------------------------------------------//
 export const useCreateRoutineMutation = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
@@ -36,9 +36,10 @@ export const useCreateRoutineMutation = () => {
   });
 };
 
-//루틴 수정
+//-----------------------------------------------루틴 수정---------------------------------------------//
 export const useEditRoutineMutation = (routineId: string) => {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   return useMutation({
     mutationFn: async (payload: IRoutinePayload) => {
@@ -51,14 +52,43 @@ export const useEditRoutineMutation = (routineId: string) => {
 
         return res.data;
       } catch (error) {
-        //todo 에러 처리
-        console.log('루틴 수정 실패:', error);
         throw error;
       }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ROUTINE.LIST] });
-      //todo 수정 후 토스트
+      showToast({ message: TOAST_MESSAGE.SUCCESS_UPDATE_ROUTINE });
+    },
+    onError: (error) => {
+      showToast({ message: error.message, variant: 'error' });
+    },
+  });
+};
+
+//-----------------------------------------------루틴 삭제---------------------------------------------//
+export const useDeleteRoutineMutation = () => {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation({
+    mutationFn: async (routineId: string) => {
+      try {
+        const res = await api.delete(API.ROUTINE.DELETE(routineId));
+
+        if (res.error) {
+          throw res.error;
+        }
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ROUTINE.LIST] });
+      showToast({ message: TOAST_MESSAGE.SUCCESS_DELETE_ROUTINE });
+    },
+    onError: (error) => {
+      showToast({ message: error.message, variant: 'error' });
     },
   });
 };

@@ -35,6 +35,7 @@ const API = {
     LIST: '/api/routines',
     CREATE: '/api/routines',
     EDIT: (routineId: string) => `/api/routines/${routineId}`,
+    DELETE: (routineId: string) => `/api/routines/${routineId}`,
   },
 };
 

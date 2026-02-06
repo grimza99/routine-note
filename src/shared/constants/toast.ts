@@ -10,6 +10,6 @@ export const TOAST_MESSAGE = {
 
   //루틴
   SUCCESS_CREATE_ROUTINE: '루틴이 생성되었습니다.',
-  SUCCESS_UPDATE_ROUTINE: '루틴이 업데이트되었습니다.',
+  SUCCESS_UPDATE_ROUTINE: '루틴이 수정되었습니다.',
   SUCCESS_DELETE_ROUTINE: '루틴이 삭제되었습니다.',
 };

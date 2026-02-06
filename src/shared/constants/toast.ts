@@ -5,11 +5,11 @@ export const TOAST_MESSAGE = {
   SUCCESS_LOGOUT: '로그아웃되었습니다.',
 
   //프로필
-  SUSSESS_PROFILE_UPDATE: '프로필이 성공적으로 업데이트되었습니다.',
+  SUSSESS_PROFILE_UPDATE: '프로필이 업데이트되었습니다.',
   SUCCESS_PASSWORD_CHANGE: '비밀번호가 성공적으로 변경되었습니다.',
 
   //루틴
-  SUCCESS_CREATE_ROUTINE: '루틴이 성공적으로 생성되었습니다.',
-  SUCCESS_UPDATE_ROUTINE: '루틴이 성공적으로 업데이트되었습니다.',
-  SUCCESS_DELETE_ROUTINE: '루틴이 성공적으로 삭제되었습니다.',
+  SUCCESS_CREATE_ROUTINE: '루틴이 생성되었습니다.',
+  SUCCESS_UPDATE_ROUTINE: '루틴이 업데이트되었습니다.',
+  SUCCESS_DELETE_ROUTINE: '루틴이 삭제되었습니다.',
 };

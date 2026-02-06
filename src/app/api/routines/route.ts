@@ -110,8 +110,28 @@ export async function POST(request: NextRequest) {
   if (!body.routineName || !body.exercises || body.exercises.length === 0) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routineName &exercises is required' } });
   }
+  const isDuplicateExerciseNames =
+    body.exercises.length !== new Set(body.exercises.map((ex) => ex.exerciseName?.trim())).size;
+
+  if (isDuplicateExerciseNames) {
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: '중복된 운동 이름이 있습니다.' } });
+  }
 
   const supabase = getSupabaseAdmin();
+
+  const { data: existingRoutine, error } = await supabase.from('routines').select('id, name').eq('user_id', userId);
+
+  if (error) {
+    return json(500, { error: { code: 'DB_ERROR', message: error.message } });
+  }
+
+  // check duplicate routine name
+  const duplicateRoutine = existingRoutine?.find((routine) => routine.name === body.routineName);
+
+  if (duplicateRoutine) {
+    return json(409, { error: { code: 'CONFLICT', message: '중복된 루틴 이름 입니다.' } });
+  }
+
   const { data: routine, error: routineError } = await supabase
     .from('routines')
     .insert({ user_id: userId, name: body.routineName, id: randomUUID() })
@@ -119,7 +139,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (routineError) {
-    return json(500, { error: { code: 'DB_ERROR', message: routineError.message } });
+    return json(500, { error: { code: 'routines DB_ERROR', message: routineError.message } });
   }
 
   if (body.exercises.length) {

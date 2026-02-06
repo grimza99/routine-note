@@ -1,4 +1,5 @@
 'use client';
+import useAuthStore from '@/entities/auth/model/useAuthStore';
 import { useRoutineList } from '@/entities/routine/model/routine.query';
 import { CreateRoutineModal, EditRoutineModal } from '@/features/routine';
 import { Button, Modal, RoutineCard, Spinner } from '@/shared';
@@ -8,14 +9,13 @@ export default function RoutineManagePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingRoutineId, setEditingRoutineId] = useState<string>('');
+  const { nickname } = useAuthStore();
   const { data: routineListData } = useRoutineList();
 
   return (
     <div className="flex flex-col gap-10 w-full">
       <Button label={'새 루틴 추가하기'} className="w-fit" onClick={() => setIsModalOpen(true)} />
-
-      <h3 className="text-2xl text-text-secondary">...님의 루틴</h3>
-      {/* todo : 유저 이름 넣기 */}
+      <h3 className="text-2xl text-text-secondary">{nickname} 님의 루틴</h3>
       {!routineListData ? (
         <Spinner size={48} />
       ) : (
@@ -51,7 +51,11 @@ export default function RoutineManagePage() {
           setIsModalOpen(false);
         }}
       >
-        <CreateRoutineModal />
+        <CreateRoutineModal
+          onClose={() => {
+            setIsModalOpen(false);
+          }}
+        />
       </Modal>
       <Modal
         modalId="routine-edit-modal"

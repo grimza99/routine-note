@@ -5,24 +5,21 @@ import { useRef, useState } from 'react';
 import { Button } from '../../../shared/ui/buttons/Button';
 import { InputField } from '../../../shared/ui/fields/InputField';
 import { useCreateRoutineMutation } from '../model/routine.muation';
-import { BouncingDots } from '@/shared';
+import { BouncingDots, useToast } from '@/shared';
 
-export default function CreateRoutineModal() {
+export default function CreateRoutineModal({ onClose }: { onClose: () => void }) {
   const nextIdRef = useRef(1);
   const [routineName, setRoutineName] = useState('');
   const [exercises, setExercises] = useState<{ id: number; name: string }[]>([{ id: nextIdRef.current, name: '' }]);
   const { mutateAsync: createRoutine, isPending } = useCreateRoutineMutation();
 
+  const { showToast } = useToast();
   const handleAddExercise = () => {
     nextIdRef.current += 1;
     setExercises((prev) => [...prev, { id: nextIdRef.current, name: '' }]);
   };
 
   const handleRemoveExercise = (targetId: number) => {
-    if (exercises.length <= 1) {
-      // todo 최소 하나의 운동은 남아있어야 함
-      return;
-    }
     setExercises((prev) => prev.filter((exercise) => exercise.id !== targetId));
   };
 
@@ -33,12 +30,12 @@ export default function CreateRoutineModal() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    if (exercises.length <= 1) {
-      // todo 최소 하나의 운동은 남아있어야 함
-      return;
-    }
     event.preventDefault();
 
+    if (exercises.length < 1) {
+      showToast({ message: '하나이상의 운동이 필요합니다.', variant: 'error' });
+      return;
+    }
     await createRoutine({
       routineName,
       exercises: exercises.map((exercise) => {
@@ -48,6 +45,7 @@ export default function CreateRoutineModal() {
     setRoutineName('');
     setExercises([{ id: 1, name: '' }]);
     nextIdRef.current = 1;
+    onClose();
   };
 
   const isButtonDisabled = routineName.trim() === '' || exercises.some((ex) => !ex.name.trim()) || isPending;
@@ -70,11 +68,7 @@ export default function CreateRoutineModal() {
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-text-primary">운동 구성</h3>
-          <Button
-            label={isPending ? <BouncingDots color="primary" /> : `운동 추가`}
-            className="w-auto"
-            onClick={handleAddExercise}
-          />
+          <Button label={`운동 추가`} className="w-auto" onClick={handleAddExercise} disabled={isPending} />
         </div>
 
         <div className="flex flex-col gap-4">
@@ -108,7 +102,12 @@ export default function CreateRoutineModal() {
       </section>
 
       <div className="flex justify-end gap-3">
-        <Button label="루틴 저장" className="w-auto" type="submit" disabled={isButtonDisabled} />
+        <Button
+          label={isPending ? <BouncingDots /> : '루틴 저장'}
+          className="w-auto"
+          type="submit"
+          disabled={isButtonDisabled}
+        />
       </div>
     </form>
   );

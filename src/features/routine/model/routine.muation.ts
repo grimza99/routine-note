@@ -1,4 +1,4 @@
-import { API, QUERY_KEYS } from '@/shared';
+import { API, QUERY_KEYS, TOAST_MESSAGE, useToast } from '@/shared';
 import { api } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -10,6 +10,7 @@ interface IRoutinePayload {
 //루틴 생성
 export const useCreateRoutineMutation = () => {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   return useMutation({
     mutationFn: async (payload: IRoutinePayload) => {
@@ -22,14 +23,15 @@ export const useCreateRoutineMutation = () => {
 
         return res.data;
       } catch (error) {
-        //todo 에러 처리
-        console.log('루틴 생성 실패:', error);
         throw error;
       }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ROUTINE.LIST] });
-      //todo 생성 후 토스트
+      showToast({ message: TOAST_MESSAGE.SUCCESS_CREATE_ROUTINE });
+    },
+    onError: (error) => {
+      showToast({ message: error.message, variant: 'error' });
     },
   });
 };

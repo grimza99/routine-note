@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, IExercise, NumberStepper, TextareaField, cn } from '@/shared';
+import { Button, IExercise, NumberStepper, TOAST_MESSAGE, TextareaField, cn, useToast } from '@/shared';
 import SetManageBox from './SetManageBox';
 import { useSetsCreateMutation } from '../model/sets.mutation';
 import { useNoteMutation } from '../model/note.mutation';
@@ -23,6 +23,8 @@ export function WorkoutManageModal({
 }: RoutineRecordModalContentProps) {
   const [note, setNote] = useState(initialNote);
   const [exerciseState, setExerciseState] = useState(exercises);
+
+  const { showToast } = useToast();
 
   const { mutateAsync: createSets } = useSetsCreateMutation();
   const { mutateAsync: manageNote } = useNoteMutation(routineId || '');
@@ -75,22 +77,27 @@ export function WorkoutManageModal({
 
   const handleSubmit = async () => {
     if (!exerciseState) return;
-    for (const exercise of exerciseState) {
-      for (const set of exercise.sets) {
-        await createSets({
-          id: exercise.id,
-          weight: set.weight,
-          reps: set.reps,
+    try {
+      for (const exercise of exerciseState) {
+        for (const set of exercise.sets) {
+          await createSets({
+            id: exercise.id,
+            weight: set.weight,
+            reps: set.reps,
+          });
+        }
+      }
+      if (note.trim() !== '') {
+        await manageNote({
+          note,
         });
       }
-    }
-    if (note.trim() !== '') {
-      await manageNote({
-        note,
-      });
+      showToast({ message: TOAST_MESSAGE.SUCCESS_UPDATE_WORKOUT });
+    } catch {
+      showToast({ message: '실패', variant: 'error' });
+      return;
     }
     onClose();
-    //todo toast}
   };
 
   return (
@@ -120,6 +127,7 @@ export function WorkoutManageModal({
                     <SetManageBox
                       key={set.id}
                       index={index}
+                      initialSet={{ weight: set.weight, reps: set.reps }}
                       onChange={(weight, reps) => handleSetChange(exercise.id, set.id, weight, reps)}
                     />
                   ))}

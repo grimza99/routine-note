@@ -1,4 +1,4 @@
-import { API, QUERY_KEYS } from '@/shared';
+import { API, QUERY_KEYS, useToast } from '@/shared';
 import { api } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -9,6 +9,7 @@ interface INotePayload {
 //note 생성,수정
 export const useNoteMutation = (workoutRoutineId: string) => {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   return useMutation({
     mutationFn: async (payload: INotePayload) => {
@@ -24,14 +25,14 @@ export const useNoteMutation = (workoutRoutineId: string) => {
 
         return res.data;
       } catch (error) {
-        //todo 에러 처리
-        console.log('노트 생성-수정 실패:', error);
         throw error;
       }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
-      //todo 생성 후 토스트
+    },
+    onError: (error) => {
+      showToast({ message: error.message, variant: 'error' });
     },
   });
 };

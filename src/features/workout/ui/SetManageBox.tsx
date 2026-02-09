@@ -1,44 +1,50 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
+interface ISet {
+  weight: number;
+  reps: number;
+}
+const INITIALTE_SET: ISet = {
+  weight: 0,
+  reps: 0,
+};
 interface SetManageBoxProps {
   index: number;
+  initialSet?: {
+    weight: number;
+    reps: number;
+  };
   onChange: (weight: number, reps: number) => void;
 }
-export default function SetManageBox({ index, onChange }: SetManageBoxProps) {
-  const [weight, setWeight] = useState(0);
-  const [reps, setReps] = useState(0);
+export default function SetManageBox({ index, initialSet, onChange }: SetManageBoxProps) {
+  const [currentSet, setCurrentSet] = useState<ISet>(initialSet || INITIALTE_SET);
 
-  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setWeight(Number(value));
-    onChange(Number(value), reps);
+  const handChangeSet = (value: string, name: keyof ISet) => {
+    setCurrentSet((prev) => ({
+      ...prev,
+      [name]: Number(value),
+    }));
+    onChange(currentSet?.weight || 0, currentSet?.reps || 0);
   };
 
-  const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
-    if (!isNaN(value)) {
-      onChange(weight, value);
-      setReps(value);
-    } else {
-      setReps(0);
-    }
-  };
   return (
-    <div className="rounded-md px-2 py-1 text-xs text-white bg-primary flex gap-2 items-center">
-      <strong>{index + 1}set</strong>
+    <div className="rounded-md px-2 py-1 text-xs text-text-primary border border-border flex gap-2 items-center">
+      <strong>{index + 1}set : </strong>
       <input
         type="number"
-        value={weight}
-        onChange={handleWeightChange}
-        className="border border-white rounded-xl px-2 w-20"
+        name="weight"
+        value={currentSet.weight}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => handChangeSet(e.target.value, e.target.name as keyof ISet)}
+        className="border border-border rounded-xl px-2 w-20"
       />
       <strong>kg</strong>
       <strong>×</strong>
       <input
-        value={reps}
-        onChange={handleRepsChange}
+        value={currentSet.reps}
+        name="reps"
+        onChange={(e: ChangeEvent<HTMLInputElement>) => handChangeSet(e.target.value, e.target.name as keyof ISet)}
         type="number"
-        className="border border-white rounded-xl px-2 w-20"
+        className="border border-border rounded-xl px-2 w-20"
       />
       <strong>회</strong>
     </div>

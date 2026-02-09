@@ -1,5 +1,5 @@
 import { useRoutineList } from '@/entities';
-import { Button, cn, formatDate, IExercise, InputField, IRoutine, PATHS, RoutineCard, useToast } from '@/shared';
+import { Button, cn, formatDate, IExercise, InputField, PATHS, RoutineCard, useToast } from '@/shared';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { useCreateWorkoutMutation, useUpdateWorkoutMutation } from '../model/workout.mutation';

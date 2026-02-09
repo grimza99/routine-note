@@ -9,7 +9,6 @@ type WorkoutSet = {
   id: string;
   weight: number | null;
   reps: number | null;
-  set_order: number;
 };
 
 type WorkoutExercise = {
@@ -32,9 +31,9 @@ type WorkoutRoutine = {
 };
 
 type RoutineItem = {
-  exercise_id: string;
+  id: string;
   exercise_name: string | null;
-  item_order: number;
+  sets: WorkoutSet[] | null;
 };
 
 type WorkoutResponse = {
@@ -65,10 +64,14 @@ type RequestBody = {
 };
 
 const mapRoutineItem = (item: RoutineItem) => ({
-  id: item.exercise_id,
+  id: item.id,
   name: item.exercise_name ?? '',
-  note: null,
-  sets: [],
+  sets:
+    item.sets?.map((set) => ({
+      id: set.id,
+      weight: set.weight,
+      reps: set.reps,
+    })) ?? [],
 });
 
 const mapStandaloneExercise = (exercise: WorkoutExercise) => ({
@@ -80,7 +83,6 @@ const mapStandaloneExercise = (exercise: WorkoutExercise) => ({
     id: set.id,
     weight: set.weight,
     reps: set.reps,
-    order: set.set_order,
   })),
 });
 
@@ -93,8 +95,6 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
     return {
       id: routine.routine_id,
       routineName: routine.routines?.name ?? null,
-      order: routine.item_order,
-      note: routine.note,
       exercises: routineItems.map(mapRoutineItem),
     };
   }),
@@ -110,8 +110,13 @@ const workoutSelect = `
     note,
     routines ( id, name ),
     workout_routine_items (
-      exercise_id,
-      exercise_name
+      id,
+      exercise_name,
+      sets (
+      id,
+      weight,
+      reps
+    )
     )
   ),
   workout_exercises (
@@ -124,9 +129,7 @@ const workoutSelect = `
     sets (
       id,
       weight,
-      reps,
-      note,
-      set_order
+      reps
     )
   )
 `;

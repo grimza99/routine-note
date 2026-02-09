@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
-import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
+import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
+import { randomUUID } from 'crypto';
+import { id } from 'zod/locales';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
@@ -10,46 +12,76 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
 
   if (!userId) {
-    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
+    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
-  const body = (await request.json()) as { weight?: number; reps?: number; note?: string; order?: number };
+  const body = (await request.json()) as { weight?: number; reps?: number; note?: string };
 
-  if (body?.order === undefined) {
-    return json(400, { error: { code: "VALIDATION_ERROR", message: "order is required" } });
-  }
+  const params = await Promise.resolve(context.params);
+  const workoutExerciseId = params?.workoutExerciseId;
 
   const supabase = getSupabaseAdmin();
-  const { data: owner, error: ownerError } = await supabase
-    .from("workout_exercises")
-    .select("id, workouts!inner(user_id)")
-    .eq("id", context.params.workoutExerciseId)
-    .eq("workouts.user_id", userId)
+  const { data: standalone, error: standaloneError } = await supabase
+    .from('workout_exercises')
+    .select('id, workouts!inner(user_id)')
+    .eq('exercise_id', workoutExerciseId)
+    .eq('workouts.user_id', userId)
     .maybeSingle();
 
-  if (ownerError) {
-    return json(500, { error: { code: "DB_ERROR", message: ownerError.message } });
+  if (standaloneError) {
+    return json(500, { error: { code: 'workout_exercises DB_ERROR', message: standaloneError.message } });
   }
 
-  if (!owner) {
-    return json(404, { error: { code: "NOT_FOUND", message: "workout exercise not found" } });
+  if (standalone) {
+    const { data, error } = await supabase
+      .from('sets')
+      .insert({
+        id: randomUUID(),
+        workout_exercise_id: workoutExerciseId,
+        weight: body.weight ?? null,
+        reps: body.reps ?? null,
+        type: 'STANDALONE_EXERCISE',
+        created_at: new Date(),
+      })
+      .select('id, weight, reps')
+      .single();
+
+    if (error) {
+      return json(500, { error: { code: 'sets insert DB_ERROR', message: error.message } });
+    }
+
+    return json(201, data);
+  } else {
+    const { data: routineExercise, error: rouineItemsDataError } = await supabase
+      .from('workout_routine_items')
+      .select('id, workout_routines!inner(workout_id, workouts!inner(user_id))')
+      .eq('id', workoutExerciseId)
+      .eq('workout_routines.workouts.user_id', userId)
+      .maybeSingle();
+
+    if (rouineItemsDataError) {
+      return json(500, { error: { code: 'workout_routine_items DB_ERROR', message: rouineItemsDataError.message } });
+    }
+    if (!routineExercise) {
+      return json(404, { error: { code: 'NOT_FOUND', message: 'workout routine item not found' } });
+    }
+    const { data, error } = await supabase
+      .from('sets')
+      .insert({
+        id: randomUUID(),
+        workout_routine_item_id: workoutExerciseId,
+        weight: body.weight ?? null,
+        reps: body.reps ?? null,
+        type: 'ROUTINE_EXERCISE',
+        created_at: new Date(),
+      })
+      .select('id, weight, reps')
+      .single();
+
+    if (error) {
+      return json(500, { error: { code: 'sets insert DB_ERROR', message: error.message } });
+    }
+
+    return json(201, data);
   }
-
-  const { data, error } = await supabase
-    .from("sets")
-    .insert({
-      workout_exercise_id: context.params.workoutExerciseId,
-      weight: body.weight ?? null,
-      reps: body.reps ?? null,
-      note: body.note ?? null,
-      set_order: body.order,
-    })
-    .select("id, weight, reps, note, set_order")
-    .single();
-
-  if (error) {
-    return json(500, { error: { code: "DB_ERROR", message: error.message } });
-  }
-
-  return json(201, data);
 }

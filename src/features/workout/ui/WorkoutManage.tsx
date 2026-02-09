@@ -16,10 +16,12 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
     title: string;
     exercises: IExercise[] | null;
     routineId: string;
+    note: string;
   }>({
     title: '',
     exercises: null,
     routineId: '',
+    note: '',
   });
 
   const { data: workoutByDateData } = useWorkoutByDate(formatDate(selectedDate));
@@ -28,8 +30,8 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
   const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.id) || [];
   const currentExercises = workoutByDateData?.exercises || [];
 
-  const handleCardClick = (title: string, target: IExercise[], routineId?: string) => {
-    setTargetWorkout({ title, exercises: target, routineId: routineId || '' });
+  const handleCardClick = (title: string, target: IExercise[], routineId?: string, note?: string) => {
+    setTargetWorkout({ title, exercises: target, routineId: routineId || '', note: note || '' });
     setIsWorkoutManageModalOpen(true);
   };
 
@@ -66,7 +68,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
                 <div
                   key={routine.id}
                   className="flex items-center gap-2"
-                  onClick={() => handleCardClick(routine.routineName, routine.exercises, routine.id)}
+                  onClick={() => handleCardClick(routine.routineName, routine.exercises, routine.id, routine.note)}
                 >
                   <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} />
                   <NoteBadge note={routine.note} />
@@ -110,6 +112,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
           title={targetWorkout.title}
           exercises={targetWorkout.exercises}
           onClose={() => setIsWorkoutManageModalOpen(false)}
+          initialNote={targetWorkout.note}
           routineId={targetWorkout.routineId}
         />
       </Modal>

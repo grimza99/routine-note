@@ -93,8 +93,11 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
     const routineItems = routine.workout_routine_items ?? [];
 
     return {
-      id: routine.routine_id,
+      id: routine.id,
+      routineId: routine.routine_id,
       routineName: routine.routines?.name ?? null,
+      note: routine.note,
+      order: routine.item_order,
       exercises: routineItems.map(mapRoutineItem),
     };
   }),

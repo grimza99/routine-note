@@ -110,7 +110,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
       >
         <WorkoutManageModal
           title={targetWorkout.title}
-          exercises={targetWorkout.exercises}
+          initialExercises={targetWorkout.exercises}
           onClose={() => setIsWorkoutManageModalOpen(false)}
           initialNote={targetWorkout.note}
           routineId={targetWorkout.routineId}

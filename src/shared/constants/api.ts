@@ -1,3 +1,5 @@
+import { DELETE } from '@/app/api/exercises/[exerciseId]/route';
+
 const API = {
   AUTH: {
     SIGNUP: '/api/auth/signup',
@@ -17,6 +19,8 @@ const API = {
     BY_DATE: (date: string) => `/api/workouts?date=${date}`,
     SETS: {
       CREATE: (exerciseId: string) => `/api/workout-exercises/${exerciseId}/sets`,
+      DELETE: (setId: string) => `/api/sets/${setId}`,
+      EDIT: (setId: string) => `/api/sets/${setId}`,
     },
     NOTE: {
       ROUTINE: (workoutRoutineId: string) => `/api/workout-routines/${workoutRoutineId}`,

@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { Button, IExercise, NumberStepper, TOAST_MESSAGE, TextareaField, cn, useToast } from '@/shared';
 import SetManageBox from './SetManageBox';
-import { useSetsCreateMutation } from '../model/sets.mutation';
+import { useSetsCreateMutation, useSetsDeleteMutation, useSetsEditMutation } from '../model/sets.mutation';
 import { useNoteMutation } from '../model/note.mutation';
 
 type RoutineRecordModalContentProps = {
   title: string;
-  exercises: IExercise[] | null;
+  initialExercises: IExercise[] | null;
   initialNote?: string;
   routineId?: string;
   onClose: () => void;
@@ -16,20 +16,23 @@ type RoutineRecordModalContentProps = {
 
 export function WorkoutManageModal({
   title,
-  exercises,
+  initialExercises,
   initialNote = '',
   routineId,
   onClose,
 }: RoutineRecordModalContentProps) {
   const [note, setNote] = useState(initialNote);
-  const [exerciseState, setExerciseState] = useState(exercises);
+  const [exerciseState, setExerciseState] = useState(initialExercises);
 
   const { showToast } = useToast();
 
   const { mutateAsync: createSets } = useSetsCreateMutation();
+  const { mutateAsync: deleteSet } = useSetsDeleteMutation();
+  const { mutateAsync: editSets } = useSetsEditMutation();
+
   const { mutateAsync: manageNote } = useNoteMutation(routineId || '');
 
-  if (!exercises) return;
+  if (!initialExercises) return;
 
   const handleSetLengthChagne = (exerciseId: string, isDecrease: boolean) => {
     if (isDecrease) {
@@ -75,11 +78,37 @@ export function WorkoutManageModal({
     );
   };
 
+  const initialSetsIds = initialExercises.flatMap((exercise) => exercise.sets.map((set) => set.id));
+
   const handleSubmit = async () => {
     if (!exerciseState) return;
+
     try {
       for (const exercise of exerciseState) {
+        const removedSets = initialExercises
+          .find((initialExercise) => initialExercise.id === exercise.id)
+          ?.sets.filter((set) => !exercise.sets.some((currentSet) => currentSet.id === set.id));
+
+        // 삭제된 세트 처리
+        if (removedSets && removedSets.length > 0) {
+          for (const set of removedSets) {
+            await deleteSet(set.id);
+          }
+        }
         for (const set of exercise.sets) {
+          if (set.reps === 0) {
+            showToast({ message: '횟수는 0보다 커야 합니다.', variant: 'error' });
+            continue;
+          }
+          if (initialSetsIds.includes(set.id)) {
+            await editSets({
+              id: set.id,
+              weight: set.weight,
+              reps: set.reps,
+            });
+            continue;
+          }
+
           await createSets({
             id: exercise.id,
             weight: set.weight,

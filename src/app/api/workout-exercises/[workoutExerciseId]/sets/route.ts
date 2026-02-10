@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
-import { id } from 'zod/locales';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 

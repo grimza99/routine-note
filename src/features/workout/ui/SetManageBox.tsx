@@ -20,11 +20,12 @@ export default function SetManageBox({ index, initialSet, onChange }: SetManageB
   const [currentSet, setCurrentSet] = useState<ISet>(initialSet || INITIALTE_SET);
 
   const handChangeSet = (value: string, name: keyof ISet) => {
-    setCurrentSet((prev) => ({
-      ...prev,
+    const nextSet = {
+      ...currentSet,
       [name]: Number(value),
-    }));
-    onChange(currentSet?.weight || 0, currentSet?.reps || 0);
+    };
+    setCurrentSet(nextSet);
+    onChange(nextSet.weight, nextSet.reps);
   };
 
   return (

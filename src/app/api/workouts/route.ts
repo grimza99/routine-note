@@ -242,7 +242,8 @@ export async function POST(request: NextRequest) {
   }
 
   const workoutId = data.id;
-  const createdRoutines: { id: string; routineId: string; order: number; note: string | null }[] = [];
+  const createdRoutines: { id: string; routineId: string; order: number; note: string | null; workout_id: string }[] =
+    [];
 
   for (const [index, routine] of routines.entries()) {
     const order = routine.order ?? index + 1;
@@ -254,7 +255,7 @@ export async function POST(request: NextRequest) {
         item_order: order,
         note: routine.note ?? '',
       })
-      .select('id, routine_id, item_order, note')
+      .select('id,workout_id, routine_id, item_order, note')
       .single();
 
     if (routineError) {
@@ -274,6 +275,7 @@ export async function POST(request: NextRequest) {
     if (routineItems?.length) {
       const workoutRoutineItemsPayload = routineItems.map((item) => ({
         id: randomUUID(),
+        workout_id: createdRoutine.workout_id,
         workout_routine_id: createdRoutine.id,
         exercise_id: item.exercise_id,
         exercise_name: item.exercise_name ?? null,
@@ -293,6 +295,7 @@ export async function POST(request: NextRequest) {
     createdRoutines.push({
       id: createdRoutine.id,
       routineId: createdRoutine.routine_id,
+      workout_id: createdRoutine.workout_id,
       order: createdRoutine.item_order,
       note: createdRoutine.note,
     });

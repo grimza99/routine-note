@@ -39,7 +39,6 @@ export async function GET(request: NextRequest) {
   });
 
   if (!workoutIds.length) {
-    console.log('workouts', workouts);
     return json(200, buildWeeklyVolumes(startDate, endDate, new Map()));
   }
 
@@ -49,7 +48,15 @@ export async function GET(request: NextRequest) {
     .in('workout_id', workoutIds);
 
   if (workoutExercisesError) {
-    return json(500, { error: { code: 'DB_ERROR', message: workoutExercisesError.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: `workout_exercises : ${workoutExercisesError.message}` } });
+  }
+  const { data: routineItems, error: routineItemsError } = await supabase
+    .from('workout_routine_items')
+    .select('id, workout_id')
+    .in('workout_id', workoutIds);
+
+  if (routineItemsError) {
+    return json(500, { error: { code: 'DB_ERROR', message: `workout_routine_items : ${routineItemsError.message}` } });
   }
 
   const workoutIdByExerciseId = new Map<string, string>();
@@ -57,23 +64,36 @@ export async function GET(request: NextRequest) {
     workoutIdByExerciseId.set(exercise.id, exercise.workout_id);
   });
 
+  const workoutIdByRoutineItemId = new Map<string, string>();
+  (routineItems ?? []).forEach((item) => {
+    workoutIdByRoutineItemId.set(item.id, item.workout_id);
+  });
+
   const workoutExerciseIds = workoutExercises?.map((exercise) => exercise.id) ?? [];
-  if (!workoutExerciseIds.length) {
+  const routineItemIds = routineItems?.map((item) => item.id) ?? [];
+
+  if (!workoutExerciseIds.length && !routineItemIds.length) {
     return json(200, buildWeeklyVolumes(startDate, endDate, new Map()));
   }
 
   const { data: sets, error: setsError } = await supabase
     .from('sets')
-    .select('weight, reps, workout_exercise_id')
-    .in('workout_exercise_id', workoutExerciseIds);
+    .select('weight, reps, workout_exercise_id, workout_routine_item_id, type')
+    .or(
+      `workout_exercise_id.in.(${workoutExerciseIds.join(',')}),workout_routine_item_id.in.(${routineItemIds.join(',')})`,
+    );
 
   if (setsError) {
     return json(500, { error: { code: 'DB_ERROR', message: setsError.message } });
   }
   const dailyVolume = new Map<string, number>();
   (sets ?? []).forEach((set) => {
-    const workoutId = workoutIdByExerciseId.get(set.workout_exercise_id);
+    const workoutId =
+      set.type === 'ROUTINE_EXERCISE'
+        ? workoutIdByRoutineItemId.get(set.workout_routine_item_id!)
+        : workoutIdByExerciseId.get(set.workout_exercise_id!);
     const workoutDate = workoutId ? workoutIdByDate.get(workoutId) : null;
+
     if (!workoutDate) return;
     const weight = Number(set.weight ?? 0);
     const reps = Number(set.reps ?? 0);

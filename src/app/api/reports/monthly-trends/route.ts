@@ -1,12 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
-import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
+import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
+import { getCurrentMonthInfo, getMonthRange } from '@/shared';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
 type MonthReport = {
   month: string;
   workoutDays: number;
+  workoutDates: string[];
   totalSets: number;
   maxConsecutiveWorkoutDays: number;
   goalWorkoutDays: number | null;
@@ -18,6 +20,7 @@ type MonthReport = {
 
 type LineSeries = {
   id: string;
+  name: string;
   data: { x: string; y: number | null }[];
 };
 
@@ -25,75 +28,79 @@ export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
   if (!userId) {
-    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
+    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
   try {
     const { year, month, weeksInMonth } = getCurrentMonthInfo();
-    const emptySeries: LineSeries[] = [
-      {
-        id: "goalAchievementRate",
-        data: Array.from({ length: weeksInMonth }, (_, index) => ({
-          x: `${index + 1}주차`,
-          y: null,
-        })),
-      },
-    ];
 
-    const reports = await getMonthlyReports(userId);
+    const reports = await getMonthlyReports(userId, `${year}-${month}`);
     const report = reports.find((item) => item.month === `${year}-${month}`);
 
     if (!report) {
-      return json(200, emptySeries);
+      return json(200, []);
     }
 
+    //현재는 목표 달성률 라인 차트만 반환, 표시
+    const uniqueDates = Array.from(new Set(report.workoutDates));
+    const weeklyCounts = Array.from({ length: weeksInMonth }, () => 0);
+
+    uniqueDates.forEach((date) => {
+      const day = Number(date.slice(8, 10));
+      if (!Number.isFinite(day)) return;
+      const weekIndex = Math.min(weeksInMonth, Math.ceil(day / 7));
+      weeklyCounts[weekIndex - 1] += 1;
+    });
+
+    let cumulative = 0;
     const series: LineSeries[] = [
       {
-        id: "goalAchievementRate",
-        data: Array.from({ length: weeksInMonth }, (_, index) => ({
-          x: `${index + 1}주차`,
-          y: report.goalAchievementRate,
-        })),
+        id: 'goalAchievementRate',
+        name: '목표 달성률',
+        data: weeklyCounts.map((count, index) => {
+          cumulative += count;
+          const goal = report.goalWorkoutDays ?? 0;
+          const rate = goal > 0 ? Number(((cumulative / goal) * 100).toFixed(1)) : null;
+
+          return {
+            x: `${index + 1}주차`,
+            y: rate,
+          };
+        }),
       },
     ];
 
     return json(200, series);
   } catch (error) {
     return json(500, {
-      error: { code: "DB_ERROR", message: error instanceof Error ? error.message : "unknown error" },
+      error: { code: 'DB_ERROR', message: error instanceof Error ? error.message : 'unknown error' },
     });
   }
 }
 
-async function getMonthlyReports(userId: string) {
+async function getMonthlyReports(userId: string, date: string): Promise<MonthReport[]> {
   const supabase = getSupabaseAdmin();
+  const { start, end } = getMonthRange(date);
   const { data: workouts, error: workoutsError } = await supabase
-    .from("workouts")
-    .select("id, workout_date")
-    .eq("user_id", userId)
-    .order("workout_date", { ascending: true });
+    .from('workouts')
+    .select('id, workout_date')
+    .eq('user_id', userId)
+    .gte('workout_date', start)
+    .lte('workout_date', end)
+    .order('workout_date', { ascending: true });
 
   if (workoutsError) {
     throw new Error(workoutsError.message);
   }
 
   const { data: goals, error: goalsError } = await supabase
-    .from("monthly_goals")
-    .select("report_month, goal_workout_days")
-    .eq("user_id", userId);
+    .from('monthly_goals')
+    .select('report_month, goal_workout_days')
+    .eq('report_month', `${date}-01`)
+    .eq('user_id', userId);
 
   if (goalsError) {
     throw new Error(goalsError.message);
-  }
-
-  const { data: inbody, error: inbodyError } = await supabase
-    .from("inbody_records")
-    .select("measured_at, weight, skeletal_muscle_mass, body_fat_mass")
-    .eq("user_id", userId)
-    .order("measured_at", { ascending: true });
-
-  if (inbodyError) {
-    throw new Error(inbodyError.message);
   }
 
   const monthSet = new Set<string>();
@@ -117,23 +124,13 @@ async function getMonthlyReports(userId: string) {
     monthSet.add(goal.report_month.slice(0, 7));
   });
 
-  const inbodyByMonth = new Map<string, (typeof inbody)[number][]>();
-  (inbody ?? []).forEach((record) => {
-    if (!record?.measured_at) return;
-    const month = record.measured_at.slice(0, 7);
-    monthSet.add(month);
-    const list = inbodyByMonth.get(month) ?? [];
-    list.push(record);
-    inbodyByMonth.set(month, list);
-  });
-
   const totalSetsByMonth = new Map<string, number>();
 
   if (workoutIds.length) {
     const { data: workoutExercises, error: workoutExerciseError } = await supabase
-      .from("workout_exercises")
-      .select("id, workout_id")
-      .in("workout_id", workoutIds);
+      .from('workout_exercises')
+      .select('id, workout_id')
+      .in('workout_id', workoutIds);
 
     if (workoutExerciseError) {
       throw new Error(workoutExerciseError.message);
@@ -149,9 +146,9 @@ async function getMonthlyReports(userId: string) {
     const workoutExerciseIds = workoutExercises?.map((we) => we.id) ?? [];
     if (workoutExerciseIds.length) {
       const { data: sets, error: setsError } = await supabase
-        .from("sets")
-        .select("id, workout_exercise_id")
-        .in("workout_exercise_id", workoutExerciseIds);
+        .from('sets')
+        .select('id, workout_exercise_id')
+        .in('workout_exercise_id', workoutExerciseIds);
 
       if (setsError) {
         throw new Error(setsError.message);
@@ -181,31 +178,26 @@ async function getMonthlyReports(userId: string) {
       const workoutDays = workoutDates.length;
       const goalWorkoutDays = goalsByMonth.get(month) ?? null;
       const goalAchievementRate =
-        goalWorkoutDays && goalWorkoutDays > 0
-          ? Number(((workoutDays / goalWorkoutDays) * 100).toFixed(1))
-          : null;
-      const inbodyList = inbodyByMonth.get(month) ?? [];
-      const first = inbodyList[0];
-      const last = inbodyList[inbodyList.length - 1];
+        goalWorkoutDays && goalWorkoutDays > 0 ? Number(((workoutDays / goalWorkoutDays) * 100).toFixed(1)) : null;
 
       return {
         month,
         workoutDays,
+        workoutDates,
         totalSets: totalSetsByMonth.get(month) ?? 0,
         maxConsecutiveWorkoutDays: getMaxConsecutiveDays(workoutDates),
         goalWorkoutDays,
         goalAchievementRate,
-        weightChange: first && last ? Number(last.weight ?? 0) - Number(first.weight ?? 0) : null,
-        skeletalMuscleMassChange:
-          first && last ? Number(last.skeletal_muscle_mass ?? 0) - Number(first.skeletal_muscle_mass ?? 0) : null,
-        bodyFatMassChange:
-          first && last ? Number(last.body_fat_mass ?? 0) - Number(first.body_fat_mass ?? 0) : null,
+        weightChange: null,
+        skeletalMuscleMassChange: null,
+        bodyFatMassChange: null,
       };
     })
     .sort((a, b) => (a.month < b.month ? 1 : -1));
 
   const currentMonth = new Date().toISOString().slice(0, 7);
-  return reports.filter((report) => report.month < currentMonth);
+
+  return reports.filter((report) => report.month <= currentMonth);
 }
 
 function getMaxConsecutiveDays(dates: string[]) {
@@ -235,17 +227,4 @@ function getMaxConsecutiveDays(dates: string[]) {
   }
 
   return maxStreak;
-}
-
-function getCurrentMonthInfo() {
-  const today = new Date();
-  const year = today.getUTCFullYear();
-  const monthNumber = today.getUTCMonth() + 1;
-  const daysInMonth = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
-  const weeksInMonth = Math.ceil(daysInMonth / 7);
-  return {
-    year: String(year),
-    month: String(monthNumber).padStart(2, "0"),
-    weeksInMonth,
-  };
 }

@@ -1,23 +1,15 @@
 'use client';
 
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
-import type { MonthlyTrendSeries } from '../model/report.query';
+import { MonthlyTrendSeries } from '@/entities';
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
-const lineColors = ['var(--primary)', '#1a1a1a', '#666666', '#e0e0e0'];
+const COLORS = ['var(--primary)', '#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 type MonthlyTrendLineChartProps = {
   data: MonthlyTrendSeries[];
 };
 
-type ChartPoint = { x: string } & Record<string, number | null>;
+type ChartPoint = { x: string } & { [key: string]: number | null | string };
 
 const buildChartData = (series: MonthlyTrendSeries[]) => {
   const map = new Map<string, ChartPoint>();
@@ -40,28 +32,17 @@ export function MonthlyTrendLineChart({ data }: MonthlyTrendLineChartProps) {
     <div className="h-64 w-full">
       <ResponsiveContainer>
         <LineChart data={chartData} margin={{ top: 10, right: 16, left: 4, bottom: 0 }}>
-          <CartesianGrid stroke="var(--border)" strokeDasharray="4 4" />
-          <XAxis dataKey="x" stroke="var(--text-secondary)" tickLine={false} axisLine={false} />
-          <YAxis stroke="var(--text-secondary)" tickLine={false} axisLine={false} />
-          <Tooltip
-            cursor={{ stroke: 'var(--border)' }}
-            contentStyle={{
-              background: 'var(--white)',
-              borderRadius: 8,
-              borderColor: 'var(--border)',
-              color: 'var(--text-primary)',
-              fontSize: 12,
-            }}
-          />
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="x" stroke="var(--text-secondary)" tickLine={false} />
+          <YAxis stroke="var(--text-secondary)" />
           {data.map((line, index) => (
             <Line
               key={line.id}
               type="monotone"
               dataKey={line.id}
-              stroke={lineColors[index % lineColors.length]}
+              stroke={COLORS[index % COLORS.length]}
               strokeWidth={2}
-              dot={{ r: 3 }}
-              activeDot={{ r: 5 }}
+              activeDot={{ r: 8 }}
             />
           ))}
         </LineChart>

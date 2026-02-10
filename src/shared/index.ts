@@ -48,6 +48,6 @@ export { formatMonthDay, formatDate } from './libs/date/format';
 export { getMonthRange } from './libs/api-route/date/getMonthRange';
 export { getDayLabel } from './libs/api-route/date/getDayLabel';
 export { getCurrentWeekRange } from './libs/api-route/date/getWeekRange';
-
+export { getCurrentMonthInfo } from './libs/date/getDateInfo';
 //types
 export type { IExercise, IRoutine } from './types/domain.type';

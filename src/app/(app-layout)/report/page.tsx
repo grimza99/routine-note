@@ -13,7 +13,7 @@ export default function ReportPage() {
   const [activeTab, setActiveTab] = useState<'prev' | 'current'>('current');
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-20">
       <Tabs items={tabItems} activeId={activeTab} onChange={(id) => setActiveTab(id as 'prev' | 'current')} />
       {activeTab === 'current' ? (
         <MonthReport />

@@ -108,7 +108,7 @@ export function MonthReport() {
         ) : routineDistribution.length ? (
           <RoutineDistributionPieChart data={routineDistribution} />
         ) : (
-          <div className="rounded-lg border p-8 text-sm text-text-secondary" style={{ borderColor: 'var(--border)' }}>
+          <div className="rounded-lg border p-8 text-sm text-text-secondary border-border">
             표시할 루틴 분포 데이터가 없어요.
           </div>
         )}

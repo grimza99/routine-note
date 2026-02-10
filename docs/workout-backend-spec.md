@@ -212,6 +212,24 @@
 }
 ```
 
+#### POST /account/profile-image
+
+설명: 프로필 이미지 업로드 (Supabase Storage public 버킷 사용)
+
+요청
+
+- Content-Type: `multipart/form-data`
+- form-data
+  - `file`: 이미지 파일
+
+응답
+
+```json
+{
+  "profileUrl": "https://<project>.supabase.co/storage/v1/object/public/profile-images/<userId>/..."
+}
+```
+
 ### 운동 종목(사전)
 
 #### GET /exercises

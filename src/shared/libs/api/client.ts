@@ -61,17 +61,23 @@ const getAccessToken = async () => {
   return data.session?.access_token ?? null;
 };
 
+const isFormDataBody = (body: unknown): body is FormData => {
+  if (typeof FormData === 'undefined') return false;
+  return body instanceof FormData;
+};
+
 export const apiFetch = async <TResponse>(
   input: string,
   init: RequestInit & { auth?: boolean; retry?: boolean } = {},
 ): Promise<ApiEnvelope<TResponse>> => {
   const { auth = true, retry = false, headers, ...rest } = init;
   const token = auth ? await getAccessToken() : null;
+  const shouldSetJsonHeader = !isFormDataBody(rest.body);
 
   const response = await fetch(input, {
     ...rest,
     headers: {
-      'Content-Type': 'application/json',
+      ...(shouldSetJsonHeader ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(headers ?? {}),
     },
@@ -146,6 +152,12 @@ export const api = {
       ...options,
       method: 'POST',
       body: body === undefined ? undefined : JSON.stringify(body),
+    }),
+  postForm: <TResponse>(url: string, formData: FormData, options: ApiOptions = {}) =>
+    apiFetch<TResponse>(url, {
+      ...options,
+      method: 'POST',
+      body: formData,
     }),
   put: <TResponse, TBody = unknown>(url: string, body?: TBody, options: ApiOptions = {}) =>
     apiFetch<TResponse>(url, {

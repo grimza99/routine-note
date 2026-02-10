@@ -10,6 +10,7 @@ const API = {
   },
   ACCOUNT: {
     PROFILE: '/api/account/profile',
+    PROFILE_IMAGE: '/api/account/profile-image',
   },
   WORKOUT: {
     CREATE: '/api/workouts',

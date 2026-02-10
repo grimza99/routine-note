@@ -3,3 +3,4 @@ export { default as SignupForm } from './ui/SignupForm';
 
 export { type IAuthResponse } from './model/auth.mutation';
 export { useMyInfoMutation } from './model/auth.info.mutation';
+export { useProfileImageMutation } from './model/profile-image.mutation';

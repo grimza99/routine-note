@@ -35,7 +35,7 @@ export default function MyPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <MyPageProfile nickname={nickname} imageUrl={profile_image} workoutDays={20} />
+      <MyPageProfile nickname={nickname} imageUrl={profile_image} workoutDays={challengeData?.workoutDays} />
       <section className="flex flex-wrap gap-4">
         {summaryData.map((data) => (
           <SummaryCard

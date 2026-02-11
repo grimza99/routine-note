@@ -5,7 +5,7 @@ import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { routineId?: string } | Promise<{ routineId?: string }>;
+type Params = Promise<{ routineId?: string }>;
 
 type RoutineItem = {
   id: string;

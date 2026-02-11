@@ -4,7 +4,7 @@ import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { workoutId: string };
+type Params = Promise<{ workoutId: string }>;
 
 type RequestBody = {
   routineId?: string;
@@ -13,6 +13,7 @@ type RequestBody = {
 };
 
 export async function POST(request: NextRequest, context: { params: Params }) {
+  const { workoutId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const { data: workout, error: workoutError } = await supabase
     .from("workouts")
     .select("id")
-    .eq("id", context.params.workoutId)
+    .eq("id", workoutId)
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     const { data: lastRoutine, error: lastRoutineError } = await supabase
       .from("workout_routines")
       .select("item_order")
-      .eq("workout_id", context.params.workoutId)
+      .eq("workout_id", workoutId)
       .order("item_order", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const { data, error } = await supabase
     .from("workout_routines")
     .insert({
-      workout_id: context.params.workoutId,
+      workout_id: workoutId,
       routine_id: body.routineId,
       item_order: nextOrder,
       note: body.note ?? null,

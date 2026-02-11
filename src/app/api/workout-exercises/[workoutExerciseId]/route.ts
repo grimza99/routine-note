@@ -4,9 +4,10 @@ import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { workoutExerciseId: string };
+type Params = Promise<{ workoutExerciseId: string }>;
 
 export async function PATCH(request: NextRequest, context: { params: Params }) {
+  const { workoutExerciseId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -19,7 +20,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   const { data: owner, error: ownerError } = await supabase
     .from("workout_exercises")
     .select("id, workout_id, workouts!inner(user_id)")
-    .eq("id", context.params.workoutExerciseId)
+    .eq("id", workoutExerciseId)
     .eq("workouts.user_id", userId)
     .maybeSingle();
 
@@ -44,7 +45,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   const { data, error } = await supabase
     .from("workout_exercises")
     .update(update)
-    .eq("id", context.params.workoutExerciseId)
+    .eq("id", workoutExerciseId)
     .select("id, exercise_id, item_order, note")
     .maybeSingle();
 
@@ -56,6 +57,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
 }
 
 export async function DELETE(request: NextRequest, context: { params: Params }) {
+  const { workoutExerciseId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -66,7 +68,7 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
   const { data: owner, error: ownerError } = await supabase
     .from("workout_exercises")
     .select("id, workouts!inner(user_id)")
-    .eq("id", context.params.workoutExerciseId)
+    .eq("id", workoutExerciseId)
     .eq("workouts.user_id", userId)
     .maybeSingle();
 
@@ -81,7 +83,7 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
   const { error } = await supabase
     .from("workout_exercises")
     .delete()
-    .eq("id", context.params.workoutExerciseId);
+    .eq("id", workoutExerciseId);
 
   if (error) {
     return json(500, { error: { code: "DB_ERROR", message: error.message } });

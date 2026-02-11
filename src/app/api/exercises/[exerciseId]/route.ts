@@ -4,9 +4,10 @@ import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { exerciseId: string };
+type Params = Promise<{ exerciseId: string }>;
 
 export async function PATCH(request: NextRequest, context: { params: Params }) {
+  const { exerciseId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -23,7 +24,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   const { data, error } = await supabase
     .from("exercise_catalogs")
     .update({ name: body.name })
-    .eq("id", context.params.exerciseId)
+    .eq("id", exerciseId)
     .eq("user_id", userId)
     .select("id, name")
     .maybeSingle();
@@ -42,6 +43,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
 }
 
 export async function DELETE(request: NextRequest, context: { params: Params }) {
+  const { exerciseId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -52,7 +54,7 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
   const { error } = await supabase
     .from("exercise_catalogs")
     .delete()
-    .eq("id", context.params.exerciseId)
+    .eq("id", exerciseId)
     .eq("user_id", userId);
 
   if (error) {

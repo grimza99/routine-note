@@ -5,9 +5,10 @@ import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { workoutId: string };
+type Params = Promise<{ workoutId: string }>;
 
 export async function POST(request: NextRequest, context: { params: Params }) {
+  const { workoutId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const { data: workout, error: workoutError } = await supabase
     .from("workouts")
     .select("id")
-    .eq("id", context.params.workoutId)
+    .eq("id", workoutId)
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const { data: lastRoutine, error: lastRoutineError } = await supabase
     .from("workout_routines")
     .select("item_order")
-    .eq("workout_id", context.params.workoutId)
+    .eq("workout_id", workoutId)
     .order("item_order", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const { data: workoutRoutine, error: workoutRoutineError } = await supabase
     .from("workout_routines")
     .insert({
-      workout_id: context.params.workoutId,
+      workout_id: workoutId,
       routine_id: body.routineId,
       item_order: nextOrder,
     })
@@ -90,7 +91,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
 
   if (!items?.length) {
     return json(200, {
-      workoutId: context.params.workoutId,
+      workoutId,
       workoutRoutineId: workoutRoutine.id,
       createdExercises: [],
     });
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
 
   const insertPayload = items.map((item) => ({
     id: randomUUID(),
-    workout_id: context.params.workoutId,
+    workout_id: workoutId,
     workout_routine_id: workoutRoutine.id,
     exercise_id: item.exercise_id,
     item_order: item.item_order,
@@ -114,7 +115,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   }
 
   return json(200, {
-    workoutId: context.params.workoutId,
+    workoutId,
     workoutRoutineId: workoutRoutine.id,
     createdExercises: data ?? [],
   });

@@ -5,7 +5,7 @@ import { randomUUID } from 'crypto';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { workoutExerciseId: string };
+type Params = Promise<{ workoutExerciseId: string }>;
 
 export async function POST(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
@@ -16,8 +16,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
 
   const body = (await request.json()) as { weight?: number; reps?: number; note?: string };
 
-  const params = await Promise.resolve(context.params);
-  const workoutExerciseId = params?.workoutExerciseId;
+  const { workoutExerciseId } = await Promise.resolve(context.params);
 
   const supabase = getSupabaseAdmin();
   const { data: standalone, error: standaloneError } = await supabase

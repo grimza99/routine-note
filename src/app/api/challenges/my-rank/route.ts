@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
-import { getMonthRange } from '@/shared';
+import { getMonthRange } from '@/shared/libs/api-route';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 

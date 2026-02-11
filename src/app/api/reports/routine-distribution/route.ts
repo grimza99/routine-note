@@ -1,9 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
-import { getMonthRange } from '@/shared';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { getMonthRange, json } from '@/shared/libs/api-route';
 
 type RoutineDistributionItem = {
   id: string;

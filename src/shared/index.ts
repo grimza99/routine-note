@@ -46,7 +46,6 @@ export { cn } from './libs/cn';
 export { formatMonthDay, formatDate } from './libs/date/format';
 
 //libs-api-route
-export { getMonthRange } from './libs/api-route/date/getMonthRange';
 export { getDayLabel } from './libs/api-route/date/getDayLabel';
 export { getCurrentWeekRange } from './libs/api-route/date/getWeekRange';
 export { getCurrentMonthInfo } from './libs/date/getDateInfo';

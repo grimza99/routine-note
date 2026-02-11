@@ -26,6 +26,8 @@
 - `VALIDATION_ERROR`: 필수 값 누락/형식 오류
 - `CONFLICT`: 중복 생성(예: 동일 날짜 Workout)
 - `NICKNAME_TAKEN`: 닉네임 중복
+- `STORAGE_ERROR` : 버킷 업로드 에러
+- `DB_ERROR` : 데이터 베이스 에러
 
 ### 유효성 규칙 (핵심)
 

@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server';
-
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
 
@@ -20,11 +19,11 @@ export async function POST(request: NextRequest) {
   const file = formData.get('file');
 
   if (!(file instanceof File)) {
-    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'file is required' } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: '파일이 필요합니다.' } });
   }
 
   if (!isImageFile(file)) {
-    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'only image files are allowed' } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: '이미지 파일만 가능합니다.' } });
   }
 
   const supabase = getSupabaseAdmin();

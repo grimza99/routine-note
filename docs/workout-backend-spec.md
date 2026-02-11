@@ -231,55 +231,6 @@
 }
 ```
 
-### 운동 종목(사전)
-
-#### GET /exercises
-
-응답
-
-```json
-[
-  { "id": "ex1", "name": "벤치프레스" },
-  { "id": "ex2", "name": "스쿼트" }
-]
-```
-
-#### POST /exercises
-
-요청
-
-```json
-{ "name": "데드리프트" }
-```
-
-응답
-
-```json
-{ "id": "ex3", "name": "데드리프트" }
-```
-
-#### PATCH /exercises/{exerciseId}
-
-요청
-
-```json
-{ "name": "스쿼트(하이바)" }
-```
-
-응답
-
-```json
-{ "id": "ex2", "name": "스쿼트(하이바)" }
-```
-
-#### DELETE /exercises/{exerciseId}
-
-응답
-
-```json
-{ "ok": true }
-```
-
 ### 루틴
 
 #### GET /routines

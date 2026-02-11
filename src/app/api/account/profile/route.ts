@@ -3,6 +3,10 @@ import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
 
+interface IProfilePayload {
+  nickname: string | null;
+  goalWorkoutDays: number | null;
+}
 export async function PATCH(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
@@ -10,41 +14,44 @@ export async function PATCH(request: NextRequest) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
-  const body = (await request.json()) as { nickname?: string; goalWorkoutDays?: number };
+  const body = (await request.json()) as IProfilePayload;
 
   const hasNickname = typeof body?.nickname === 'string';
   const hasGoal = Number.isFinite(body?.goalWorkoutDays);
 
   if (!hasNickname && !hasGoal) {
     return json(400, {
-      error: { code: 'VALIDATION_ERROR', message: 'nickname or goalWorkoutDays is required' },
+      error: { code: 'VALIDATION_ERROR', message: '닉네임이나 월 목표일 둘중에 하나는 필수로 입력해야 합니다.' },
     });
   }
 
   const supabase = getSupabaseAdmin();
 
+  //nickname 업데이트
   let nextNickname: string | null = null;
   if (hasNickname) {
     const normalizedNickname = body.nickname?.trim() ?? '';
 
     if (!normalizedNickname) {
       return json(400, {
-        error: { code: 'VALIDATION_ERROR', message: 'nickname is required' },
+        error: { code: 'VALIDATION_ERROR', message: '닉네임은 빈값일 수 없습니다' },
       });
     }
 
-    const { data: existingUser, error: existingUserError } = await supabase
+    const { data: existingNickname, error: existingNicknameError } = await supabase
       .from('users')
-      .select('id')
+      .select('nickname, id')
       .eq('nickname', normalizedNickname)
       .maybeSingle();
 
-    if (existingUserError) {
-      return json(500, { error: { code: 'DB_ERROR', message: existingUserError.message } });
+    if (existingNicknameError) {
+      return json(500, { error: { code: 'DB_ERROR', message: 'users table: ' + existingNicknameError.message } });
     }
 
-    if (existingUser && existingUser.id !== userId) {
-      return json(409, { error: { code: 'NICKNAME_TAKEN', message: '이미 존재하는 닉네임 입니다.' } });
+    if (existingNickname && existingNickname.id !== userId) {
+      return json(409, {
+        error: { code: 'NICKNAME_TAKEN', message: `${existingNickname}은 이미 존재하는 닉네임 입니다.` },
+      });
     }
 
     const { data: authUser, error: authUserError } = await supabase.auth.admin.getUserById(userId);
@@ -72,15 +79,15 @@ export async function PATCH(request: NextRequest) {
       .eq('id', userId);
 
     if (updateProfileError) {
-      return json(500, { error: { code: 'DB_ERROR', message: updateProfileError.message } });
+      return json(500, { error: { code: 'DB_ERROR', message: 'users update error:' + updateProfileError.message } });
     }
 
     nextNickname = normalizedNickname;
   }
 
   let goalWorkoutDays: number | null = null;
-  let month: string | null = null;
 
+  //goal 업데이트
   if (hasGoal) {
     const goalValue = Number(body.goalWorkoutDays);
 
@@ -115,7 +122,6 @@ export async function PATCH(request: NextRequest) {
 
   return json(200, {
     nickname: nextNickname,
-    month,
     goalWorkoutDays,
   });
 }

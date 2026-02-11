@@ -206,9 +206,8 @@
 
 ```json
 {
-  "nickname": "새로운닉네임",
-  "month": "2026-02",
-  "goalWorkoutDays": 12
+  "nickname": "새로운닉네임"|null,
+  "goalWorkoutDays": 12|null
 }
 ```
 

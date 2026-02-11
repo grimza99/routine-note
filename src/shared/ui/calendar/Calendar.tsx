@@ -1,9 +1,10 @@
 'use client';
 import { useMemo, useState } from 'react';
-import { Button, cn } from '@/shared';
+import { Button, cn, Dot, formatDate } from '@/shared';
 
 type CalendarProps = {
   value?: Date | null;
+  recordDates?: string[];
   onSelectDate?: (date: Date) => void;
   className?: string;
 };
@@ -15,7 +16,7 @@ const createDate = (year: number, month: number, day: number) => new Date(year, 
 const isSameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
-export function Calendar({ value, onSelectDate, className }: CalendarProps) {
+export function Calendar({ value, onSelectDate, recordDates, className }: CalendarProps) {
   const today = new Date();
   const initialMonth = value ?? today;
   const [currentMonth, setCurrentMonth] = useState(() =>
@@ -116,7 +117,12 @@ export function Calendar({ value, onSelectDate, className }: CalendarProps) {
               key={key}
               onClick={() => onSelectDate?.(date)}
               type="button"
-              label={date.getDate().toString()}
+              label={
+                <div className="flex flex-col items-center w-full h-full">
+                  {date.getDate().toString()}
+                  {recordDates?.includes(formatDate(date)) && <Dot />}
+                </div>
+              }
               variant={isSelected ? 'primary' : 'secondary'}
               className={cn(
                 'text-sm border-none',

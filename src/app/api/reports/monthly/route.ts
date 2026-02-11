@@ -1,26 +1,26 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
-import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
+import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
 export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
-  const month = request.nextUrl.searchParams.get("month");
+  const month = request.nextUrl.searchParams.get('month');
 
   if (!userId) {
-    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
+    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
   if (!month) {
-    return json(400, { error: { code: "VALIDATION_ERROR", message: "month is required" } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'month is required' } });
   }
 
-  const [yearText, monthText] = month.split("-");
+  const [yearText, monthText] = month.split('-');
   const yearNumber = Number(yearText);
   const monthNumber = Number(monthText);
   if (!Number.isInteger(yearNumber) || !Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) {
-    return json(400, { error: { code: "VALIDATION_ERROR", message: "month must be in YYYY-MM format" } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'month must be in YYYY-MM format' } });
   }
 
   const start = `${month}-01`;
@@ -28,25 +28,25 @@ export async function GET(request: NextRequest) {
 
   const supabase = getSupabaseAdmin();
   const { data: goal, error: goalError } = await supabase
-    .from("monthly_goals")
-    .select("goal_workout_days")
-    .eq("user_id", userId)
-    .eq("report_month", start)
+    .from('monthly_goals')
+    .select('goal_workout_days')
+    .eq('user_id', userId)
+    .eq('report_month', start)
     .maybeSingle();
 
   if (goalError) {
-    return json(500, { error: { code: "DB_ERROR", message: goalError.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: goalError.message } });
   }
 
   const { data: workouts, error: workoutsError } = await supabase
-    .from("workouts")
-    .select("id, workout_date")
-    .eq("user_id", userId)
-    .gte("workout_date", start)
-    .lte("workout_date", end);
+    .from('workouts')
+    .select('id, workout_date')
+    .eq('user_id', userId)
+    .gte('workout_date', start)
+    .lte('workout_date', end);
 
   if (workoutsError) {
-    return json(500, { error: { code: "DB_ERROR", message: workoutsError.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: workoutsError.message } });
   }
 
   const workoutIds = workouts?.map((workout) => workout.id) ?? [];
@@ -55,31 +55,29 @@ export async function GET(request: NextRequest) {
   const maxConsecutiveWorkoutDays = getMaxConsecutiveDays(workoutDates);
   const goalWorkoutDays = goal?.goal_workout_days ?? null;
   const goalAchievementRate =
-    goalWorkoutDays && goalWorkoutDays > 0
-      ? Number(((workoutDays / goalWorkoutDays) * 100).toFixed(1))
-      : null;
+    goalWorkoutDays && goalWorkoutDays > 0 ? Number(((workoutDays / goalWorkoutDays) * 100).toFixed(1)) : null;
 
   let totalSets = 0;
   if (workoutIds.length) {
     const { data: workoutExercises, error: weError } = await supabase
-      .from("workout_exercises")
-      .select("id")
-      .in("workout_id", workoutIds);
+      .from('workout_exercises')
+      .select('id')
+      .in('workout_id', workoutIds);
 
     if (weError) {
-      return json(500, { error: { code: "DB_ERROR", message: weError.message } });
+      return json(500, { error: { code: 'DB_ERROR', message: weError.message } });
     }
 
     const workoutExerciseIds = workoutExercises?.map((we) => we.id) ?? [];
 
     if (workoutExerciseIds.length) {
       const { count, error: setsError } = await supabase
-        .from("sets")
-        .select("id", { count: "exact", head: true })
-        .in("workout_exercise_id", workoutExerciseIds);
+        .from('sets')
+        .select('id', { count: 'exact', head: true })
+        .in('workout_exercise_id', workoutExerciseIds);
 
       if (setsError) {
-        return json(500, { error: { code: "DB_ERROR", message: setsError.message } });
+        return json(500, { error: { code: 'DB_ERROR', message: setsError.message } });
       }
 
       totalSets = count ?? 0;
@@ -87,15 +85,15 @@ export async function GET(request: NextRequest) {
   }
 
   const { data: inbody, error: inbodyError } = await supabase
-    .from("inbody_records")
-    .select("measured_at, weight, skeletal_muscle_mass, body_fat_mass")
-    .eq("user_id", userId)
-    .gte("measured_at", start)
-    .lte("measured_at", end)
-    .order("measured_at", { ascending: true });
+    .from('inbody_records')
+    .select('measured_at, weight, skeletal_muscle_mass, body_fat_mass')
+    .eq('user_id', userId)
+    .gte('measured_at', start)
+    .lte('measured_at', end)
+    .order('measured_at', { ascending: true });
 
   if (inbodyError) {
-    return json(500, { error: { code: "DB_ERROR", message: inbodyError.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: inbodyError.message } });
   }
 
   const inbodyList = inbody ?? [];
@@ -105,8 +103,7 @@ export async function GET(request: NextRequest) {
   const weightChange = first && last ? Number(last.weight ?? 0) - Number(first.weight ?? 0) : null;
   const skeletalMuscleMassChange =
     first && last ? Number(last.skeletal_muscle_mass ?? 0) - Number(first.skeletal_muscle_mass ?? 0) : null;
-  const bodyFatMassChange =
-    first && last ? Number(last.body_fat_mass ?? 0) - Number(first.body_fat_mass ?? 0) : null;
+  const bodyFatMassChange = first && last ? Number(last.body_fat_mass ?? 0) - Number(first.body_fat_mass ?? 0) : null;
 
   return json(200, {
     month,
@@ -118,6 +115,7 @@ export async function GET(request: NextRequest) {
     weightChange,
     skeletalMuscleMassChange,
     bodyFatMassChange,
+    workoutDates,
   });
 }
 

@@ -9,6 +9,7 @@ export { ToastProvider } from './ui/toast/ToastProvider';
 export { Spinner } from './ui/loaders/Spinner';
 export { BouncingDots } from './ui/loaders/BouncingDots';
 export { NumberStepper } from './ui/steppers/NumberStepper';
+export { Dot } from './ui/dot/Dot';
 
 //ui - tabs
 export { Tabs } from './ui/tabs/Tabs';

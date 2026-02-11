@@ -45,7 +45,7 @@ export default function RoutineCalPage() {
           ))}
         </div>
       </div>
-      <Calendar value={selectedDate} onSelectDate={setSelectedDate} />
+      <Calendar value={selectedDate} onSelectDate={setSelectedDate} recordDates={monthlyData?.workoutDates} />
       <WorkoutManage selectedDate={selectedDate} />
     </div>
   );

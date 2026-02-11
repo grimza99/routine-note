@@ -14,6 +14,7 @@ interface IWorkoutReportResponse {
   weightChange: null; //todo
   skeletalMuscleMassChange: null; //todl
   bodyFatMassChange: null;
+  workoutDates: string[]; // 'YYYY-MM-DD' 형식의 날짜 배열
 }
 
 //운동 리포트 쿼리

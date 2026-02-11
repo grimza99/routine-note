@@ -1,8 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-
-import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { NextRequest } from 'next/server';
+import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
+import { getMaxConsecutiveDays, json } from '@/shared/libs/api-route';
 
 type MonthReport = {
   month: string;
@@ -20,37 +18,37 @@ export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
   if (!userId) {
-    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
+    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
   const supabase = getSupabaseAdmin();
   const { data: workouts, error: workoutsError } = await supabase
-    .from("workouts")
-    .select("id, workout_date")
-    .eq("user_id", userId)
-    .order("workout_date", { ascending: true });
+    .from('workouts')
+    .select('id, workout_date')
+    .eq('user_id', userId)
+    .order('workout_date', { ascending: true });
 
   if (workoutsError) {
-    return json(500, { error: { code: "DB_ERROR", message: workoutsError.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: workoutsError.message } });
   }
 
   const { data: goals, error: goalsError } = await supabase
-    .from("monthly_goals")
-    .select("report_month, goal_workout_days")
-    .eq("user_id", userId);
+    .from('monthly_goals')
+    .select('report_month, goal_workout_days')
+    .eq('user_id', userId);
 
   if (goalsError) {
-    return json(500, { error: { code: "DB_ERROR", message: goalsError.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: goalsError.message } });
   }
 
   const { data: inbody, error: inbodyError } = await supabase
-    .from("inbody_records")
-    .select("measured_at, weight, skeletal_muscle_mass, body_fat_mass")
-    .eq("user_id", userId)
-    .order("measured_at", { ascending: true });
+    .from('inbody_records')
+    .select('measured_at, weight, skeletal_muscle_mass, body_fat_mass')
+    .eq('user_id', userId)
+    .order('measured_at', { ascending: true });
 
   if (inbodyError) {
-    return json(500, { error: { code: "DB_ERROR", message: inbodyError.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: inbodyError.message } });
   }
 
   const monthSet = new Set<string>();
@@ -88,12 +86,12 @@ export async function GET(request: NextRequest) {
 
   if (workoutIds.length) {
     const { data: workoutExercises, error: workoutExerciseError } = await supabase
-      .from("workout_exercises")
-      .select("id, workout_id")
-      .in("workout_id", workoutIds);
+      .from('workout_exercises')
+      .select('id, workout_id')
+      .in('workout_id', workoutIds);
 
     if (workoutExerciseError) {
-      return json(500, { error: { code: "DB_ERROR", message: workoutExerciseError.message } });
+      return json(500, { error: { code: 'DB_ERROR', message: workoutExerciseError.message } });
     }
 
     const workoutExerciseMonthById = new Map<string, string>();
@@ -106,12 +104,12 @@ export async function GET(request: NextRequest) {
     const workoutExerciseIds = workoutExercises?.map((we) => we.id) ?? [];
     if (workoutExerciseIds.length) {
       const { data: sets, error: setsError } = await supabase
-        .from("sets")
-        .select("id, workout_exercise_id")
-        .in("workout_exercise_id", workoutExerciseIds);
+        .from('sets')
+        .select('id, workout_exercise_id')
+        .in('workout_exercise_id', workoutExerciseIds);
 
       if (setsError) {
-        return json(500, { error: { code: "DB_ERROR", message: setsError.message } });
+        return json(500, { error: { code: 'DB_ERROR', message: setsError.message } });
       }
 
       (sets ?? []).forEach((set) => {
@@ -138,9 +136,7 @@ export async function GET(request: NextRequest) {
       const workoutDays = workoutDates.length;
       const goalWorkoutDays = goalsByMonth.get(month) ?? null;
       const goalAchievementRate =
-        goalWorkoutDays && goalWorkoutDays > 0
-          ? Number(((workoutDays / goalWorkoutDays) * 100).toFixed(1))
-          : null;
+        goalWorkoutDays && goalWorkoutDays > 0 ? Number(((workoutDays / goalWorkoutDays) * 100).toFixed(1)) : null;
       const inbodyList = inbodyByMonth.get(month) ?? [];
       const first = inbodyList[0];
       const last = inbodyList[inbodyList.length - 1];
@@ -155,8 +151,7 @@ export async function GET(request: NextRequest) {
         weightChange: first && last ? Number(last.weight ?? 0) - Number(first.weight ?? 0) : null,
         skeletalMuscleMassChange:
           first && last ? Number(last.skeletal_muscle_mass ?? 0) - Number(first.skeletal_muscle_mass ?? 0) : null,
-        bodyFatMassChange:
-          first && last ? Number(last.body_fat_mass ?? 0) - Number(first.body_fat_mass ?? 0) : null,
+        bodyFatMassChange: first && last ? Number(last.body_fat_mass ?? 0) - Number(first.body_fat_mass ?? 0) : null,
       };
     })
     .sort((a, b) => (a.month < b.month ? 1 : -1));
@@ -165,33 +160,4 @@ export async function GET(request: NextRequest) {
   const filteredReports = reports.filter((report) => report.month < currentMonth);
 
   return json(200, filteredReports);
-}
-
-function getMaxConsecutiveDays(dates: string[]) {
-  if (!dates.length) return 0;
-
-  const uniqueDates = Array.from(new Set(dates));
-  const dayNumbers = uniqueDates
-    .map((date) => Date.parse(`${date}T00:00:00Z`))
-    .filter((value) => Number.isFinite(value))
-    .sort((a, b) => a - b)
-    .map((value) => Math.floor(value / 86400000));
-
-  if (!dayNumbers.length) return 0;
-
-  let maxStreak = 1;
-  let currentStreak = 1;
-
-  for (let i = 1; i < dayNumbers.length; i += 1) {
-    if (dayNumbers[i] - dayNumbers[i - 1] === 1) {
-      currentStreak += 1;
-    } else {
-      currentStreak = 1;
-    }
-    if (currentStreak > maxStreak) {
-      maxStreak = currentStreak;
-    }
-  }
-
-  return maxStreak;
 }

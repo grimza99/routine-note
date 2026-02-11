@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
-import { getMonthRange } from '@/shared/libs/api-route';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
-
-const getCurrentMonth = () => new Date().toISOString().slice(0, 7);
+import { getMonthRange, json } from '@/shared/libs/api-route';
 
 // 내 챌린지 랭킹 조회 API (테스트 완료)
 export async function GET(request: NextRequest) {
@@ -14,7 +10,8 @@ export async function GET(request: NextRequest) {
   if (!userId) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
-  const year_month = request.nextUrl.searchParams.get('month') ?? getCurrentMonth();
+  const currentMonth = new Date().toISOString().slice(0, 7);
+  const year_month = request.nextUrl.searchParams.get('month') ?? currentMonth;
   const { start, end } = getMonthRange(year_month);
 
   const supabase = getSupabaseAdmin();

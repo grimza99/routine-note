@@ -1,9 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-
+import { NextRequest } from 'next/server';
 import { getSupabaseAdmin } from '@/shared/libs/supabase';
-import { getMonthRange } from '@/shared/libs/api-route';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { getMonthRange, json } from '@/shared/libs/api-route';
 
 export async function GET(request: NextRequest) {
   const month = request.nextUrl.searchParams.get('month');

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getSupabaseAdmin } from '@/shared/libs/supabase';
-import { getMonthRange } from '@/shared';
+import { getMonthRange } from '@/shared/libs/api-route';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
@@ -37,10 +37,7 @@ export async function GET(request: NextRequest) {
   let nicknameById = new Map<string, string>();
 
   if (userIds.length > 0) {
-    const { data: users, error: usersError } = await supabase
-      .from('users')
-      .select('id, nickname')
-      .in('id', userIds);
+    const { data: users, error: usersError } = await supabase.from('users').select('id, nickname').in('id', userIds);
 
     if (usersError) {
       return json(500, { error: { code: 'DB_ERROR', message: usersError.message } });

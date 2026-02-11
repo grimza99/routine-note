@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
   (workoutRoutines ?? []).forEach((routine) => {
     if (!routine?.routine_id) return;
     const id = routine.routine_id;
-    const label = routine.routines?.name ?? '알 수 없음';
+    const label = routine.routines?.[0]?.name ?? '알 수 없음';
     const current = routineMap.get(id);
     routineMap.set(id, {
       id,

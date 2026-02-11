@@ -4,7 +4,7 @@ import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { setId: string };
+type Params = Promise<{ setId: string }>;
 
 export async function PATCH(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);

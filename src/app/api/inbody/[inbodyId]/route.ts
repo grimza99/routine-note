@@ -4,9 +4,10 @@ import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { inbodyId: string };
+type Params = Promise<{ inbodyId: string }>;
 
 export async function PATCH(request: NextRequest, context: { params: Params }) {
+  const { inbodyId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -47,7 +48,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   const { data, error } = await supabase
     .from("inbody_records")
     .update(update)
-    .eq("id", context.params.inbodyId)
+    .eq("id", inbodyId)
     .eq("user_id", userId)
     .select("id, measured_at, weight, skeletal_muscle_mass, body_fat_mass")
     .maybeSingle();
@@ -64,6 +65,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
 }
 
 export async function DELETE(request: NextRequest, context: { params: Params }) {
+  const { inbodyId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -74,7 +76,7 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
   const { error } = await supabase
     .from("inbody_records")
     .delete()
-    .eq("id", context.params.inbodyId)
+    .eq("id", inbodyId)
     .eq("user_id", userId);
 
   if (error) {

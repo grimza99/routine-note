@@ -4,7 +4,7 @@ import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { workoutRoutineId: string };
+type Params = Promise<{ workoutRoutineId: string }>;
 
 type RequestBody = {
   order?: number;
@@ -24,8 +24,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'order must be >= 1' } });
   }
 
-  const params = Promise.resolve(context.params);
-  const workoutRoutineId = (await params).workoutRoutineId;
+  const { workoutRoutineId } = await Promise.resolve(context.params);
 
   const supabase = getSupabaseAdmin();
   const { data: owner, error: ownerError } = await supabase
@@ -73,6 +72,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
 }
 
 export async function DELETE(request: NextRequest, context: { params: Params }) {
+  const { workoutRoutineId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -83,7 +83,7 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
   const { data: owner, error: ownerError } = await supabase
     .from('workout_routines')
     .select('id, workouts!inner(user_id)')
-    .eq('id', context.params.workoutRoutineId)
+    .eq('id', workoutRoutineId)
     .eq('workouts.user_id', userId)
     .maybeSingle();
 
@@ -98,13 +98,13 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
   const { error: deleteRoutineItemsError } = await supabase
     .from('workout_routine_items')
     .delete()
-    .eq('workout_routine_id', context.params.workoutRoutineId);
+    .eq('workout_routine_id', workoutRoutineId);
 
   if (deleteRoutineItemsError) {
     return json(500, { error: { code: 'DB_ERROR', message: deleteRoutineItemsError.message } });
   }
 
-  const { error } = await supabase.from('workout_routines').delete().eq('id', context.params.workoutRoutineId);
+  const { error } = await supabase.from('workout_routines').delete().eq('id', workoutRoutineId);
 
   if (error) {
     return json(500, { error: { code: 'DB_ERROR', message: error.message } });

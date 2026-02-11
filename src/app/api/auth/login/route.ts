@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 import { getSupabaseAnon } from '@/shared/libs/supabase';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { json } from '@/shared/libs/api-route';
 
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as { email?: string; password?: string };

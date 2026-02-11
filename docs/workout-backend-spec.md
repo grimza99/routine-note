@@ -26,6 +26,8 @@
 - `VALIDATION_ERROR`: 필수 값 누락/형식 오류
 - `CONFLICT`: 중복 생성(예: 동일 날짜 Workout)
 - `NICKNAME_TAKEN`: 닉네임 중복
+- `STORAGE_ERROR` : 버킷 업로드 에러
+- `DB_ERROR` : 데이터 베이스 에러
 
 ### 유효성 규칙 (핵심)
 
@@ -206,9 +208,8 @@
 
 ```json
 {
-  "nickname": "새로운닉네임",
-  "month": "2026-02",
-  "goalWorkoutDays": 12
+  "nickname": "새로운닉네임"|null,
+  "goalWorkoutDays": 12|null
 }
 ```
 
@@ -228,55 +229,6 @@
 {
   "profileUrl": "https://<project>.supabase.co/storage/v1/object/public/profile-images/<userId>/..."
 }
-```
-
-### 운동 종목(사전)
-
-#### GET /exercises
-
-응답
-
-```json
-[
-  { "id": "ex1", "name": "벤치프레스" },
-  { "id": "ex2", "name": "스쿼트" }
-]
-```
-
-#### POST /exercises
-
-요청
-
-```json
-{ "name": "데드리프트" }
-```
-
-응답
-
-```json
-{ "id": "ex3", "name": "데드리프트" }
-```
-
-#### PATCH /exercises/{exerciseId}
-
-요청
-
-```json
-{ "name": "스쿼트(하이바)" }
-```
-
-응답
-
-```json
-{ "id": "ex2", "name": "스쿼트(하이바)" }
-```
-
-#### DELETE /exercises/{exerciseId}
-
-응답
-
-```json
-{ "ok": true }
 ```
 
 ### 루틴

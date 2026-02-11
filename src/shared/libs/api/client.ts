@@ -173,10 +173,4 @@ export const api = {
     }),
   delete: <TResponse>(url: string, options: ApiOptions = {}) =>
     apiFetch<TResponse>(url, { ...options, method: 'DELETE' }),
-  put: <TResponse, TBody = unknown>(url: string, body?: TBody, options: ApiOptions = {}) =>
-    apiFetch<TResponse>(url, {
-      ...options,
-      method: 'PUT',
-      body: body === undefined ? undefined : JSON.stringify(body),
-    }),
 };

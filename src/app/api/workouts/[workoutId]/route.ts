@@ -5,7 +5,7 @@ import { randomUUID } from 'crypto';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { workoutId: string };
+type Params = Promise<{ workoutId: string }>;
 
 type WorkoutSet = {
   id: string;
@@ -104,6 +104,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
 });
 
 export async function GET(request: NextRequest, context: { params: Params }) {
+  const { workoutId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -146,7 +147,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       )
       `,
     )
-    .eq('id', context.params.workoutId)
+    .eq('id', workoutId)
     .eq('user_id', userId)
     .maybeSingle();
 
@@ -197,8 +198,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     }
   }
 
-  const params = await Promise.resolve(context.params);
-  const workoutId = params?.workoutId;
+  const { workoutId } = await Promise.resolve(context.params);
 
   const supabase = getSupabaseAdmin();
 
@@ -421,8 +421,7 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
-  const params = await Promise.resolve(context.params);
-  const workoutId = params?.workoutId;
+  const { workoutId } = await Promise.resolve(context.params);
 
   const supabase = getSupabaseAdmin();
   const { error } = await supabase.from('workouts').delete().eq('id', workoutId).eq('user_id', userId);

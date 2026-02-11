@@ -1,35 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from 'next/server';
 
-import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
+import { getMonthRange, json } from '@/shared/libs/api-route';
 
 export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
-  const month = request.nextUrl.searchParams.get("month");
+  const month = request.nextUrl.searchParams.get('month');
 
   if (!userId) {
-    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
+    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
   if (!month) {
-    return json(400, { error: { code: "VALIDATION_ERROR", message: "month is required" } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'month is required' } });
   }
 
-  const start = `${month}-01`;
-  const end = `${month}-31`;
+  const { start, end } = getMonthRange(month);
 
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
-    .from("inbody_records")
-    .select("id, measured_at, weight, skeletal_muscle_mass, body_fat_mass")
-    .eq("user_id", userId)
-    .gte("measured_at", start)
-    .lte("measured_at", end)
-    .order("measured_at", { ascending: true });
+    .from('inbody_records')
+    .select('id, measured_at, weight, skeletal_muscle_mass, body_fat_mass')
+    .eq('user_id', userId)
+    .gte('measured_at', start)
+    .lte('measured_at', end)
+    .order('measured_at', { ascending: true });
 
   if (error) {
-    return json(500, { error: { code: "DB_ERROR", message: error.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: error.message } });
   }
 
   return json(200, data ?? []);
@@ -39,7 +37,7 @@ export async function POST(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
   if (!userId) {
-    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
+    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
   const body = (await request.json()) as {
@@ -50,12 +48,12 @@ export async function POST(request: NextRequest) {
   };
 
   if (!body?.measuredAt) {
-    return json(400, { error: { code: "VALIDATION_ERROR", message: "measuredAt is required" } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'measuredAt is required' } });
   }
 
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
-    .from("inbody_records")
+    .from('inbody_records')
     .insert({
       user_id: userId,
       measured_at: body.measuredAt,
@@ -63,11 +61,11 @@ export async function POST(request: NextRequest) {
       skeletal_muscle_mass: body.skeletalMuscleMass ?? null,
       body_fat_mass: body.bodyFatMass ?? null,
     })
-    .select("id, measured_at, weight, skeletal_muscle_mass, body_fat_mass")
+    .select('id, measured_at, weight, skeletal_muscle_mass, body_fat_mass')
     .single();
 
   if (error) {
-    return json(500, { error: { code: "DB_ERROR", message: error.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: error.message } });
   }
 
   return json(201, data);

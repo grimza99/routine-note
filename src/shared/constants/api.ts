@@ -1,5 +1,3 @@
-import { DELETE } from '@/app/api/exercises/[exerciseId]/route';
-
 const API = {
   AUTH: {
     SIGNUP: '/api/auth/signup',

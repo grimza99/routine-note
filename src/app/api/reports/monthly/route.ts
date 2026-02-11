@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { getMonthRange, json } from '@/shared/libs/api-route';
 
 export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
@@ -23,8 +22,7 @@ export async function GET(request: NextRequest) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'month must be in YYYY-MM format' } });
   }
 
-  const start = `${month}-01`;
-  const end = new Date(Date.UTC(yearNumber, monthNumber, 0)).toISOString().slice(0, 10);
+  const { start, end } = getMonthRange(month);
 
   const supabase = getSupabaseAdmin();
   const { data: goal, error: goalError } = await supabase

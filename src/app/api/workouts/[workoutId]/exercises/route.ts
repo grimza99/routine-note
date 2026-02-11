@@ -5,9 +5,10 @@ import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
-type Params = { workoutId: string };
+type Params = Promise<{ workoutId: string }>;
 
 export async function POST(request: NextRequest, context: { params: Params }) {
+  const { workoutId } = await Promise.resolve(context.params);
   const userId = await getAuthUserId(request);
 
   if (!userId) {
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const { data: workout, error: workoutError } = await supabase
     .from("workouts")
     .select("id")
-    .eq("id", context.params.workoutId)
+    .eq("id", workoutId)
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
       return json(500, { error: { code: "DB_ERROR", message: workoutRoutineError.message } });
     }
 
-    if (!workoutRoutine || workoutRoutine.workout_id !== context.params.workoutId) {
+    if (!workoutRoutine || workoutRoutine.workout_id !== workoutId) {
       return json(404, { error: { code: "NOT_FOUND", message: "workout routine not found" } });
     }
   }
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     .from("workout_exercises")
     .insert({
       id: randomUUID(),
-      workout_id: context.params.workoutId,
+      workout_id: workoutId,
       workout_routine_id: body.workoutRoutineId ?? null,
       exercise_id: body.exerciseId,
       item_order: body.order,

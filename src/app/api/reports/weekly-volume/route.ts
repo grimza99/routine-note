@@ -1,8 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
-import { getCurrentWeekRange, getDayLabel } from '@/shared';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { getCurrentWeekRange, getDayLabel, json } from '@/shared/libs/api-route';
 
 type WeeklyVolumeItem = {
   day: string;

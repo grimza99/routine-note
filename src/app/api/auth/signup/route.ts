@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 import { getSupabaseAdmin, getSupabaseAnon } from '@/shared/libs/supabase';
+import { json } from '@/shared/libs/api-route';
 
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+interface ISignUpPayload {
+  email: string;
+  password: string;
+  username: string;
+  nickname?: string | null;
+  age?: number;
+  policy: boolean;
+}
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as {
-    email: string;
-    password: string;
-    username: string;
-    nickname?: string | null;
-    age?: number;
-    policy: boolean;
-  };
+  const body = (await request.json()) as ISignUpPayload;
 
   if (!body?.email || !body?.password || !body?.username) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: '이메일, 이름, 비밀번호는 필수 입력입니다.' } });
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   const normalizedNickname = body.nickname?.trim() ? body.nickname.trim() : body.username.trim();
 
   const supabaseAdmin = getSupabaseAdmin();
-  const { data: existingUser, error: existingUserError } = await supabaseAdmin
+  const { data: existingNickname, error: existingNicknameError } = await supabaseAdmin
     .from('users')
     .select('id')
     .eq('nickname', normalizedNickname)
@@ -33,15 +33,15 @@ export async function POST(request: NextRequest) {
     .eq('email', body.email)
     .maybeSingle();
 
-  if (existingUserError || existingEmailError) {
+  if (existingNicknameError || existingEmailError) {
     return json(500, {
-      error: { code: 'DB_ERROR', message: existingUserError?.message || existingEmailError?.message },
+      error: { code: 'DB_ERROR', message: existingNicknameError?.message || existingEmailError?.message },
     });
   }
   if (existingEmail) {
     return json(409, { error: { code: 'EMAIL_TAKEN', message: '이미 존재하는 이메일 입니다.' } });
   }
-  if (existingUser) {
+  if (existingNickname) {
     return json(409, { error: { code: 'NICKNAME_TAKEN', message: '이미 존재하는 닉네임 입니다.' } });
   }
 

@@ -4,7 +4,6 @@ export { InputField } from './ui/fields/InputField';
 export { TextareaField } from './ui/fields/TextareaField';
 export { Button } from './ui/buttons/Button';
 export { Calendar } from './ui/calendar/Calendar';
-export { Modal } from './ui/modals/Modal';
 export { ToastProvider } from './ui/toast/ToastProvider';
 export { Spinner } from './ui/loaders/Spinner';
 export { BouncingDots } from './ui/loaders/BouncingDots';
@@ -38,7 +37,6 @@ export { TOAST_MESSAGE } from './constants/toast';
 
 //hooks
 export { useOnClickOutside } from './hooks/useOnClickOutside';
-export { useModal } from './hooks/useModal';
 export { useToast } from './hooks/useToast';
 
 // libs

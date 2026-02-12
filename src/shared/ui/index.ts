@@ -1,4 +1,5 @@
 //shared - ui
 
-//modals v2
+//modals
 export { ModalBridgeProvider } from './modals/ModalBridgeProvider';
+export { Modal } from './modals/Modal';

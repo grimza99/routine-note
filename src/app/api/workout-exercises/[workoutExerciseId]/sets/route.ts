@@ -1,9 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-
+import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { json } from '@/shared/libs/api-route';
 
 type Params = Promise<{ workoutExerciseId: string }>;
 
@@ -27,7 +25,9 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     .maybeSingle();
 
   if (standaloneError) {
-    return json(500, { error: { code: 'workout_exercises DB_ERROR', message: standaloneError.message } });
+    return json(500, {
+      error: { code: 'DB_ERROR', message: 'workout_exercises DB select:' + standaloneError.message },
+    });
   }
 
   if (standalone) {
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
       .single();
 
     if (error) {
-      return json(500, { error: { code: 'sets insert DB_ERROR', message: error.message } });
+      return json(500, { error: { code: 'DB_ERROR', message: 'sets DB insert :' + error.message } });
     }
 
     return json(201, data);
@@ -58,7 +58,9 @@ export async function POST(request: NextRequest, context: { params: Params }) {
       .maybeSingle();
 
     if (rouineItemsDataError) {
-      return json(500, { error: { code: 'workout_routine_items DB_ERROR', message: rouineItemsDataError.message } });
+      return json(500, {
+        error: { code: 'DB_ERROR', message: 'workout_routine_items DB select' + rouineItemsDataError.message },
+      });
     }
     if (!routineExercise) {
       return json(404, { error: { code: 'NOT_FOUND', message: 'workout routine item not found' } });
@@ -77,7 +79,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
       .single();
 
     if (error) {
-      return json(500, { error: { code: 'sets insert DB_ERROR', message: error.message } });
+      return json(500, { error: { code: 'DB_ERROR', message: 'sets DB insert' + error.message } });
     }
 
     return json(201, data);

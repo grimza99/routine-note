@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { json } from '@/shared/libs/api-route';
 
 type Params = Promise<{ workoutRoutineId: string }>;
 
-type RequestBody = {
+type RequestPayload = {
   order?: number;
   note?: string;
 };
@@ -18,7 +17,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
-  const body = (await request.json()) as RequestBody;
+  const body = (await request.json()) as RequestPayload;
 
   if (body.order !== undefined && body.order < 1) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'order must be >= 1' } });

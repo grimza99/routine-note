@@ -1,8 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-
+import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { json } from '@/shared/libs/api-route';
 
 type Params = Promise<{ setId: string }>;
 
@@ -71,7 +69,7 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
   const { data: owner, error: ownerError } = await supabase.from('sets').select('id').eq('id', setId).maybeSingle();
 
   if (ownerError) {
-    return json(500, { error: { code: 'select sets DB_ERROR', message: ownerError.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: 'select sets DB:' + ownerError.message } });
   }
 
   if (!owner) {
@@ -81,7 +79,7 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
   const { error } = await supabase.from('sets').delete().eq('id', setId);
 
   if (error) {
-    return json(500, { error: { code: 'sets delete DB_ERROR', message: error.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: 'sets delete DB:' + error.message } });
   }
 
   return json(200, { ok: true });

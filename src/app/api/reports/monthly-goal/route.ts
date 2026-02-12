@@ -1,25 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
-
-import { getAuthUserId, getSupabaseAdmin } from "@/shared/libs/supabase";
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { NextRequest } from 'next/server';
+import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
+import { json } from '@/shared/libs/api-route';
 
 export async function POST(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
   if (!userId) {
-    return json(401, { error: { code: "UNAUTHORIZED", message: "missing or invalid token" } });
+    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
   const body = (await request.json()) as { month?: string; goalWorkoutDays?: number };
 
   if (!body?.month) {
-    return json(400, { error: { code: "VALIDATION_ERROR", message: "month is required" } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'month is required' } });
   }
 
   if (!Number.isFinite(body.goalWorkoutDays) || Number(body.goalWorkoutDays) <= 0) {
     return json(400, {
-      error: { code: "VALIDATION_ERROR", message: "goalWorkoutDays must be a positive number" },
+      error: { code: 'VALIDATION_ERROR', message: 'goalWorkoutDays must be a positive number' },
     });
   }
 
@@ -28,20 +26,20 @@ export async function POST(request: NextRequest) {
 
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
-    .from("monthly_goals")
+    .from('monthly_goals')
     .upsert(
       {
         user_id: userId,
         report_month: reportMonth,
         goal_workout_days: goalWorkoutDays,
       },
-      { onConflict: "user_id,report_month" }
+      { onConflict: 'user_id,report_month' },
     )
-    .select("id, report_month, goal_workout_days")
+    .select('id, report_month, goal_workout_days')
     .single();
 
   if (error) {
-    return json(500, { error: { code: "DB_ERROR", message: error.message } });
+    return json(500, { error: { code: 'DB_ERROR', message: error.message } });
   }
 
   return json(200, {

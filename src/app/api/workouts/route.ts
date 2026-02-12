@@ -1,23 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
-
+import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
 import { json } from '@/shared/libs/api-route';
 
-type WorkoutSet = {
+type ExerciseSet = {
   id: string;
   weight: number | null;
   reps: number | null;
 };
 
-type WorkoutExercise = {
+type WorkoutStandaloneExercise = {
   id: string;
   exercise_id: string;
   exercise_name?: string | null;
   note: string | null;
   item_order: number;
   workout_routine_id: string | null;
-  sets: WorkoutSet[] | null;
+  sets: ExerciseSet[] | null;
 };
 
 type WorkoutRoutine = {
@@ -26,54 +25,50 @@ type WorkoutRoutine = {
   item_order: number;
   note: string | null;
   routines: { id: string; name: string } | null;
-  workout_routine_items: RoutineItem[] | null;
+  workout_routine_items: RoutineExercise[] | null;
 };
 
-type RoutineItem = {
+type RoutineExercise = {
   id: string;
   exercise_name: string | null;
-  sets: WorkoutSet[] | null;
+  sets: ExerciseSet[] | null;
 };
 
 type WorkoutResponse = {
   id: string;
   workout_date: string;
   workout_routines: WorkoutRoutine[] | null;
-  workout_exercises: WorkoutExercise[] | null;
-};
-
-type RoutineRequest = {
-  routineId?: string;
-  order?: number;
-  note?: string;
-};
-
-type ExerciseRequest = {
-  exerciseId?: string;
-  exerciseName?: string;
-  order?: number;
-  note?: string;
-  routineIndex?: number;
+  workout_exercises: WorkoutStandaloneExercise[] | null;
 };
 
 type RequestBody = {
   date?: string;
-  routines?: RoutineRequest[];
-  exercises?: ExerciseRequest[];
+  routines?: {
+    routineId?: string;
+    order?: number;
+    note?: string;
+  }[];
+  exercises?: {
+    exerciseId?: string;
+    exerciseName?: string;
+    order?: number;
+    note?: string;
+    routineIndex?: number;
+  }[];
 };
 
-const mapRoutineItem = (item: RoutineItem) => ({
-  id: item.id,
-  name: item.exercise_name ?? '',
+const mapRoutineExercises = (exercise: RoutineExercise) => ({
+  id: exercise.id,
+  name: exercise.exercise_name ?? '',
   sets:
-    item.sets?.map((set) => ({
+    exercise.sets?.map((set) => ({
       id: set.id,
       weight: set.weight,
       reps: set.reps,
     })) ?? [],
 });
 
-const mapStandaloneExercise = (exercise: WorkoutExercise) => ({
+const mapStandaloneExercise = (exercise: WorkoutStandaloneExercise) => ({
   id: exercise.id,
   name: exercise.exercise_name ?? '',
   note: exercise.note,
@@ -89,7 +84,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
   id: workout.id,
   date: workout.workout_date,
   routines: (workout.workout_routines ?? []).map((routine) => {
-    const routineItems = routine.workout_routine_items ?? [];
+    const routineExercises = routine.workout_routine_items ?? [];
 
     return {
       id: routine.id,
@@ -97,7 +92,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
       routineName: routine.routines?.name ?? null,
       note: routine.note,
       order: routine.item_order,
-      exercises: routineItems.map(mapRoutineItem),
+      exercises: routineExercises.map(mapRoutineExercises),
     };
   }),
   exercises: (workout.workout_exercises ?? []).map(mapStandaloneExercise),

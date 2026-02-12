@@ -11,9 +11,9 @@ type ModalProviderProps = {
 };
 
 type ModalContextValue = {
-  activeModalKey: string | null;
+  activeModalKey: keyof ModalRegistry | null;
   modalPayload: unknown;
-  openModal: (modalKey: string, payload?: unknown) => void;
+  openModal: (modalKey: keyof ModalRegistry, payload?: unknown) => void;
   closeModal: () => void;
   isModalOpen: (modalKey: string) => boolean;
 };
@@ -21,10 +21,10 @@ type ModalContextValue = {
 const ModalContext = createContext<ModalContextValue | null>(null);
 
 export function ModalProvider({ children, registry }: ModalProviderProps) {
-  const [activeModalKey, setActiveModalKey] = useState<string | null>(null);
+  const [activeModalKey, setActiveModalKey] = useState<keyof ModalRegistry | null>(null);
   const [modalPayload, setModalPayload] = useState<unknown>(null);
 
-  const openModal = useCallback((modalKey: string, payload?: unknown) => {
+  const openModal = useCallback((modalKey: keyof ModalRegistry, payload?: unknown) => {
     setActiveModalKey(modalKey);
     setModalPayload(payload ?? null);
   }, []);
@@ -47,9 +47,6 @@ export function ModalProvider({ children, registry }: ModalProviderProps) {
     [activeModalKey, closeModal, isModalOpen, modalPayload, openModal],
   );
 
-  if (activeModalKey && !registry[activeModalKey]) {
-    throw new Error(`모달에 사용된 "${activeModalKey}"가 레지스트리에 등록되어있지 않습니다.`);
-  }
   const currentModal = activeModalKey ? registry[activeModalKey] : null;
 
   return (

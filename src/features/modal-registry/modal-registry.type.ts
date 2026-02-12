@@ -11,4 +11,11 @@ type ModalRegistryEntry = {
   render: (payload: unknown, context: ModalRenderContext) => ReactNode;
 };
 
-export type ModalRegistry = Record<string, ModalRegistryEntry>;
+type ModalRegistryKey =
+  | 'deleteWorkout'
+  | 'recordWorkout'
+  | 'manageWorkout'
+  | 'createRoutine'
+  | 'editRoutine'
+  | 'deleteRoutine';
+export type ModalRegistry = Record<ModalRegistryKey, ModalRegistryEntry>;

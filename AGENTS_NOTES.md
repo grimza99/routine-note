@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-02-12] [auth] `/auth` prerender 에러 대응을 위한 `useSearchParams` 제거
+  - 영향/증상/개요 (필수): `/auth` 빌드 시 prerender 에러가 발생해 로그인 폼의 URL 쿼리 읽기 방식 점검 필요.
+  - 결정/조치 (필수): `LoginForm`에서 `useSearchParams`를 제거하고 `window.location.search` 기반 즉시 계산으로 `next` 파라미터를 전달하도록 변경.
+  - 관련 파일/링크 (선택): `src/features/auth/ui/LoginForm.tsx`
+
 - [2026-02-12] [auth] `src/proxy.ts` `next` 파라미터 기반 로그인 후 리다이렉트 반영
   - 영향/증상/개요 (필수): 보호 라우트 접근 시 `/auth?next=...`로 이동하지만 로그인 성공 후 항상 기본 경로로만 이동하던 흐름 보완 필요.
   - 결정/조치 (필수): `LoginForm`에서 `next` 쿼리를 읽어 `useLoginMutation`에 전달하고, mutation 내부에서 내부 경로(`/` 시작, `//` 제외)만 허용해 안전하게 `router.push` 하도록 수정.

@@ -2,11 +2,10 @@
 import { Button, InputField } from '@/shared';
 import { FormEvent, useState } from 'react';
 import { useLoginMutation } from '../model/auth.mutation';
-import { useSearchParams } from 'next/navigation';
 
 export default function LoginForm() {
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('next') ?? undefined;
+  const redirectTo =
+    typeof window === 'undefined' ? undefined : (new URLSearchParams(window.location.search).get('next') ?? undefined);
 
   const [payload, setPayload] = useState({
     email: '',

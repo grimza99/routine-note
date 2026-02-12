@@ -1,8 +1,7 @@
 'use client';
-import { PATHS } from '@/shared/constants';
 import { usePathname } from 'next/navigation';
 
-const EXCLUDE_PATHS = [PATHS.ACCOUNT.PASSWORD_RESET];
+const EXCLUDE_PATHS = ['password-reset'];
 
 type TPageHeaderBannerVariant = 'routine-cal' | 'manage' | 'mypage' | 'report' | 'challenge';
 

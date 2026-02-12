@@ -2,17 +2,17 @@
   "cookies": [
     {
       "name": "sb_refresh_token",
-      "value": "jq6rsqnuqje3",
+      "value": "uzbxz3ym3i3t",
       "domain": "127.0.0.1",
       "path": "/",
-      "expires": 1770622196.312568,
+      "expires": 1770635063.05226,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "sb_access_token",
-      "value": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjQ1YzljZmY1LWM1YWEtNDBlNy05OTZkLTU5ZjY1NGIyMGNkYSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3RweHRyZ294d3h3bW1lZ3FtY3RyLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiI2OTc3YThmZS05MTY2LTQ2MDEtOTBjZi02ZmZkYTg2YmRiOTAiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzcwMzY2NTk2LCJpYXQiOjE3NzAzNjI5OTYsImVtYWlsIjoiZTJlKzE3NzAzNjI5OTQ0OTRAZXhhbXBsZS5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImFnZSI6MjAsImVtYWlsIjoiZTJlKzE3NzAzNjI5OTQ0OTRAZXhhbXBsZS5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmlja25hbWUiOiJlMmUtdXNlci0xNzcwMzYyOTk0NDk0IiwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiI2OTc3YThmZS05MTY2LTQ2MDEtOTBjZi02ZmZkYTg2YmRiOTAiLCJ1c2VybmFtZSI6IkUyRS1Vc2VyIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NzAzNjI5OTZ9XSwic2Vzc2lvbl9pZCI6ImYxMDY0NDdlLWIxOWQtNGE3MS1hOGM0LWQ4ZmM5ZWUyZmIwZCIsImlzX2Fub255bW91cyI6ZmFsc2V9.Yj5tuExpdQHzl93TG6VuuCyG9IEsGUt6kdwFMvcMHR0VXSnzK0TR_fjRIomd_asatWcFJqgZWmkU0XtCv5PPXw",
+      "value": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjQ1YzljZmY1LWM1YWEtNDBlNy05OTZkLTU5ZjY1NGIyMGNkYSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3RweHRyZ294d3h3bW1lZ3FtY3RyLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIyY2NjYjRmZC04ODgwLTQ5ODEtODk1Yi0wYzA1ZjI4ZDdkOWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzcwMzc5NDYyLCJpYXQiOjE3NzAzNzU4NjIsImVtYWlsIjoiZTJlKzE3NzAzNzU4NjE2MjlAZXhhbXBsZS5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImFnZSI6MjAsImVtYWlsIjoiZTJlKzE3NzAzNzU4NjE2MjlAZXhhbXBsZS5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmlja25hbWUiOiJlMmUtdXNlci0xNzcwMzc1ODYxNjI5IiwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiIyY2NjYjRmZC04ODgwLTQ5ODEtODk1Yi0wYzA1ZjI4ZDdkOWYiLCJ1c2VybmFtZSI6IkUyRS1Vc2VyIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NzAzNzU4NjJ9XSwic2Vzc2lvbl9pZCI6IjE1Y2U2MGIxLTVkNDEtNGMxOS1hN2ExLTJhZjE0NTU0MzkzZiIsImlzX2Fub255bW91cyI6ZmFsc2V9.CyRDqNIATaDqpQn5mbx1HosCPgz08vcWv6Yh3jC3dM1KGNJr7-2pMmHAvwQEepBTOqWxXltGXeWbQSBphTCQLQ",
       "domain": "127.0.0.1",
       "path": "/",
       "expires": -1,
@@ -27,7 +27,7 @@
       "localStorage": [
         {
           "name": "auth-store",
-          "value": "{\"state\":{\"id\":\"6977a8fe-9166-4601-90cf-6ffda86bdb90\",\"username\":\"E2E-User\",\"nickname\":\"e2e-user-1770362994494\",\"email\":\"e2e+1770362994494@example.com\",\"age\":20,\"profile_image\":null},\"version\":0}"
+          "value": "{\"state\":{\"id\":\"2cccb4fd-8880-4981-895b-0c05f28d7d9f\",\"username\":\"E2E-User\",\"nickname\":\"e2e-user-1770375861629\",\"email\":\"e2e+1770375861629@example.com\",\"age\":20,\"profile_image\":null},\"version\":0}"
         }
       ]
     }

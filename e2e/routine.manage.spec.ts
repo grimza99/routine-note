@@ -21,7 +21,10 @@ test.describe.serial('루틴 관리 플로우', () => {
     const createdRoutineHeading = page.getByRole('heading', { name: routineName });
     await expect(createdRoutineHeading).toBeVisible();
 
-    const createdRoutineCard = page.locator('div', { has: createdRoutineHeading });
+    const createdRoutineCard = page
+      .locator('div', { has: createdRoutineHeading })
+      .filter({ has: page.getByRole('button', { name: '수정' }) })
+      .first();
     await createdRoutineCard.getByRole('button', { name: '수정' }).click();
 
     const form = page.locator('form');
@@ -36,7 +39,10 @@ test.describe.serial('루틴 관리 플로우', () => {
     const updatedRoutineHeading = page.getByRole('heading', { name: updatedRoutineName });
     await expect(updatedRoutineHeading).toBeVisible();
 
-    const updatedRoutineCard = page.locator('div', { has: updatedRoutineHeading });
+    const updatedRoutineCard = page
+      .locator('div', { has: updatedRoutineHeading })
+      .filter({ has: page.getByRole('button', { name: '삭제' }) })
+      .first();
     await updatedRoutineCard.getByRole('button', { name: '삭제' }).click();
 
     await page.getByRole('button', { name: '확인' }).click();

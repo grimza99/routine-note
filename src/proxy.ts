@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { TOKEN } from './shared/constants';
 
 const APP_HOME_PATH = '/routine/routine-cal';
 const AUTH_PATH = '/auth';
 const PROTECTED_PATH_PREFIXES = ['/routine', '/report', '/challenge', '/mypage'];
 
 const hasAuthToken = (request: NextRequest) => {
-  const accessToken = request.cookies.get('sb_access_token')?.value;
-  const refreshToken = request.cookies.get('sb_refresh_token')?.value;
+  const accessToken = request.cookies.get(TOKEN.ACCESS)?.value;
+  const refreshToken = request.cookies.get(TOKEN.REFRESH)?.value;
 
   return Boolean(accessToken || refreshToken);
 };

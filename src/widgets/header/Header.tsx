@@ -2,10 +2,8 @@
 
 import { useRef, useState } from 'react';
 import Link from 'next/link';
-import { Button, PATHS, PROJECT, useOnClickOutside } from '@/shared';
+import { Button, PROJECT, useOnClickOutside } from '@/shared';
 import { useLogoutMutation } from '@/features/auth/model/auth.mutation';
-import { useRouter } from 'next/navigation';
-import { useQueryClient } from '@tanstack/react-query';
 
 type HeaderNavItem = {
   label: string;
@@ -23,8 +21,6 @@ const navItems: HeaderNavItem[] = [
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLElement | null>(null);
-  const router = useRouter();
-  const queryClient = useQueryClient();
 
   const handleToggleMenu = () => setIsMenuOpen((prev) => !prev);
   const handleCloseMenu = () => setIsMenuOpen(false);
@@ -32,11 +28,6 @@ export default function Header() {
   useOnClickOutside(menuRef, handleCloseMenu, { enabled: isMenuOpen });
   const { mutateAsync: logout } = useLogoutMutation();
 
-  const handleLogout = async () => {
-    router.push(PATHS.HOME);
-    queryClient.clear();
-    await logout();
-  };
   return (
     <header className="sticky top-0 z-10 w-full bg-background">
       <div className="mx-auto flex w-full max-w-300 items-center justify-between px-6 py-4">
@@ -61,7 +52,7 @@ export default function Header() {
               {item.label}
             </Link>
           ))}
-          <Button label="로그아웃" onClick={handleLogout} variant="primary" className="w-fit" />
+          <Button label="로그아웃" onClick={async () => await logout()} variant="primary" className="w-fit" />
         </nav>
 
         <button
@@ -106,7 +97,7 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
-            <Button label="로그아웃" onClick={handleLogout} variant="primary" className="w-fit" />
+            <Button label="로그아웃" onClick={async () => await logout()} variant="primary" className="w-fit" />
           </nav>
         </aside>
       </div>

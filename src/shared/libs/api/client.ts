@@ -1,3 +1,4 @@
+import { TOKEN } from '@/shared/constants';
 import { supabaseClient } from '@/shared/libs/supabase';
 
 type ApiError = {
@@ -27,6 +28,10 @@ const setCookieValue = (name: string, value: string) => {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
   document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; SameSite=Lax${secure}`;
 };
+export const deleteCookieValue = (name: string) => {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+};
 
 const applyAccessTokenCookieFromResponse = (payload: unknown) => {
   if (!payload || typeof payload !== 'object') return;
@@ -34,7 +39,7 @@ const applyAccessTokenCookieFromResponse = (payload: unknown) => {
   const data = payload as AuthSessionPayload;
   const accessToken = data.access_token ?? data.token ?? null;
   if (!accessToken) return;
-  setCookieValue('sb_access_token', accessToken);
+  setCookieValue(TOKEN.ACCESS, accessToken);
 };
 
 const refreshAccessToken = async () => {
@@ -55,7 +60,7 @@ const refreshAccessToken = async () => {
 };
 
 const getAccessToken = async () => {
-  const cookieToken = getCookieValue('sb_access_token');
+  const cookieToken = getCookieValue(TOKEN.ACCESS);
   if (cookieToken) return cookieToken;
   const { data } = await supabaseClient.auth.getSession();
   return data.session?.access_token ?? null;

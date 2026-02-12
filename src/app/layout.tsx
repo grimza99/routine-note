@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { QueryProvider, ToastProvider } from '@/shared';
 import './globals.css';
+import { ModalBridgeProvider } from '@/shared/ui';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-full`}>
         <ToastProvider>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <ModalBridgeProvider>{children}</ModalBridgeProvider>
+          </QueryProvider>
         </ToastProvider>
       </body>
     </html>

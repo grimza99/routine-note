@@ -1,7 +1,7 @@
 'use client';
 import { useMyChallengeRank, useRoutineList, useWorkoutQuery } from '@/entities';
 import useAuthStore from '@/entities/auth/model/useAuthStore';
-import { useMyInfoMutation } from '@/features/auth';
+import { ResetPasswordRequestButton, useMyInfoMutation } from '@/features/auth';
 import AccountInfoSection from '@/features/auth/ui/AccountInfoSection';
 import MyPageProfile from '@/features/auth/ui/MyPageProfile';
 import { SummaryCard } from '@/shared';
@@ -54,6 +54,7 @@ export default function MyPage() {
         goalWorkoutDays={goalArchivement?.goalWorkoutDays}
         onSaveInfo={updateMyInfo}
       />
+      <ResetPasswordRequestButton />
     </div>
   );
 }

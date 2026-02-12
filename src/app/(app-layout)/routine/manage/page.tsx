@@ -1,26 +1,20 @@
 'use client';
 import useAuthStore from '@/entities/auth/model/useAuthStore';
 import { useRoutineList } from '@/entities/routine/model/routine.query';
-import { CreateRoutineModal, EditRoutineModal, useDeleteRoutineMutation } from '@/features/routine';
-import { Button, CommonConfirmModal, Modal, RoutineCard, Spinner } from '@/shared';
-import { useState } from 'react';
+import { useDeleteRoutineMutation } from '@/features/routine';
+import { Button, RoutineCard, Spinner } from '@/shared';
+import { useModal } from '@/shared/hooks';
 
 export default function RoutineManagePage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  const [editingRoutineId, setEditingRoutineId] = useState<string>('');
-  const [deletingRoutineId, setDeletingRoutineId] = useState<string>('');
-
+  const { openModal } = useModal();
   const { nickname } = useAuthStore();
-  const { data: routineListData } = useRoutineList();
 
+  const { data: routineListData } = useRoutineList();
   const { mutateAsync: deleteRoutine, isPending: isDeleting } = useDeleteRoutineMutation();
 
   return (
     <div className="flex flex-col gap-10 w-full">
-      <Button label={'새 루틴 추가하기'} className="w-fit" onClick={() => setIsModalOpen(true)} />
+      <Button label={'새 루틴 추가하기'} className="w-fit" onClick={() => openModal('createRoutine')} />
       <h3 className="text-2xl text-text-secondary">{nickname} 님의 루틴</h3>
       {!routineListData ? (
         <Spinner size={48} />
@@ -36,16 +30,17 @@ export default function RoutineManagePage() {
                       label="수정"
                       className="w-fit py-1"
                       onClick={() => {
-                        setIsEditModalOpen(true);
-                        setEditingRoutineId(routine.routineId);
+                        openModal('editRoutine', { routineId: routine.routineId });
                       }}
                     />
                     <Button
                       label="삭제"
                       className="w-fit py-1"
                       onClick={() => {
-                        setIsDeleteModalOpen(true);
-                        setDeletingRoutineId(routine.routineId);
+                        openModal('deleteRoutine', {
+                          isPending: isDeleting,
+                          onConfirm: () => deleteRoutine(routine.routineId),
+                        });
                       }}
                     />
                   </div>
@@ -60,56 +55,6 @@ export default function RoutineManagePage() {
           )}
         </>
       )}
-      <Modal
-        modalId="routine-manage-modal"
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-        }}
-      >
-        <CreateRoutineModal
-          onClose={() => {
-            setIsModalOpen(false);
-          }}
-        />
-      </Modal>
-      <Modal
-        modalId="routine-edit-modal"
-        isOpen={isEditModalOpen}
-        onClose={() => {
-          setIsEditModalOpen(false);
-        }}
-      >
-        {isEditModalOpen && editingRoutineId ? (
-          <EditRoutineModal
-            routineId={editingRoutineId}
-            onClose={() => {
-              setIsEditModalOpen(false);
-            }}
-          />
-        ) : null}
-      </Modal>
-      <Modal
-        modalId="routine-delete-confirm-modal"
-        isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-        }}
-      >
-        {isDeleteModalOpen && deletingRoutineId && (
-          <CommonConfirmModal
-            title="정말 이 루틴을 삭제하시겠습니까?"
-            message="삭제된 루틴은 복구할 수 없습니다."
-            onClose={() => {
-              setIsDeleteModalOpen(false);
-            }}
-            onConfirm={() => {
-              deleteRoutine(deletingRoutineId);
-            }}
-            isPending={isDeleting}
-          />
-        )}
-      </Modal>
     </div>
   );
 }

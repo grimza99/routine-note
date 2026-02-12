@@ -2,14 +2,18 @@
 import { Button, InputField } from '@/shared';
 import { FormEvent, useState } from 'react';
 import { useLoginMutation } from '../model/auth.mutation';
+import { useSearchParams } from 'next/navigation';
 
 export default function LoginForm() {
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('next') ?? undefined;
+
   const [payload, setPayload] = useState({
     email: '',
     password: '',
   });
 
-  const { mutateAsync: login, isPending } = useLoginMutation();
+  const { mutateAsync: login, isPending } = useLoginMutation(redirectTo);
 
   //handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

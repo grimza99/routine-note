@@ -19,6 +19,16 @@
 
 ## 노트
 
+- [2026-02-12] [auth] `src/proxy.ts` `next` 파라미터 기반 로그인 후 리다이렉트 반영
+  - 영향/증상/개요 (필수): 보호 라우트 접근 시 `/auth?next=...`로 이동하지만 로그인 성공 후 항상 기본 경로로만 이동하던 흐름 보완 필요.
+  - 결정/조치 (필수): `LoginForm`에서 `next` 쿼리를 읽어 `useLoginMutation`에 전달하고, mutation 내부에서 내부 경로(`/` 시작, `//` 제외)만 허용해 안전하게 `router.push` 하도록 수정.
+  - 관련 파일/링크 (선택): `src/features/auth/ui/LoginForm.tsx`, `src/features/auth/model/auth.mutation.ts`, `src/proxy.ts`
+
+- [2026-02-11] [next16] 동적 API 라우트 params Promise 타입 정리 및 빌드 차단 이슈 확인
+  - 영향/증상/개요 (필수): Next.js 16 빌드에서 동적 라우트 핸들러의 `context.params`가 Promise 시그니처를 요구해 타입 불일치 발생.
+  - 결정/조치 (필수): `[exerciseId]` 포함 모든 동적 API 라우트에서 `type Params = Promise<...>`로 통일하고 핸들러에서 `await context.params` 사용으로 수정. 검증 빌드 중 `@/shared`의 `getMonthRange` export 누락(월간 랭킹/리포트 라우트) 별도 오류 확인.
+  - 관련 파일/링크 (선택): `src/app/api/exercises/[exerciseId]/route.ts`, `src/app/api/workouts/[workoutId]/route.ts`, `src/app/api/challenges/monthly-rank/route.ts`, `src/app/api/reports/monthly-trends/route.ts`
+
 - [2026-02-06] [backend] workout 루틴 아이템 저장 구조 변경
   - 영향/증상/개요 (필수): 루틴 기반 운동은 `workout_exercises`가 아닌 `workout_routine_items`에 저장하도록 구조 변경 필요.
   - 결정/조치 (필수): `workouts` POST에서 루틴 아이템을 `workout_routine_items`로 insert, `workoutSelect`/응답 매핑 변경, `workout_exercises`는 standalone만 저장하도록 문서 반영.

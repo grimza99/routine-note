@@ -70,8 +70,14 @@ interface LoginPayload {
   email: string;
   password: string;
 }
+const getSafeRedirectPath = (redirectTo?: string) => {
+  if (!redirectTo) return PATHS.ROUTINE.CAL;
+  if (!redirectTo.startsWith('/')) return PATHS.ROUTINE.CAL;
+  if (redirectTo.startsWith('//')) return PATHS.ROUTINE.CAL;
+  return redirectTo;
+};
 
-export const useLoginMutation = () => {
+export const useLoginMutation = (redirectTo?: string) => {
   const router = useRouter();
   const { showToast } = useToast();
   const { setAuth } = useAuthStoreActions();
@@ -102,7 +108,7 @@ export const useLoginMutation = () => {
           profile_image: data.profile_image,
         });
       }
-      router.push(PATHS.ROUTINE.CAL);
+      router.push(getSafeRedirectPath(redirectTo));
       showToast({ message: TOAST_MESSAGE.SUCCESS_LOGIN });
     },
     onError: (err) => {

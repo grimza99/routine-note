@@ -1,6 +1,7 @@
 import { useAuthStoreActions } from '@/entities/auth/model/useAuthStore';
 import { API, PATHS, TOAST_MESSAGE, useToast } from '@/shared';
-import { api } from '@/shared/libs/api';
+import { TOKEN } from '@/shared/constants';
+import { api, deleteCookieValue } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
@@ -134,9 +135,10 @@ export const useLogoutMutation = () => {
       return res.data;
     },
     onSuccess: () => {
+      router.push(PATHS.HOME);
+      deleteCookieValue(TOKEN.ACCESS);
       queryClient.clear();
       clearAuth();
-      router.push('/auth');
     },
   });
 };

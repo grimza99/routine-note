@@ -174,7 +174,10 @@ interface PasswordResetConfirmPayload {
   newPassword: string;
 }
 export const usePasswordResetConfirmMutation = () => {
+  const queryClient = useQueryClient();
+  const { clearAuth } = useAuthStoreActions();
   const { showToast } = useToast();
+
   const router = useRouter();
   return useMutation({
     mutationFn: async (payload: PasswordResetConfirmPayload) => {
@@ -189,8 +192,11 @@ export const usePasswordResetConfirmMutation = () => {
       }
     },
     onSuccess: () => {
+      router.replace(PATHS.AUTH);
+      deleteCookieValue(TOKEN.ACCESS);
+      queryClient.clear();
+      clearAuth();
       showToast({ message: TOAST_MESSAGE.SUCCESS_PASSWORD_RESET_CONFIRM });
-      router.replace(PATHS.ACCOUNT.MYPAGE);
     },
     onError: () => {
       showToast({ message: '비밀번호 재설정에 실패 했습니다.', variant: 'error' });

@@ -1,8 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Modal, PROJECT } from '@/shared';
+import { PROJECT } from '@/shared';
 import { POLICIES } from '@/entities';
+import { Modal } from '@/shared/ui';
 
 type PolicyKey = keyof typeof POLICIES;
 

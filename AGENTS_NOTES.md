@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-02-12] [ui] 모달 V2 스켈레톤(provider/registry/useModal) 신규 추가
+  - 영향/증상/개요 (필수): 기존 모달 코드를 유지한 채 key 기반 레지스트리 패턴을 실험/점진 전환할 수 있는 신규 구조 필요.
+  - 결정/조치 (필수): `shared`에 범용 `ModalProvider/useModal`을 추가하고, `app/providers/modal`에 앱 전용 `modalRegistry`/bridge provider를 신설. 기존 모달 사용처는 수정하지 않고 루트 레이아웃에만 브리지 provider 연결.
+  - 관련 파일/링크 (선택): `src/shared/ui/modals-v2/ModalProvider.tsx`, `src/shared/ui/modals-v2/types.ts`, `src/shared/hooks/useModal.ts`, `src/app/providers/modal/modalRegistry.tsx`, `src/app/providers/modal/ModalBridgeProvider.tsx`, `src/app/layout.tsx`
+
 - [2026-02-12] [auth] `/auth` prerender 에러 대응을 위한 `useSearchParams` 제거
   - 영향/증상/개요 (필수): `/auth` 빌드 시 prerender 에러가 발생해 로그인 폼의 URL 쿼리 읽기 방식 점검 필요.
   - 결정/조치 (필수): `LoginForm`에서 `useSearchParams`를 제거하고 `window.location.search` 기반 즉시 계산으로 `next` 파라미터를 전달하도록 변경.

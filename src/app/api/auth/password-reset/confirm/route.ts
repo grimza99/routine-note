@@ -1,20 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
-
+import { NextRequest } from 'next/server';
 import { getSupabaseAdmin } from '@/shared/libs/supabase';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { json } from '@/shared/libs/api-route';
+import { TOKEN } from '@/shared/constants';
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as { accessToken?: string; newPassword?: string };
+  const body = (await request.json()) as { newPassword?: string };
 
-  if (!body?.accessToken || !body?.newPassword) {
+  if (!body?.newPassword) {
     return json(400, {
       error: { code: 'VALIDATION_ERROR', message: 'accessToken and newPassword are required' },
     });
   }
-
+  const accessToken = request.cookies.get(TOKEN.ACCESS)?.value;
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase.auth.getUser(body.accessToken);
+  const { data, error } = await supabase.auth.getUser(accessToken);
 
   if (error || !data?.user?.id) {
     return json(401, { error: { code: 'AUTH_ERROR', message: error?.message || 'invalid token' } });

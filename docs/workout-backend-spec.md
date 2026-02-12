@@ -153,16 +153,9 @@
 
 #### POST /auth/password-reset/request
 
-설명: 비밀번호 재설정 이메일 발송 (로그인 상태면 email 생략 가능)
+설명: 슈파베이스의 auth 에 등록된 이메일 주소로 비밀번호 재설정 이메일 발송
 
-요청
-
-```json
-{
-  "email?": "user@example.com",
-  "redirectTo?": "https://app.example.com/reset-password"
-}
-```
+요청 body x
 
 응답
 
@@ -172,13 +165,12 @@
 
 #### POST /auth/password-reset/confirm
 
-설명: 이메일 인증 링크의 accessToken으로 비밀번호 변경
+설명: request시 쿠키에 첨부된 accessToken으로 비밀번호 변경
 
 요청
 
 ```json
 {
-  "accessToken": "token-from-email-link",
   "newPassword": "newPassword123"
 }
 ```

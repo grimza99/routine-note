@@ -1,5 +1,8 @@
 'use client';
+import { PATHS } from '@/shared/constants';
 import { usePathname } from 'next/navigation';
+
+const EXCLUDE_PATHS = [PATHS.ACCOUNT.PASSWORD_RESET];
 
 type TPageHeaderBannerVariant = 'routine-cal' | 'manage' | 'mypage' | 'report' | 'challenge';
 
@@ -33,6 +36,9 @@ const PAGE_HEADER_BANNER_CONTENT: Record<TPageHeaderBannerVariant, PageHeaderBan
 
 export default function PageHeaderBanner() {
   const pathname = usePathname().split('/');
+  if (EXCLUDE_PATHS.includes(pathname[pathname.length - 1])) {
+    return null;
+  }
   const variant = pathname[pathname.length - 1] as TPageHeaderBannerVariant;
   const { title, subtitle } = PAGE_HEADER_BANNER_CONTENT[variant];
 

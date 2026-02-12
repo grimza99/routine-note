@@ -3,6 +3,9 @@ const PATHS = {
   AUTH: {
     LOGIN: '/auth/login',
     SIGNUP: '/auth/signup',
+  },
+  ACCOUNT: {
+    MYPAGE: '/mypage',
     PASSWORD_RESET: '/password-reset',
   },
   ROUTINE: {

@@ -1,3 +1,4 @@
+'use client';
 import { useAuthStoreActions } from '@/entities/auth/model/useAuthStore';
 import { API, PATHS, TOAST_MESSAGE, useToast } from '@/shared';
 import { TOKEN } from '@/shared/constants';
@@ -139,6 +140,60 @@ export const useLogoutMutation = () => {
       deleteCookieValue(TOKEN.ACCESS);
       queryClient.clear();
       clearAuth();
+    },
+  });
+};
+
+//-----------------------------------------------비밀번호 리셋 메일 발송---------------------------------------------//
+
+export const usePasswordResetMutation = () => {
+  const { showToast } = useToast();
+  return useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await api.post(API.AUTH.PASSWORD_RESET_REQUEST);
+        if (res.error) {
+          throw res.error;
+        }
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      showToast({ message: TOAST_MESSAGE.SUCCESS_PASSWORD_RESET_REQUEST });
+    },
+    onError: () => {
+      showToast({ message: '비밀번호 재설정 이메일 전송에 실패 했습니다.', variant: 'error' });
+    },
+  });
+};
+//-----------------------------------------------비밀번호 리셋---------------------------------------------//
+
+interface PasswordResetConfirmPayload {
+  newPassword: string;
+}
+export const usePasswordResetConfirmMutation = () => {
+  const { showToast } = useToast();
+  const router = useRouter();
+  return useMutation({
+    mutationFn: async (payload: PasswordResetConfirmPayload) => {
+      try {
+        const res = await api.post(API.AUTH.PASSWORD_RESET_CONFIRM, payload);
+        if (res.error) {
+          throw res.error;
+        }
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      showToast({ message: TOAST_MESSAGE.SUCCESS_PASSWORD_RESET_CONFIRM });
+      router.replace(PATHS.ACCOUNT.MYPAGE);
+    },
+    onError: () => {
+      showToast({ message: '비밀번호 재설정에 실패 했습니다.', variant: 'error' });
     },
   });
 };

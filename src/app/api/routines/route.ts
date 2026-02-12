@@ -1,9 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-
+import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { json } from '@/shared/libs/api-route';
 
 type RoutineItem = {
   id: string;
@@ -16,11 +14,6 @@ type RoutineResponse = {
   id: string;
   name: string;
   routine_items: RoutineItem[] | null;
-};
-
-type RoutineExerciseRequest = {
-  exerciseName?: string;
-  order?: number;
 };
 
 const mapRoutine = (routine: RoutineResponse) => ({
@@ -95,6 +88,14 @@ export async function GET(request: NextRequest) {
 
 // ---------------------------------POST /api/routines -create routine
 
+interface RoutinePayload {
+  routineName: string;
+  exercises: {
+    exerciseName?: string;
+    order?: number;
+  }[];
+}
+
 export async function POST(request: NextRequest) {
   const userId = await getAuthUserId(request);
 
@@ -102,13 +103,10 @@ export async function POST(request: NextRequest) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
-  const body = (await request.json()) as {
-    routineName?: string;
-    exercises?: RoutineExerciseRequest[];
-  };
+  const body = (await request.json()) as RoutinePayload;
 
   if (!body.routineName || !body.exercises || body.exercises.length === 0) {
-    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routineName &exercises is required' } });
+    return json(400, { error: { code: 'VALIDATION_ERROR', message: '루틴이름과 운동은 필수로 입력해야 합니다.' } });
   }
   const isDuplicateExerciseNames =
     body.exercises.length !== new Set(body.exercises.map((ex) => ex.exerciseName?.trim())).size;

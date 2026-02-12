@@ -1,9 +1,7 @@
 import { randomUUID } from 'crypto';
-import { NextRequest, NextResponse } from 'next/server';
-
+import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
-
-const json = (status: number, body: unknown) => NextResponse.json(body, { status });
+import { json } from '@/shared/libs/api-route';
 
 type Params = Promise<{ routineId?: string }>;
 
@@ -89,6 +87,11 @@ export async function GET(request: NextRequest, context: { params: Params }) {
   return json(200, mapRoutine(data as unknown as RoutineResponse));
 }
 
+interface RoutinePayload {
+  routineName?: string;
+  exercises?: RoutineExerciseRequest[];
+}
+
 export async function PATCH(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
 
@@ -103,10 +106,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routineId is invalid' } });
   }
 
-  const body = (await request.json()) as {
-    routineName?: string;
-    exercises?: RoutineExerciseRequest[];
-  };
+  const body = (await request.json()) as RoutinePayload;
 
   const routineName = body.routineName;
   const exercises = body.exercises;

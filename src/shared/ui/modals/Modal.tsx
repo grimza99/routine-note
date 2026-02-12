@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -17,38 +17,8 @@ type ModalProps = {
 };
 
 export function Modal({ modalId, isOpen, onClose, children, className, overlayClassName }: ModalProps) {
-  const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-  useOnClickOutside(modalRef, onClose);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted || !modalId) {
-      return undefined;
-    }
-
-    let didCreate = false;
-    let element = document.getElementById(modalId);
-
-    if (!element) {
-      element = document.createElement('div');
-      element.id = modalId;
-      document.body.appendChild(element);
-      didCreate = true;
-    }
-
-    setPortalElement(element);
-
-    return () => {
-      if (didCreate && element?.parentNode) {
-        element.parentNode.removeChild(element);
-      }
-    };
-  }, [isMounted, modalId]);
+  useOnClickOutside(modalRef, onClose, { enabled: isOpen });
 
   useEffect(() => {
     if (!isOpen) {
@@ -84,12 +54,12 @@ export function Modal({ modalId, isOpen, onClose, children, className, overlayCl
     [],
   );
 
-  if (!isOpen || !portalElement) {
+  if (!isOpen || typeof document === 'undefined') {
     return null;
   }
 
   return createPortal(
-    <div className={cn('fixed inset-0 z-50', overlayClassName)}>
+    <div id={modalId} className={cn('fixed inset-0 z-50', overlayClassName)}>
       <div className="absolute inset-0" style={overlayStyle} aria-hidden />
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-8">
         <div
@@ -111,6 +81,6 @@ export function Modal({ modalId, isOpen, onClose, children, className, overlayCl
         </div>
       </div>
     </div>,
-    portalElement,
+    document.body,
   );
 }

@@ -38,6 +38,7 @@ export { TOAST_MESSAGE } from './constants/toast';
 
 //hooks
 export { useOnClickOutside } from './hooks/useOnClickOutside';
+export { useModal } from './hooks/useModal';
 export { useToast } from './hooks/useToast';
 
 // libs

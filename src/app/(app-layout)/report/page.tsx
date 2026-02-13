@@ -24,7 +24,7 @@ export default function ReportPage() {
               <img src="/icons/craft.left.svg" alt="이전 달" className="w-6 h-6 md:w-9 md:h-9" />
             </button>
             <span className="font-semibold text-xl md:text-3xl text-primary">{monthLabel}</span>
-            <button type="button" onClick={handleNextMonth} aria-label="다음 달">
+            <button type="button" onClick={() => handleNextMonth(true)} aria-label="다음 달">
               <img src="/icons/craft.right.svg" alt="다음 달" className="w-6 h-6 md:w-9 md:h-9" />
             </button>
           </div>

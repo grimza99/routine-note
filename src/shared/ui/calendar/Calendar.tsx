@@ -69,7 +69,7 @@ export function Calendar({ value, onSelectDate, recordDates, className }: Calend
           <span className="font-semibold text-xl md:text-3xl text-primary">{monthLabel}</span>
           <button
             type="button"
-            onClick={handleNextMonth}
+            onClick={() => handleNextMonth()}
             className={cn('flex p-1 items-center justify-center rounded border-primary border')}
             aria-label="다음 달"
           >

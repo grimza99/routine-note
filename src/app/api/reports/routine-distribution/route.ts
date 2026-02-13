@@ -9,6 +9,8 @@ type RoutineDistributionItem = {
   value: number;
 };
 
+type RoutineRelation = { name?: string } | Array<{ name?: string }> | null;
+
 export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
   const month = request.nextUrl.searchParams.get('month');
@@ -54,7 +56,8 @@ export async function GET(request: NextRequest) {
   (workoutRoutines ?? []).forEach((routine) => {
     if (!routine?.routine_id) return;
     const id = routine.routine_id;
-    const label = routine.routines?.[0]?.name ?? '알 수 없음';
+    const routines = routine.routines as RoutineRelation;
+    const label = Array.isArray(routines) ? routines[0]?.name ?? '알 수 없음' : routines?.name ?? '알 수 없음';
     const current = routineMap.get(id);
     routineMap.set(id, {
       id,

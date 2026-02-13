@@ -13,7 +13,7 @@ interface MonthReportData {
   skeletalMuscleMassChange: null | number;
   bodyFatMassChange: null | number;
 }
-//모든 달 리포트 쿼리
+//------------------------------------모든 달 리포트 쿼리------------------------------------
 export function useAllMonthReportsQuery() {
   return useQuery({
     queryKey: [QUERY_KEYS.REPORT.MONTHLY_ALL],
@@ -47,21 +47,21 @@ export type WeeklyVolumeItem = {
   volume: number;
 };
 
-export function useMonthlyTrendQuery() {
+//------------------------------------주차별 달성률 리포트 쿼리------------------------------------
+export function useMonthlyTrendQuery(month: string) {
   return useQuery({
-    queryKey: [QUERY_KEYS.REPORT.MONTHLY_TRENDS],
+    queryKey: [QUERY_KEYS.REPORT.MONTHLY_TRENDS, month],
     queryFn: async () => {
       try {
-        const res = await api.get<MonthlyTrendSeries[]>(API.REPORT.MONTHLY_TRENDS);
+        const res = await api.get<MonthlyTrendSeries[]>(API.REPORT.MONTHLY_TRENDS(month));
         return res.data ?? [];
       } catch (error) {
-        console.log('월간 성과 추이 조회 실패:', error);
         throw error;
       }
     },
   });
 }
-
+//------------------------------------루틴 분포도 리포트 쿼리------------------------------------
 export function useRoutineDistributionQuery(month: string) {
   return useQuery({
     queryKey: [QUERY_KEYS.REPORT.ROUTINE_DISTRIBUTION, month],
@@ -78,6 +78,7 @@ export function useRoutineDistributionQuery(month: string) {
   });
 }
 
+//------------------------------------주간 운동량 리포트 쿼리(월~일)------------------------------------
 export function useWeeklyVolumeQuery(month: string) {
   return useQuery({
     queryKey: [QUERY_KEYS.REPORT.WEEKLY_VOLUME, month],

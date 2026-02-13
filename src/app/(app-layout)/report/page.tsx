@@ -29,7 +29,7 @@ export default function ReportPage() {
         </div>
       </div>
       {activeTab === 'current' ? (
-        <MonthReport />
+        <MonthReport intialMonth={currentMonth} />
       ) : (
         <div className="flex flex-col gap-8 lg:gap-15 items-center">
           <h2 className="text-3xl font-bold">지난 리포트</h2>

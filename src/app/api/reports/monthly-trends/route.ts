@@ -30,7 +30,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { year, month, weeksInMonth } = getCurrentMonthInfo();
+    const monthParams = request.nextUrl.searchParams.get('month');
+
+    if (!monthParams) {
+      return json(400, { error: { code: 'VALIDATION_ERROR', message: 'month is required' } });
+    }
+    const { year, month, weeksInMonth } = getCurrentMonthInfo(monthParams);
 
     const reports = await getMonthlyReports(userId, `${year}-${month}`);
     const report = reports.find((item) => item.month === `${year}-${month}`);

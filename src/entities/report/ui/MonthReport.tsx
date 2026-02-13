@@ -4,15 +4,17 @@ import { MonthlyTrendLineChart, RoutineDistributionPieChart, WeeklyVolumeBarChar
 import { Spinner, SummaryCard } from '@/shared';
 import { useEffect, useMemo, useState } from 'react';
 import { useMonthlyTrendQuery, useRoutineDistributionQuery, useWeeklyVolumeQuery } from '../model/report.query';
+import { formatDateYearMonth } from '@/shared/libs';
 
-export function MonthReport() {
-  const currentMonth = new Date().toISOString().slice(0, 7);
+export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
+  const currentMonth = formatDateYearMonth(intialMonth) || formatDateYearMonth(new Date());
+
   const [selectedMonth, setSelectedMonth] = useState('');
 
   const { data: monthlyReportData } = useWorkoutQuery(currentMonth);
   const { data: weeklyVolume = [], isLoading: isWeeklyLoading } = useWeeklyVolumeQuery(selectedMonth);
   const { data: routineDistribution = [], isLoading: isRoutineLoading } = useRoutineDistributionQuery(currentMonth);
-  const { data: monthlyTrends = [], isLoading: isMonthlyTrendLoading } = useMonthlyTrendQuery();
+  const { data: monthlyTrends = [], isLoading: isMonthlyTrendLoading } = useMonthlyTrendQuery(currentMonth);
 
   const summaryData = [
     {

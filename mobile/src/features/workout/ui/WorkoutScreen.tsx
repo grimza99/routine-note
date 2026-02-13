@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -17,6 +16,7 @@ import { workoutApi } from '../api/workoutApi';
 import { trackEvent } from '../../../shared/libs/analytics/track';
 import type { RoutineItem } from '../../../shared/types/routine';
 import type { WorkoutItem } from '../../../shared/types/workout';
+import { Button } from '../../../shared/ui';
 
 type ExerciseSetConfig = {
   order: number;
@@ -110,7 +110,9 @@ export const WorkoutScreen = () => {
   useEffect(() => {
     setExerciseSetConfigs((prev) =>
       exercisePayload.map((exercise) => {
-        const existing = prev.find((config) => config.order === exercise.order && config.exerciseName === exercise.exerciseName);
+        const existing = prev.find(
+          (config) => config.order === exercise.order && config.exerciseName === exercise.exerciseName,
+        );
         return existing ?? createDefaultSetConfig(exercise.order, exercise.exerciseName);
       }),
     );
@@ -122,7 +124,11 @@ export const WorkoutScreen = () => {
     );
   };
 
-  const updateSetConfig = (order: number, field: keyof Omit<ExerciseSetConfig, 'order' | 'exerciseName'>, value: string) => {
+  const updateSetConfig = (
+    order: number,
+    field: keyof Omit<ExerciseSetConfig, 'order' | 'exerciseName'>,
+    value: string,
+  ) => {
     setExerciseSetConfigs((prev) =>
       prev.map((config) => (config.order === order ? { ...config, [field]: value } : config)),
     );
@@ -257,10 +263,22 @@ export const WorkoutScreen = () => {
 
       <View style={styles.form}>
         <View style={styles.inlineRow}>
-          <TextInput value={date} onChangeText={setDate} style={[styles.input, styles.dateInput]} placeholder="YYYY-MM-DD" />
-          <Pressable style={styles.searchButton} onPress={handleDateSearch}>
-            <Text style={styles.searchButtonText}>조회</Text>
-          </Pressable>
+          <TextInput
+            value={date}
+            onChangeText={setDate}
+            style={[styles.input, styles.dateInput]}
+            placeholder="YYYY-MM-DD"
+          />
+          <Button
+            label="조회"
+            variant="secondary"
+            onPress={handleDateSearch}
+            disabled={isSaving}
+            style={{
+              width: 100,
+              alignSelf: 'flex-end',
+            }}
+          />
         </View>
 
         <Text style={styles.label}>루틴 선택</Text>
@@ -273,12 +291,11 @@ export const WorkoutScreen = () => {
           renderItem={({ item }) => {
             const selected = selectedRoutineIds.includes(item.routineId);
             return (
-              <Pressable
-                style={[styles.routineChip, selected ? styles.routineChipSelected : styles.routineChipDefault]}
+              <Button
+                label={item.routineName}
                 onPress={() => toggleRoutine(item.routineId)}
-              >
-                <Text style={selected ? styles.routineChipTextSelected : styles.routineChipTextDefault}>{item.routineName}</Text>
-              </Pressable>
+                variant={selected ? 'primary' : 'secondary'}
+              />
             );
           }}
           ListEmptyComponent={<Text style={styles.emptyText}>선택 가능한 루틴이 없습니다.</Text>}
@@ -333,12 +350,12 @@ export const WorkoutScreen = () => {
         )}
 
         <View style={styles.actionsRow}>
-          <Pressable style={styles.primaryButton} onPress={handleSave} disabled={isSaving}>
-            <Text style={styles.primaryButtonText}>{isSaving ? '저장 중...' : workout?.id ? '운동 수정' : '운동 생성'}</Text>
-          </Pressable>
-          <Pressable style={styles.deleteButton} onPress={handleDelete}>
-            <Text style={styles.deleteButtonText}>삭제</Text>
-          </Pressable>
+          <Button
+            label={isSaving ? '저장 중...' : workout?.id ? '운동 수정' : '운동 생성'}
+            onPress={handleSave}
+            disabled={isSaving}
+          />
+          <Button label="삭제" onPress={handleDelete} disabled={isSaving} variant="tertiary" />
         </View>
       </View>
 
@@ -404,18 +421,6 @@ const styles = StyleSheet.create({
   dateInput: {
     flex: 1,
   },
-  searchButton: {
-    borderWidth: 1,
-    borderColor: '#E60023',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 14,
-  },
-  searchButtonText: {
-    color: '#E60023',
-    fontWeight: '600',
-  },
   label: {
     fontWeight: '600',
     color: '#1A1A1A',
@@ -423,20 +428,7 @@ const styles = StyleSheet.create({
   routineList: {
     gap: 8,
   },
-  routineChip: {
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  routineChipSelected: {
-    borderColor: '#E60023',
-    backgroundColor: '#E60023',
-  },
-  routineChipDefault: {
-    borderColor: '#E6E6E6',
-    backgroundColor: '#FFFFFF',
-  },
+
   routineChipTextSelected: {
     color: '#FFFFFF',
     fontWeight: '600',
@@ -466,30 +458,6 @@ const styles = StyleSheet.create({
   actionsRow: {
     flexDirection: 'row',
     gap: 8,
-  },
-  primaryButton: {
-    flex: 1,
-    backgroundColor: '#E60023',
-    borderRadius: 8,
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  primaryButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  deleteButton: {
-    minWidth: 80,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-  },
-  deleteButtonText: {
-    color: '#666666',
-    fontWeight: '600',
   },
   summaryCard: {
     marginTop: 12,

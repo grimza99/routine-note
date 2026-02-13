@@ -1,25 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { routineApi } from '../api/routineApi';
 import type { RoutineItem } from '../../../shared/types/routine';
+import { Button } from '../../../shared/ui';
 
 export const RoutineScreen = () => {
   const [routines, setRoutines] = useState<RoutineItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [routineName, setRoutineName] = useState('');
-  const [exerciseInput, setExerciseInput] = useState('');
+  const [exercises, setExercises] = useState([{ exerciseName: '', id: Math.random().toString() }]);
   const [editingRoutineId, setEditingRoutineId] = useState<string | null>(null);
 
   const loadRoutines = useCallback(async () => {
@@ -37,11 +28,9 @@ export const RoutineScreen = () => {
     void loadRoutines();
   }, [loadRoutines]);
 
-  const exercisePayload = useMemo(() => routineApi.parseExercises(exerciseInput), [exerciseInput]);
-
   const resetForm = () => {
     setRoutineName('');
-    setExerciseInput('');
+    setExercises([{ exerciseName: '', id: Math.random().toString() }]);
     setEditingRoutineId(null);
   };
 
@@ -51,7 +40,7 @@ export const RoutineScreen = () => {
       return;
     }
 
-    if (!exercisePayload.length) {
+    if (!exercises.length) {
       Alert.alert('입력 확인', '운동을 1개 이상 입력해 주세요.');
       return;
     }
@@ -60,7 +49,7 @@ export const RoutineScreen = () => {
       setIsSaving(true);
       const payload = {
         routineName: routineName.trim(),
-        exercises: exercisePayload,
+        exercises,
       };
 
       if (editingRoutineId) {
@@ -102,7 +91,13 @@ export const RoutineScreen = () => {
   const handleEdit = (routine: RoutineItem) => {
     setEditingRoutineId(routine.routineId);
     setRoutineName(routine.routineName);
-    setExerciseInput(routine.exercises.map((exercise) => exercise.exerciseName).join(', '));
+    setExercises(
+      routine.exercises.map((exercise) => ({
+        exerciseName: exercise.exerciseName,
+        id: exercise.id,
+      })),
+    );
+    // setExerciseInput(routine.exercises.map((exercise) => exercise.exerciseName).join(', '));
   };
 
   if (isLoading) {
@@ -113,36 +108,49 @@ export const RoutineScreen = () => {
     );
   }
 
+  const handleExerciseChange = (id: string, text: string) => {
+    const updatedExercises = exercises.map((exercise) =>
+      exercise.id === id ? { ...exercise, exerciseName: text } : exercise,
+    );
+    setExercises(updatedExercises);
+  };
+  const handleAddExercise = () => {
+    setExercises([...exercises, { exerciseName: '', id: Math.random().toString() }]);
+  };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>루틴 관리</Text>
-      <Text style={styles.description}>운동은 콤마(,)로 구분해서 입력합니다.</Text>
-
+      <Text style={styles.title}>내 루틴 관리</Text>
       <View style={styles.form}>
-        <TextInput
-          placeholder="루틴 이름"
-          style={styles.input}
-          value={routineName}
-          onChangeText={setRoutineName}
+        <TextInput placeholder="루틴 이름" style={styles.input} value={routineName} onChangeText={setRoutineName} />
+        <Button
+          label="운동 추가"
+          variant="secondary"
+          onPress={handleAddExercise}
+          disabled={isSaving}
+          style={{
+            width: 100,
+            alignSelf: 'flex-end',
+          }}
         />
-        <TextInput
-          placeholder="예: 벤치프레스, 랫풀다운, 숄더프레스"
-          style={[styles.input, styles.multiline]}
-          multiline
-          value={exerciseInput}
-          onChangeText={setExerciseInput}
-        />
+        {exercises.map((exercise, idx) => (
+          <View key={exercise.id} style={{ display: 'flex', flexDirection: 'row', gap: 4, alignItems: 'center' }}>
+            <Text>{`운동 ${idx + 1}`}</Text>
+            <TextInput
+              key={exercise.id}
+              placeholder="예: 벤치프레스, 랫풀다운, 숄더프레스"
+              style={[styles.input]}
+              value={exercise.exerciseName}
+              onChangeText={(value) => handleExerciseChange(exercise.id, value)}
+            />
+          </View>
+        ))}
         <View style={styles.actionsRow}>
-          <Pressable style={styles.primaryButton} onPress={handleSubmit} disabled={isSaving}>
-            <Text style={styles.primaryButtonText}>
-              {isSaving ? '저장 중...' : editingRoutineId ? '루틴 수정' : '루틴 생성'}
-            </Text>
-          </Pressable>
-          {editingRoutineId ? (
-            <Pressable style={styles.secondaryButton} onPress={resetForm}>
-              <Text style={styles.secondaryButtonText}>취소</Text>
-            </Pressable>
-          ) : null}
+          <Button
+            label={isSaving ? '저장 중...' : editingRoutineId ? '루틴 수정' : '루틴 생성'}
+            onPress={handleSubmit}
+            disabled={isSaving}
+          />
+          {editingRoutineId ? <Button label="취소" variant="tertiary" onPress={resetForm} disabled={isSaving} /> : null}
         </View>
       </View>
 
@@ -155,14 +163,12 @@ export const RoutineScreen = () => {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.cardTitle}>{item.routineName}</Text>
-            <Text style={styles.cardSubTitle}>{item.exercises.map((exercise) => exercise.exerciseName).join(', ')}</Text>
+            <Text style={styles.cardSubTitle}>
+              {item.exercises.map((exercise) => exercise.exerciseName).join(', ')}
+            </Text>
             <View style={styles.cardActions}>
-              <Pressable style={styles.cardEditButton} onPress={() => handleEdit(item)}>
-                <Text style={styles.cardEditText}>수정</Text>
-              </Pressable>
-              <Pressable style={styles.cardDeleteButton} onPress={() => handleDelete(item.routineId)}>
-                <Text style={styles.cardDeleteText}>삭제</Text>
-              </Pressable>
+              <Button label="수정" onPress={() => handleEdit(item)} variant="secondary" />
+              <Button label="삭제" onPress={() => handleDelete(item.routineId)} variant="tertiary" />
             </View>
           </View>
         )}
@@ -187,11 +193,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     color: '#1A1A1A',
-  },
-  description: {
-    marginTop: 6,
     marginBottom: 10,
-    color: '#666666',
   },
   form: {
     padding: 12,
@@ -199,7 +201,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E6E6E6',
     backgroundColor: '#F7F7F7',
-    gap: 10,
+    gap: 5,
   },
   input: {
     borderWidth: 1,
@@ -209,37 +211,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#FFFFFF',
   },
-  multiline: {
-    minHeight: 70,
-    textAlignVertical: 'top',
+  addExerciseButton: {
+    width: 60,
   },
   actionsRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  primaryButton: {
-    flex: 1,
-    backgroundColor: '#E60023',
-    borderRadius: 8,
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  primaryButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    minWidth: 72,
-    borderWidth: 1,
-    borderColor: '#E60023',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-  },
-  secondaryButtonText: {
-    color: '#E60023',
-    fontWeight: '600',
+    flexDirection: 'column',
+    gap: 4,
   },
   listContent: {
     paddingTop: 14,
@@ -270,27 +247,5 @@ const styles = StyleSheet.create({
   cardActions: {
     flexDirection: 'row',
     gap: 8,
-  },
-  cardEditButton: {
-    borderWidth: 1,
-    borderColor: '#E60023',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  cardEditText: {
-    color: '#E60023',
-    fontWeight: '600',
-  },
-  cardDeleteButton: {
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  cardDeleteText: {
-    color: '#666666',
-    fontWeight: '600',
   },
 });

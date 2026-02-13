@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useAuthSession } from '../model/useAuthSession';
+import { Button } from '../../../shared/ui';
 
 export const LoginScreen = () => {
   const { login } = useAuthSession();
@@ -43,9 +44,7 @@ export const LoginScreen = () => {
         value={password}
         onChangeText={setPassword}
       />
-      <Pressable style={styles.button} onPress={handleLogin} disabled={isPending}>
-        <Text style={styles.buttonText}>{isPending ? '로그인 중...' : '로그인'}</Text>
-      </Pressable>
+      <Button label={isPending ? '로그인 중...' : '로그인'} onPress={handleLogin} disabled={isPending} />
     </View>
   );
 };
@@ -72,16 +71,5 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-  },
-  button: {
-    marginTop: 8,
-    backgroundColor: '#E60023',
-    borderRadius: 8,
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
   },
 });

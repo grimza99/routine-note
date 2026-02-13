@@ -3,7 +3,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { workoutApi } from '../api/workoutApi';
-import { Button, DefaultContainer } from '../../../shared/ui';
+import { Button, DefaultContainer, Dot } from '../../../shared/ui';
 import { isSameDay } from '../../../shared/libs';
 import { useMonth } from '../../../shared/hooks';
 
@@ -133,9 +133,9 @@ export const WorkoutCalendar = ({ currentDate = new Date(), onSelectDate, record
                     isSelected && styles.dayCellTextSelected,
                   ]}
                 >
-                  {/* {recordDates?.includes(item.dateText) && <Dot />} */}
                   {item.dayLabel}
                 </Text>
+                {recordDates?.includes(item.dateText) && <Dot color={isSelected ? '#ffffff' : undefined} />}
               </Pressable>
             </View>
           );
@@ -189,8 +189,9 @@ const styles = StyleSheet.create({
   },
   dayCell: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     minHeight: 36,
     paddingHorizontal: 0,
     paddingVertical: 8,
@@ -204,6 +205,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   dayCellText: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     color: '#E60023',
     fontSize: 14,
   },

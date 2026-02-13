@@ -1,4 +1,4 @@
-const pad2 = (value: number) => String(value).padStart(2, "0");
+const pad2 = (value: number) => String(value).padStart(2, '0');
 
 export const formatDate = (date: Date) => {
   const year = date.getFullYear();
@@ -12,3 +12,5 @@ export const formatMonthDay = (date: Date) => {
   const day = pad2(date.getDate());
   return `${month}월 ${day}일`;
 };
+
+export const createDate = (year: number, month: number, day: number) => new Date(year, month, day);

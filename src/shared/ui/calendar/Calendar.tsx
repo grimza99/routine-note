@@ -1,6 +1,8 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Button, cn, Dot, formatDate } from '@/shared';
+import { useMonth } from '@/shared/hooks';
+import { createDate } from '@/shared/libs';
 
 type CalendarProps = {
   value?: Date | null;
@@ -11,19 +13,11 @@ type CalendarProps = {
 
 const WEEK_DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
-const createDate = (year: number, month: number, day: number) => new Date(year, month, day);
-
 const isSameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
 export function Calendar({ value, onSelectDate, recordDates, className }: CalendarProps) {
-  const today = new Date();
-  const initialMonth = value ?? today;
-  const [currentMonth, setCurrentMonth] = useState(() =>
-    createDate(initialMonth.getFullYear(), initialMonth.getMonth(), 1),
-  );
-
-  const monthLabel = `${currentMonth.getFullYear()}년 ${currentMonth.getMonth() + 1}월`;
+  const { currentMonth, handleChangeSetMonth, monthLabel, handlePrevMonth, handleNextMonth } = useMonth(value);
 
   const days = useMemo(() => {
     const year = currentMonth.getFullYear();
@@ -52,17 +46,9 @@ export function Calendar({ value, onSelectDate, recordDates, className }: Calend
     return cells;
   }, [currentMonth]);
 
-  const handlePrevMonth = () => {
-    setCurrentMonth((prev) => createDate(prev.getFullYear(), prev.getMonth() - 1, 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth((prev) => createDate(prev.getFullYear(), prev.getMonth() + 1, 1));
-  };
-
   const handleToday = () => {
     const nextToday = new Date();
-    setCurrentMonth(createDate(nextToday.getFullYear(), nextToday.getMonth(), 1));
+    handleChangeSetMonth(nextToday);
     onSelectDate?.(nextToday);
   };
 

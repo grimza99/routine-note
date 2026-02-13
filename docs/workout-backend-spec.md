@@ -7,6 +7,10 @@
 - Base URL: `/api`
 - Auth: `Authorization: Bearer <token>`
 - 시간 포맷: `YYYY-MM-DD`, 월 포맷: `YYYY-MM`
+- 클라이언트 메타 헤더(권장)
+  - `x-client-platform`: `ios | android | web`
+  - `x-app-version`: 앱/웹 버전 문자열 (`1.0.0`, `web`)
+  - `x-app-build`: 빌드 번호/식별자
 - 에러 응답 예시
 
 ```json
@@ -783,6 +787,44 @@
   "workoutDays": 12,
   "totalParticipants": 24
 }
+```
+
+### 이벤트 수집
+
+#### POST /events
+
+설명: 웹/RN 공통 이벤트 수집 엔드포인트. 현재는 서버 로그 수집이며 추후 DB/분석 툴 적재 예정.
+
+요청
+
+```json
+{
+  "eventName": "login_success",
+  "userId": "uuid-string or omitted",
+  "source": "web-login-form",
+  "platform": "web",
+  "appVersion": "web",
+  "appBuild": "local",
+  "timestamp": "2026-02-13T12:00:00.000Z",
+  "properties": {
+    "month": "2026-02"
+  }
+}
+```
+
+허용 `eventName`
+
+- `app_install`
+- `app_open`
+- `login_success`
+- `workout_saved`
+- `routine_applied`
+- `report_viewed`
+
+응답
+
+```json
+{ "ok": true }
 ```
 
 ## 2) DB 스키마 (Postgres 초안)

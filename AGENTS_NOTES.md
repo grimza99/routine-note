@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-02-13] [mobile] 하이브리드 RN 전환 계획에 맞춘 공통 인터페이스 1차 반영
+  - 영향/증상/개요 (필수): 웹 MVP 기반 모바일 확장을 위해 모바일 메타 헤더, 이벤트 스키마, 실행 문서가 필요.
+  - 결정/조치 (필수): `x-client-platform/x-app-version/x-app-build` 헤더를 공통 API 클라이언트에 추가하고 `POST /api/events` 라우트 및 이벤트 상수/트래킹 유틸을 신설. 실행/홍보 문서(`docs/mobile-hybrid-plan.md`, `docs/growth-launch-playbook.md`) 추가.
+  - 관련 파일/링크 (선택): `src/shared/libs/api/client.ts`, `src/app/api/events/route.ts`, `src/shared/constants/mobile.ts`, `src/shared/constants/analytics.ts`
+
 - [2026-02-12] [ui] 모달 V2 스켈레톤(provider/registry/useModal) 신규 추가
   - 영향/증상/개요 (필수): 기존 모달 코드를 유지한 채 key 기반 레지스트리 패턴을 실험/점진 전환할 수 있는 신규 구조 필요.
   - 결정/조치 (필수): `shared`에 범용 `ModalProvider/useModal`을 추가하고, `app/providers/modal`에 앱 전용 `modalRegistry`/bridge provider를 신설. 기존 모달 사용처는 수정하지 않고 루트 레이아웃에만 브리지 provider 연결.

@@ -1,1 +1,1 @@
-export { createDate } from './date/format';
+export { createDate, formatDateYearMonth } from './date/format';

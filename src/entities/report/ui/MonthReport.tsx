@@ -8,9 +8,8 @@ import { formatDateYearMonth } from '@/shared/libs';
 
 export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
   const currentMonth = formatDateYearMonth(intialMonth) || formatDateYearMonth(new Date());
-
+  const todayMonth = formatDateYearMonth(new Date());
   const [selectedMonth, setSelectedMonth] = useState('');
-
   const { data: monthlyReportData } = useWorkoutQuery(currentMonth);
   const { data: weeklyVolume = [], isLoading: isWeeklyLoading } = useWeeklyVolumeQuery(selectedMonth);
   const { data: routineDistribution = [], isLoading: isRoutineLoading } = useRoutineDistributionQuery(currentMonth);
@@ -63,26 +62,28 @@ export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
           />
         ))}
       </section>
-      <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-text-primary">주간 운동량</h2>
-          <span className="text-sm text-text-secondary">세트수 × 무게 기준</span>
-        </div>
-        {isWeeklyLoading ? (
-          <div
-            className="flex items-center justify-center rounded-lg border p-8"
-            style={{ borderColor: 'var(--border)' }}
-          >
-            <Spinner size={20} />
+      {currentMonth === todayMonth && (
+        <section className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-text-primary">주간 운동량</h2>
+            <span className="text-sm text-text-secondary">세트수 × 무게 기준</span>
           </div>
-        ) : weeklyVolume.length ? (
-          <WeeklyVolumeBarChart data={weeklyVolume} />
-        ) : (
-          <div className="rounded-lg border p-8 text-sm text-text-secondary" style={{ borderColor: 'var(--border)' }}>
-            표시할 주간 운동량 데이터가 없어요.
-          </div>
-        )}
-      </section>
+          {isWeeklyLoading ? (
+            <div
+              className="flex items-center justify-center rounded-lg border p-8"
+              style={{ borderColor: 'var(--border)' }}
+            >
+              <Spinner size={20} />
+            </div>
+          ) : weeklyVolume.length ? (
+            <WeeklyVolumeBarChart data={weeklyVolume} />
+          ) : (
+            <div className="rounded-lg border p-8 text-sm text-text-secondary" style={{ borderColor: 'var(--border)' }}>
+              표시할 주간 운동량 데이터가 없어요.
+            </div>
+          )}
+        </section>
+      )}
       <section className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold text-text-primary">월간 목표 달성률 추이</h2>
         {isMonthlyTrendLoading ? (

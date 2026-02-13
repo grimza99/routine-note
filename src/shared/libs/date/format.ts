@@ -6,6 +6,12 @@ export const formatDate = (date: Date) => {
   const day = pad2(date.getDate());
   return `${year}-${month}-${day}`;
 };
+export const formatDateYearMonth = (date?: Date | null) => {
+  const currentDate = date || new Date();
+  const year = currentDate.getFullYear();
+  const month = pad2(currentDate.getMonth() + 1);
+  return `${year}-${month}`;
+};
 
 export const formatMonthDay = (date: Date) => {
   const month = pad2(date.getMonth() + 1);

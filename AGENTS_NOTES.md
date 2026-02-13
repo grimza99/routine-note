@@ -19,6 +19,36 @@
 
 ## 노트
 
+- [2026-02-13] [env] Expo 부팅 시 `@babel/runtime` 해석 오류 대응
+  - 영향/증상/개요 (필수): `mobile/index.ts`에서 `@babel/runtime/helpers/interopRequireDefault` 모듈 미해석으로 Metro 번들 실패.
+  - 결정/조치 (필수): `mobile` 워크스페이스에 `@babel/runtime` 의존성 추가(`pnpm --filter routine-note-mobile add @babel/runtime`).
+  - 관련 파일/링크 (선택): `mobile/package.json`, `pnpm-lock.yaml`
+
+- [2026-02-13] [mobile] WorkoutScreen 세트 입력 방식을 운동별 개별값으로 확장
+  - 영향/증상/개요 (필수): 공통 세트값 1개만 입력 가능해 운동별 강도 차이를 반영하기 어려움.
+  - 결정/조치 (필수): 운동 입력 목록 기준으로 각 운동마다 `세트수/무게/횟수`를 개별 입력하도록 UI/상태를 변경하고, 저장 시 운동별 설정값으로 세트 생성 호출.
+  - 관련 파일/링크 (선택): `mobile/src/features/workout/ui/WorkoutScreen.tsx`
+
+- [2026-02-13] [mobile] WorkoutScreen 세트 입력(세트수/무게/횟수) 및 세트 생성 API 연동
+  - 영향/증상/개요 (필수): 모바일 운동 기록에서 세트 단위 입력이 없어 웹 대비 핵심 기록 정보가 누락됨.
+  - 결정/조치 (필수): `WorkoutScreen`에 세트 기본값 입력 UI를 추가하고, 저장 시 `POST /api/workout-exercises/{id}/sets`를 호출해 각 운동에 세트 생성하도록 구현. 세트 생성 라우트의 standalone 식별 조건을 `exercise_id`가 아닌 `id` 기준으로 수정.
+  - 관련 파일/링크 (선택): `mobile/src/features/workout/ui/WorkoutScreen.tsx`, `mobile/src/features/workout/api/workoutApi.ts`, `src/app/api/workout-exercises/[workoutExerciseId]/sets/route.ts`
+
+- [2026-02-13] [mobile] 모바일 Native 화면에 운동기록/루틴 CRUD API 연동 추가
+  - 영향/증상/개요 (필수): 하이브리드 앱 골격 이후 실제 사용 가능한 CRUD(루틴 생성/수정/삭제, 날짜별 운동 생성/수정/삭제) 연결이 필요.
+  - 결정/조치 (필수): `mobile`에 `routineApi/workoutApi`를 추가하고 `RoutineScreen`, `WorkoutScreen`을 폼+목록 기반 CRUD 화면으로 교체. 저장 후 이벤트(`workout_saved`, `routine_applied`) 전송 연결.
+  - 관련 파일/링크 (선택): `mobile/src/features/routine/ui/RoutineScreen.tsx`, `mobile/src/features/workout/ui/WorkoutScreen.tsx`, `mobile/src/features/routine/api/routineApi.ts`, `mobile/src/features/workout/api/workoutApi.ts`
+
+- [2026-02-13] [env] 워크스페이스 의존성 설치 실패 (npm registry DNS)
+  - 영향/증상/개요 (필수): `pnpm install` 시 `ERR_PNPM_META_FETCH_FAIL` (`getaddrinfo ENOTFOUND registry.npmjs.org`)로 `mobile` 워크스페이스 의존성 설치 불가.
+  - 결정/조치 (필수): 코드/문서 반영은 완료했고, 의존성 설치/lockfile 갱신은 네트워크 복구 후 재실행 필요.
+  - 관련 파일/링크 (선택): `package.json`, `pnpm-workspace.yaml`, `mobile/package.json`
+
+- [2026-02-13] [mobile] 하이브리드 RN 실행 골격/딥링크 계약/이벤트 DB 적재 2차 반영
+  - 영향/증상/개요 (필수): 추천 순서(모바일 워크스페이스 → 라우트 계약 → 이벤트 적재)에 맞춰 실제 실행 가능한 기반 코드 필요.
+  - 결정/조치 (필수): `mobile/` Expo 워크스페이스를 추가하고(로그인/운동/루틴 Native + 리포트/챌린지/마이페이지 WebView fallback), 딥링크 계약 문서/타입(`docs/mobile-routing-contract.md`, `src/shared/types/mobile-routing.type.ts`)을 신설. `/api/events`를 `analytics_events` 테이블 insert로 전환하고 마이그레이션 SQL(`supabase/migrations/20260213_create_analytics_events.sql`) 추가.
+  - 관련 파일/링크 (선택): `mobile/App.tsx`, `mobile/src/app/navigation/routeContract.ts`, `src/app/api/events/route.ts`, `src/app/api/auth/refresh/route.ts`
+
 - [2026-02-13] [mobile] 하이브리드 RN 전환 계획에 맞춘 공통 인터페이스 1차 반영
   - 영향/증상/개요 (필수): 웹 MVP 기반 모바일 확장을 위해 모바일 메타 헤더, 이벤트 스키마, 실행 문서가 필요.
   - 결정/조치 (필수): `x-client-platform/x-app-version/x-app-build` 헤더를 공통 API 클라이언트에 추가하고 `POST /api/events` 라우트 및 이벤트 상수/트래킹 유틸을 신설. 실행/홍보 문서(`docs/mobile-hybrid-plan.md`, `docs/growth-launch-playbook.md`) 추가.

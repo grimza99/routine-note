@@ -20,7 +20,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const { data: standalone, error: standaloneError } = await supabase
     .from('workout_exercises')
     .select('id, workouts!inner(user_id)')
-    .eq('exercise_id', workoutExerciseId)
+    .eq('id', workoutExerciseId)
     .eq('workouts.user_id', userId)
     .maybeSingle();
 

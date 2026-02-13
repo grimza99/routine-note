@@ -47,3 +47,4 @@ export { getCurrentMonthInfo } from './libs/date/getDateInfo';
 
 //types
 export type { IExercise, IRoutine } from './types/domain.type';
+export type { MobileRouteContractItem, MobileRouteKey, RouteResolution } from './types/mobile-routing.type';

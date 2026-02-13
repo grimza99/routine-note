@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { ANALYTICS_EVENT_NAMES } from '@/shared/constants';
 import { getClientMeta, json } from '@/shared/libs/api-route';
-import { getAuthUserId } from '@/shared/libs/supabase';
+import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 
 const eventSchema = z.object({
   eventName: z.enum(ANALYTICS_EVENT_NAMES),
@@ -28,16 +28,35 @@ export async function POST(request: NextRequest) {
   const payload = parsed.data;
 
   const event = {
-    ...payload,
+    event_name: payload.eventName,
     userId: payload.userId ?? authUserId ?? null,
+    source: payload.source ?? null,
     platform: payload.platform ?? clientMeta.platform,
-    appVersion: payload.appVersion ?? clientMeta.appVersion,
-    appBuild: payload.appBuild ?? clientMeta.appBuild,
-    timestamp: payload.timestamp ?? new Date().toISOString(),
+    app_version: payload.appVersion ?? clientMeta.appVersion,
+    app_build: payload.appBuild ?? clientMeta.appBuild,
+    properties: payload.properties ?? {},
+    event_at: payload.timestamp ?? new Date().toISOString(),
+    ip_address: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
+    user_agent: request.headers.get('user-agent') ?? null,
   };
 
-  // TODO: 추후 DB/외부 분석 툴 적재
-  console.info('[analytics]', event);
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.from('analytics_events').insert({
+    event_name: event.event_name,
+    user_id: event.userId,
+    source: event.source,
+    platform: event.platform,
+    app_version: event.app_version,
+    app_build: event.app_build,
+    properties: event.properties,
+    event_at: event.event_at,
+    ip_address: event.ip_address,
+    user_agent: event.user_agent,
+  });
+
+  if (error) {
+    return json(500, { error: { code: 'DB_ERROR', message: error.message } });
+  }
 
   return json(202, { ok: true });
 }

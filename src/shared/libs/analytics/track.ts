@@ -26,7 +26,6 @@ export const trackEvent = async (payload: TrackEventPayload) => {
         platform: CLIENT_PLATFORM.WEB,
         timestamp: payload.timestamp ?? new Date().toISOString(),
       },
-      { auth: false },
     );
   } catch (error) {
     console.warn('trackEvent failed', error);

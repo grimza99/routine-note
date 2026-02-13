@@ -116,6 +116,7 @@
   "age": 0,
   "privacy_policy": true,
   "token": "jwt-token",
+  "refresh_token": "refresh-token",
   "profile_image": "" || null,
 }
 ```
@@ -127,7 +128,9 @@
 요청
 
 ```json
-{}
+{
+  "refreshToken?": "refresh-token"
+}
 ```
 
 응답
@@ -135,6 +138,7 @@
 ```json
 {
   "token": "new-jwt-token",
+  "refresh_token": "new-refresh-token",
   "user": { "id": "u1", "email": "user@example.com" }
 }
 ```
@@ -793,7 +797,7 @@
 
 #### POST /events
 
-설명: 웹/RN 공통 이벤트 수집 엔드포인트. 현재는 서버 로그 수집이며 추후 DB/분석 툴 적재 예정.
+설명: 웹/RN 공통 이벤트 수집 엔드포인트. 서버에서 유효성 검증 후 `analytics_events` 테이블에 적재.
 
 요청
 
@@ -826,6 +830,11 @@
 ```json
 { "ok": true }
 ```
+
+저장 테이블
+
+- `analytics_events`
+  - `event_name`, `user_id?`, `source?`, `platform?`, `app_version?`, `app_build?`, `properties(jsonb)`, `event_at`
 
 ## 2) DB 스키마 (Postgres 초안)
 
@@ -979,6 +988,26 @@ CREATE TABLE challenge_rankings (
 
 CREATE UNIQUE INDEX challenge_rankings_month_rank_uq
   ON challenge_rankings (report_month, rank);
+
+-- analytics events
+CREATE TABLE analytics_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NULL,
+  event_name TEXT NOT NULL,
+  source TEXT NULL,
+  platform TEXT NULL,
+  app_version TEXT NULL,
+  app_build TEXT NULL,
+  properties JSONB NOT NULL DEFAULT '{}'::jsonb,
+  ip_address TEXT NULL,
+  user_agent TEXT NULL,
+  event_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX analytics_events_event_name_idx ON analytics_events (event_name);
+CREATE INDEX analytics_events_user_id_idx ON analytics_events (user_id);
+CREATE INDEX analytics_events_event_at_idx ON analytics_events (event_at DESC);
 ```
 
 ## 3) 리포트/챌린지 집계 로직 (초안)

@@ -1,22 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Alert, FlatList, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { routineApi } from '../../routine/api/routineApi';
 import { workoutApi } from '../api/workoutApi';
 import { trackEvent } from '../../../shared/libs/analytics/track';
 import type { RoutineItem } from '../../../shared/types/routine';
 import type { WorkoutItem } from '../../../shared/types/workout';
-import { Button } from '../../../shared/ui';
+import { Button, Input } from '../../../shared/ui';
 
 type ExerciseSetConfig = {
   order: number;
@@ -263,12 +253,7 @@ export const WorkoutScreen = () => {
 
       <View style={styles.form}>
         <View style={styles.inlineRow}>
-          <TextInput
-            value={date}
-            onChangeText={setDate}
-            style={[styles.input, styles.dateInput]}
-            placeholder="YYYY-MM-DD"
-          />
+          <Input value={date} onChangeText={setDate} style={[styles.flex1]} placeholder="YYYY-MM-DD" />
           <Button
             label="조회"
             variant="secondary"
@@ -303,13 +288,7 @@ export const WorkoutScreen = () => {
         />
 
         <Text style={styles.label}>개별 운동(콤마 구분)</Text>
-        <TextInput
-          value={exerciseInput}
-          onChangeText={setExerciseInput}
-          style={[styles.input, styles.multiline]}
-          multiline
-          placeholder="예: 푸쉬업, 플랭크"
-        />
+        <Input value={exerciseInput} onChangeText={setExerciseInput} placeholder="예: 푸쉬업, 플랭크" />
 
         <Text style={styles.label}>운동별 세트 값</Text>
         {exerciseSetConfigs.length ? (
@@ -320,24 +299,24 @@ export const WorkoutScreen = () => {
                   {config.order}. {config.exerciseName}
                 </Text>
                 <View style={styles.inlineRow}>
-                  <TextInput
+                  <Input
                     value={config.setCountInput}
                     onChangeText={(value) => updateSetConfig(config.order, 'setCountInput', value)}
-                    style={[styles.input, styles.metricInput]}
+                    style={[styles.flex1]}
                     keyboardType="number-pad"
                     placeholder="세트수"
                   />
-                  <TextInput
+                  <Input
                     value={config.weightInput}
                     onChangeText={(value) => updateSetConfig(config.order, 'weightInput', value)}
-                    style={[styles.input, styles.metricInput]}
+                    style={[styles.flex1]}
                     keyboardType="decimal-pad"
                     placeholder="무게"
                   />
-                  <TextInput
+                  <Input
                     value={config.repsInput}
                     onChangeText={(value) => updateSetConfig(config.order, 'repsInput', value)}
-                    style={[styles.input, styles.metricInput]}
+                    style={[styles.flex1]}
                     keyboardType="number-pad"
                     placeholder="횟수"
                   />
@@ -379,9 +358,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 40,
   },
-  metricInput: {
-    flex: 1,
-  },
   centered: {
     flex: 1,
     alignItems: 'center',
@@ -410,15 +386,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
-  },
-  dateInput: {
+
+  flex1: {
     flex: 1,
   },
   label: {
@@ -436,10 +405,7 @@ const styles = StyleSheet.create({
   routineChipTextDefault: {
     color: '#1A1A1A',
   },
-  multiline: {
-    minHeight: 70,
-    textAlignVertical: 'top',
-  },
+
   setConfigList: {
     gap: 8,
   },

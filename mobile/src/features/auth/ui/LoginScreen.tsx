@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import { useAuthSession } from '../model/useAuthSession';
-import { Button } from '../../../shared/ui';
+import { Button, Input } from '../../../shared/ui';
 
 export const LoginScreen = () => {
   const { login } = useAuthSession();
@@ -29,21 +29,14 @@ export const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Routine Note</Text>
-      <TextInput
-        autoCapitalize="none"
-        keyboardType="email-address"
+      <Input
         placeholder="이메일"
-        style={styles.input}
         value={email}
         onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
       />
-      <TextInput
-        secureTextEntry
-        placeholder="비밀번호"
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-      />
+      <Input secureTextEntry placeholder="비밀번호" value={password} onChangeText={setPassword} />
       <Button label={isPending ? '로그인 중...' : '로그인'} onPress={handleLogin} disabled={isPending} />
     </View>
   );
@@ -64,12 +57,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#E60023',
     marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
   },
 });

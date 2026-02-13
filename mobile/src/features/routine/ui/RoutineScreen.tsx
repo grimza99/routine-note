@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
 import { routineApi } from '../api/routineApi';
 import type { RoutineItem } from '../../../shared/types/routine';
-import { Button } from '../../../shared/ui';
+import { Button, Input } from '../../../shared/ui';
 
 export const RoutineScreen = () => {
   const [routines, setRoutines] = useState<RoutineItem[]>([]);
@@ -121,7 +121,7 @@ export const RoutineScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>내 루틴 관리</Text>
       <View style={styles.form}>
-        <TextInput placeholder="루틴 이름" style={styles.input} value={routineName} onChangeText={setRoutineName} />
+        <Input placeholder="루틴 이름" value={routineName} onChangeText={setRoutineName} />
         <Button
           label="운동 추가"
           variant="secondary"
@@ -135,10 +135,9 @@ export const RoutineScreen = () => {
         {exercises.map((exercise, idx) => (
           <View key={exercise.id} style={{ display: 'flex', flexDirection: 'row', gap: 4, alignItems: 'center' }}>
             <Text>{`운동 ${idx + 1}`}</Text>
-            <TextInput
+            <Input
               key={exercise.id}
               placeholder="예: 벤치프레스, 랫풀다운, 숄더프레스"
-              style={[styles.input]}
               value={exercise.exerciseName}
               onChangeText={(value) => handleExerciseChange(exercise.id, value)}
             />
@@ -202,14 +201,6 @@ const styles = StyleSheet.create({
     borderColor: '#E6E6E6',
     backgroundColor: '#F7F7F7',
     gap: 5,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
   },
   addExerciseButton: {
     width: 60,

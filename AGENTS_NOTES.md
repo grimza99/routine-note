@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-02-13] [mobile] 공통 Button 이후 Input 공통 컴포넌트 추가 적용
+  - 영향/증상/개요 (필수): `RoutineScreen`, `WorkoutScreen`에서 `TextInput` 스타일/속성 패턴이 반복되어 유지보수 비용 증가.
+  - 결정/조치 (필수): `mobile/src/shared/ui/input/Input.tsx`를 추가하고 두 화면의 입력 필드를 `Input`으로 교체. `shared/ui/index.ts` export 반영 및 모바일 타입체크(`pnpm --filter routine-note-mobile exec tsc --noEmit`) 통과.
+  - 관련 파일/링크 (선택): `mobile/src/shared/ui/input/Input.tsx`, `mobile/src/features/routine/ui/RoutineScreen.tsx`, `mobile/src/features/workout/ui/WorkoutScreen.tsx`
+
 - [2026-02-13] [env] Expo 부팅 시 `@babel/runtime` 해석 오류 대응
   - 영향/증상/개요 (필수): `mobile/index.ts`에서 `@babel/runtime/helpers/interopRequireDefault` 모듈 미해석으로 Metro 번들 실패.
   - 결정/조치 (필수): `mobile` 워크스페이스에 `@babel/runtime` 의존성 추가(`pnpm --filter routine-note-mobile add @babel/runtime`).

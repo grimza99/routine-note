@@ -97,7 +97,6 @@ export const RoutineScreen = () => {
         id: exercise.id,
       })),
     );
-    // setExerciseInput(routine.exercises.map((exercise) => exercise.exerciseName).join(', '));
   };
 
   if (isLoading) {
@@ -117,9 +116,9 @@ export const RoutineScreen = () => {
   const handleAddExercise = () => {
     setExercises([...exercises, { exerciseName: '', id: Math.random().toString() }]);
   };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>내 루틴 관리</Text>
       <View style={styles.form}>
         <Input placeholder="루틴 이름" value={routineName} onChangeText={setRoutineName} />
         <Button
@@ -128,8 +127,10 @@ export const RoutineScreen = () => {
           onPress={handleAddExercise}
           disabled={isSaving}
           style={{
-            width: 100,
+            width: 80,
             alignSelf: 'flex-end',
+            paddingHorizontal: 4,
+            paddingVertical: 6,
           }}
         />
         {exercises.map((exercise, idx) => (
@@ -137,8 +138,9 @@ export const RoutineScreen = () => {
             <Text>{`운동 ${idx + 1}`}</Text>
             <Input
               key={exercise.id}
-              placeholder="예: 벤치프레스, 랫풀다운, 숄더프레스"
+              placeholder="예: 벤치프레스"
               value={exercise.exerciseName}
+              style={{ flex: 1 }}
               onChangeText={(value) => handleExerciseChange(exercise.id, value)}
             />
           </View>
@@ -188,13 +190,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
   },
-  title: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: 10,
-  },
   form: {
+    marginTop: 8,
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,

@@ -6,22 +6,40 @@ import { formatDate, formatMonthDay, trackEvent } from '../../../../shared/libs'
 import { workoutApi } from '../../api/workoutApi';
 import { Button, Input } from '../../../../shared/ui';
 import { RoutineItem } from '../../../../shared/types/routine';
-import { WorkoutPayload } from '../../../../shared/types';
+import { WorkoutBydateResponse, WorkoutPayload } from '../../../../shared/types';
 import { WorkoutRoutineCard } from '../WorkoutRoutineCard';
 
-interface CreateWorkoutSheetProps {
+interface WorkoutSheetProps {
   selectedDate: Date;
+  initialWorkoutData?: WorkoutBydateResponse | null;
 }
+const nomalizedResponseToPayload = (response: WorkoutBydateResponse): WorkoutPayload => ({
+  date: response.date,
+  routines: response.routines.map((routine) => ({
+    routineId: routine.routineId,
+    order: routine.order,
+  })),
+  exercises: response.exercises.map((exercise) => ({
+    exerciseName: exercise.exerciseName,
+  })),
+});
 
-export function CreateWorkoutSheet({ selectedDate }: CreateWorkoutSheetProps) {
+export function WorkoutSheet({ selectedDate, initialWorkoutData }: WorkoutSheetProps) {
+  const type = initialWorkoutData ? 'manage' : 'create';
   const [routines, setRoutines] = useState<RoutineItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>([]);
-  const [createWorkoutPayload, setCreateWorkoutPayload] = useState<WorkoutPayload>({
-    date: formatDate(selectedDate),
-    routines: [],
-    exercises: [],
-  });
+  const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(
+    initialWorkoutData ? initialWorkoutData.routines.map((routine) => routine.routineId) : [],
+  );
+  const [payload, setPayload] = useState<WorkoutPayload>(
+    initialWorkoutData
+      ? nomalizedResponseToPayload(initialWorkoutData)
+      : {
+          date: formatDate(selectedDate),
+          routines: [],
+          exercises: [],
+        },
+  );
 
   const loadRoutines = useCallback(async () => {
     const list = await routineApi.list();
@@ -42,38 +60,55 @@ export function CreateWorkoutSheet({ selectedDate }: CreateWorkoutSheetProps) {
 
   const toggleRoutine = (routineId: string) => {
     const targetRoutine = routines.find((routine) => routine.routineId === routineId);
+
     if (!targetRoutine) {
       return;
     }
-    setSelectedRoutineIds((prev) =>
-      prev.includes(routineId) ? prev.filter((id) => id !== routineId) : [...prev, routineId],
-    );
-    setCreateWorkoutPayload((prev) => ({
-      ...prev,
-      routines: [...prev.routines, targetRoutine],
-    }));
+    const isAreadySelected = selectedRoutineIds.includes(routineId);
+    setSelectedRoutineIds((prev) => (isAreadySelected ? prev.filter((id) => id !== routineId) : [...prev, routineId]));
+    if (isAreadySelected) {
+      setPayload((prev) => ({
+        ...prev,
+        routines: prev.routines.filter((routine) => routine.routineId !== routineId),
+      }));
+    } else {
+      setPayload((prev) => ({
+        ...prev,
+        routines: [...prev.routines, targetRoutine],
+      }));
+    }
   };
 
   const handleStandaloneExerciseRemove = (index: number) => {
-    setCreateWorkoutPayload((prev) => {
+    setPayload((prev) => {
       const updatedExercises = [...prev.exercises];
       updatedExercises.splice(index, 1);
       return { ...prev, exercises: updatedExercises };
     });
   };
 
-  const handleSave = async () => {
+  const handleSubmit = async () => {
     try {
       setIsSaving(true);
-      await workoutApi.create(createWorkoutPayload);
-
-      void trackEvent('workout_created', {
-        ...createWorkoutPayload,
-      });
-
-      Alert.alert('완료', '운동 기록을 생성했습니다.');
+      if (type === 'manage' && initialWorkoutData) {
+        await workoutApi.update(initialWorkoutData.id, payload);
+        void trackEvent('workout_update', {
+          selectedDate,
+          ...payload,
+        });
+        Alert.alert('완료', '운동 기록을 수정했습니다.');
+      } else {
+        await workoutApi.create(payload);
+        void trackEvent('workout_created', {
+          ...payload,
+        });
+        Alert.alert('완료', '운동 기록을 생성했습니다.');
+      }
     } catch (error) {
-      Alert.alert('저장 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
+      Alert.alert(
+        type === 'create' ? '운동 기록 생성 실패' : '운동 기록 수정 실패',
+        error instanceof Error ? error.message : '오류가 발생했습니다.',
+      );
     } finally {
       setIsSaving(false);
     }
@@ -82,8 +117,10 @@ export function CreateWorkoutSheet({ selectedDate }: CreateWorkoutSheetProps) {
   return (
     <ScrollView contentContainerStyle={styles.sheetContent}>
       <View style={styles.form}>
-        <Text style={styles.secondaryTitle}>{formatMonthDay(selectedDate)} 날짜 운동 기록하기</Text>
-        <Text style={styles.label}>기록할 루틴 선택</Text>
+        <Text style={styles.secondaryTitle}>
+          {formatMonthDay(selectedDate)} 운동 기록 {type === 'manage' && '수정'}
+        </Text>
+        {type === 'create' && <Text style={styles.label}>기록할 루틴 선택</Text>}
         <ScrollView contentContainerStyle={styles.routineList}>
           {routines.length ? (
             routines.map((routine) => {
@@ -106,20 +143,20 @@ export function CreateWorkoutSheet({ selectedDate }: CreateWorkoutSheetProps) {
           label="루틴외의 운동 추가"
           onPress={() => {
             const newExercise = { exerciseName: '' };
-            setCreateWorkoutPayload((prev) => ({ ...prev, exercises: [...prev.exercises, newExercise] }));
+            setPayload((prev) => ({ ...prev, exercises: [...prev.exercises, newExercise] }));
           }}
           variant="secondary"
         />
-        {createWorkoutPayload.exercises.map((exercise, index) => (
+        {payload.exercises.map((exercise, index) => (
           <View key={index} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Input
               key={index}
               placeholder="예: 벤치프레스, 스쿼트"
               value={exercise.exerciseName}
               onChange={(text) => {
-                const updatedExercises = [...createWorkoutPayload.exercises];
+                const updatedExercises = [...payload.exercises];
                 updatedExercises[index].exerciseName = text.nativeEvent.text;
-                setCreateWorkoutPayload((prev) => ({ ...prev, exercises: updatedExercises }));
+                setPayload((prev) => ({ ...prev, exercises: updatedExercises }));
               }}
               style={{ flex: 1 }}
             />
@@ -127,7 +164,11 @@ export function CreateWorkoutSheet({ selectedDate }: CreateWorkoutSheetProps) {
           </View>
         ))}
 
-        <Button label={isSaving ? '저장 중...' : '운동 기록 생성'} onPress={handleSave} disabled={isSaving} />
+        <Button
+          label={isSaving ? '...' : type === 'create' ? '운동 기록 생성' : '운동 기록 수정'}
+          onPress={handleSubmit}
+          disabled={isSaving}
+        />
       </View>
     </ScrollView>
   );

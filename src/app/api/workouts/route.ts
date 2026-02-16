@@ -59,7 +59,7 @@ type RequestBody = {
 
 const mapRoutineExercises = (exercise: RoutineExercise) => ({
   id: exercise.id,
-  name: exercise.exercise_name ?? '',
+  exerciseName: exercise.exercise_name ?? '',
   sets:
     exercise.sets?.map((set) => ({
       id: set.id,
@@ -70,7 +70,7 @@ const mapRoutineExercises = (exercise: RoutineExercise) => ({
 
 const mapStandaloneExercise = (exercise: WorkoutStandaloneExercise) => ({
   id: exercise.id,
-  name: exercise.exercise_name ?? '',
+  exerciseName: exercise.exercise_name ?? '',
   note: exercise.note,
   order: exercise.item_order,
   sets: (exercise.sets ?? []).map((set) => ({

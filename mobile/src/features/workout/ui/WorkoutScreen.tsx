@@ -1,244 +1,46 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-import { routineApi } from '../../routine/api/routineApi';
 import { workoutApi } from '../api/workoutApi';
-import { trackEvent } from '../../../shared/libs/analytics/track';
-import type { RoutineItem } from '../../../shared/types/routine';
-import type { WorkoutItem } from '../../../shared/types/workout';
-import { Button, Input } from '../../../shared/ui';
-
-type ExerciseSetConfig = {
-  order: number;
-  exerciseName: string;
-  setCountInput: string;
-  weightInput: string;
-  repsInput: string;
-};
-
-const parsePositiveInt = (value: string, fallback: number) => {
-  const parsed = Number.parseInt(value, 10);
-  if (Number.isNaN(parsed) || parsed < 1) {
-    return fallback;
-  }
-
-  return parsed;
-};
-
-const parseNonNegativeNumber = (value: string, fallback: number) => {
-  const parsed = Number.parseFloat(value);
-  if (Number.isNaN(parsed) || parsed < 0) {
-    return fallback;
-  }
-
-  return parsed;
-};
-
-const createDefaultSetConfig = (order: number, exerciseName: string): ExerciseSetConfig => ({
-  order,
-  exerciseName,
-  setCountInput: '3',
-  weightInput: '20',
-  repsInput: '10',
-});
+import { Button, DraggableSheet } from '../../../shared/ui';
+import { WorkoutCalendar } from './WorkoutCalendar';
+import { formatDate, formatMonthDay } from '../../../shared/libs';
+import { WorkoutRoutineCardWithSets } from './WorkoutRoutineCardWithSets';
+import { WorkoutBydateResponse } from '../../../shared/types';
+import { WorkoutSheet } from './sheet/WorkoutSheet';
 
 export const WorkoutScreen = () => {
-  const [date, setDate] = useState(workoutApi.toDate(new Date()));
-  const [routines, setRoutines] = useState<RoutineItem[]>([]);
-  const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>([]);
-  const [exerciseInput, setExerciseInput] = useState('');
-  const [exerciseSetConfigs, setExerciseSetConfigs] = useState<ExerciseSetConfig[]>([]);
-  const [workout, setWorkout] = useState<WorkoutItem | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [sheetMode, setSheetMode] = useState<'create' | 'manage' | 'sets' | null>(null); //null이면 닫힘
+  const [workoutByDate, setWorkoutByDate] = useState<WorkoutBydateResponse | null>(null);
 
-  const loadRoutines = useCallback(async () => {
-    const list = await routineApi.list();
-    setRoutines(list);
-  }, []);
-
-  const loadWorkout = useCallback(async (selectedDate: string) => {
-    const item = await workoutApi.getByDate(selectedDate);
-    setWorkout(item);
-    setSelectedRoutineIds(item?.routines.map((routine) => routine.routineId) ?? []);
-
-    const exerciseNames = item?.exercises.map((exercise) => exercise.name).join(', ') ?? '';
-    setExerciseInput(exerciseNames);
-
-    const loadedSetConfigs =
-      item?.exercises.map((exercise, index) => {
-        const firstSet = exercise.sets?.[0];
-        return {
-          order: index + 1,
-          exerciseName: exercise.name,
-          setCountInput: String(exercise.sets?.length ?? 0),
-          weightInput: String(firstSet?.weight ?? 0),
-          repsInput: String(firstSet?.reps ?? 1),
-        };
-      }) ?? [];
-
-    setExerciseSetConfigs(loadedSetConfigs);
-  }, []);
-
-  const loadAll = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      await Promise.all([loadRoutines(), loadWorkout(date)]);
-    } catch (error) {
-      Alert.alert('조회 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [date, loadRoutines, loadWorkout]);
-
-  useEffect(() => {
-    void loadAll();
-  }, [loadAll]);
-
-  const exercisePayload = useMemo(() => workoutApi.parseExercises(exerciseInput), [exerciseInput]);
-
-  useEffect(() => {
-    setExerciseSetConfigs((prev) =>
-      exercisePayload.map((exercise) => {
-        const existing = prev.find(
-          (config) => config.order === exercise.order && config.exerciseName === exercise.exerciseName,
-        );
-        return existing ?? createDefaultSetConfig(exercise.order, exercise.exerciseName);
-      }),
-    );
-  }, [exercisePayload]);
-
-  const toggleRoutine = (routineId: string) => {
-    setSelectedRoutineIds((prev) =>
-      prev.includes(routineId) ? prev.filter((value) => value !== routineId) : [...prev, routineId],
-    );
-  };
-
-  const updateSetConfig = (
-    order: number,
-    field: keyof Omit<ExerciseSetConfig, 'order' | 'exerciseName'>,
-    value: string,
-  ) => {
-    setExerciseSetConfigs((prev) =>
-      prev.map((config) => (config.order === order ? { ...config, [field]: value } : config)),
-    );
-  };
-
-  const buildPayload = () => ({
-    date,
-    routines: selectedRoutineIds.map((routineId, index) => ({
-      routineId,
-      order: index + 1,
-      note: '',
-    })),
-    exercises: exercisePayload,
-  });
-
-  const createSetsForExercises = async (savedWorkout: WorkoutItem | null) => {
-    if (!savedWorkout?.exercises?.length) return;
-
-    for (const config of exerciseSetConfigs) {
-      const targetExercise = savedWorkout.exercises.find((exercise) => exercise.order === config.order);
-      if (!targetExercise) continue;
-
-      const setCount = parsePositiveInt(config.setCountInput, 0);
-      const weight = parseNonNegativeNumber(config.weightInput, 0);
-      const reps = parsePositiveInt(config.repsInput, 1);
-
-      if (!setCount) continue;
-
-      for (let index = 0; index < setCount; index += 1) {
-        await workoutApi.createSet(targetExercise.id, {
-          weight,
-          reps,
-          note: '',
-        });
-      }
-    }
-  };
-
-  const totalPlannedSets = useMemo(
-    () => exerciseSetConfigs.reduce((sum, config) => sum + parsePositiveInt(config.setCountInput, 0), 0),
-    [exerciseSetConfigs],
+  const loadWorkoutByDate = useCallback(
+    async (selectedDate: string) => {
+      const workoutByDateData = await workoutApi.getByDate(selectedDate);
+      setWorkoutByDate(workoutByDateData);
+    },
+    [selectedDate],
   );
 
-  const handleSave = async () => {
-    if (!date.trim()) {
-      Alert.alert('입력 확인', '날짜를 입력해 주세요.');
-      return;
-    }
-
-    try {
-      setIsSaving(true);
-      const payload = buildPayload();
-
-      let savedWorkout: WorkoutItem | null = null;
-      if (workout?.id) {
-        savedWorkout = await workoutApi.update(workout.id, payload);
-      } else {
-        savedWorkout = await workoutApi.create(payload);
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        setIsInitialLoading(true);
+        await loadWorkoutByDate(formatDate(selectedDate));
+      } catch (error) {
+        Alert.alert('조회 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
+      } finally {
+        setIsInitialLoading(false);
       }
+    };
 
-      await createSetsForExercises(savedWorkout);
-      await loadWorkout(date);
-      void trackEvent('workout_saved', {
-        date,
-        routineCount: payload.routines.length,
-        exerciseCount: payload.exercises.length,
-      });
-      if (payload.routines.length > 0) {
-        void trackEvent('routine_applied', {
-          date,
-          routineCount: payload.routines.length,
-        });
-      }
-      Alert.alert('완료', workout?.id ? '운동 기록을 수정했습니다.' : '운동 기록을 생성했습니다.');
-    } catch (error) {
-      Alert.alert('저장 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    void initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadWorkoutByDate, selectedDate]);
 
-  const handleDelete = () => {
-    if (!workout?.id) {
-      Alert.alert('안내', '삭제할 운동 기록이 없습니다.');
-      return;
-    }
-
-    Alert.alert('운동 기록 삭제', '선택한 날짜의 운동 기록을 삭제할까요?', [
-      { text: '취소', style: 'cancel' },
-      {
-        text: '삭제',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await workoutApi.remove(workout.id);
-            setWorkout(null);
-            setSelectedRoutineIds([]);
-            setExerciseInput('');
-            setExerciseSetConfigs([]);
-            Alert.alert('완료', '운동 기록을 삭제했습니다.');
-          } catch (error) {
-            Alert.alert('삭제 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
-          }
-        },
-      },
-    ]);
-  };
-
-  const handleDateSearch = async () => {
-    try {
-      setIsLoading(true);
-      await loadWorkout(date);
-    } catch (error) {
-      Alert.alert('조회 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="small" color="#E60023" />
@@ -247,104 +49,74 @@ export const WorkoutScreen = () => {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.containerContent}>
-      <Text style={styles.title}>운동 기록</Text>
-      <Text style={styles.description}>날짜를 기준으로 운동 기록을 생성/수정/삭제합니다.</Text>
-
-      <View style={styles.form}>
-        <View style={styles.inlineRow}>
-          <Input value={date} onChangeText={setDate} style={[styles.flex1]} placeholder="YYYY-MM-DD" />
-          <Button
-            label="조회"
-            variant="secondary"
-            onPress={handleDateSearch}
-            disabled={isSaving}
-            style={{
-              width: 100,
-              alignSelf: 'flex-end',
-            }}
-          />
-        </View>
-
-        <Text style={styles.label}>루틴 선택</Text>
-        <FlatList
-          data={routines}
-          horizontal
-          keyExtractor={(item) => item.routineId}
-          contentContainerStyle={styles.routineList}
-          refreshControl={<RefreshControl refreshing={isLoading} onRefresh={loadAll} tintColor="#E60023" />}
-          renderItem={({ item }) => {
-            const selected = selectedRoutineIds.includes(item.routineId);
-            return (
-              <Button
-                label={item.routineName}
-                onPress={() => toggleRoutine(item.routineId)}
-                variant={selected ? 'primary' : 'secondary'}
-              />
-            );
+    <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.containerContent}>
+        <Text style={styles.title}>운동 기록</Text>
+        <Text style={styles.description}>하단 시트에서 운동 기록을 관리할수있어요!</Text>
+        <WorkoutCalendar
+          currentDate={selectedDate}
+          onSelectDate={(selectedDate) => {
+            setSelectedDate(selectedDate);
           }}
-          ListEmptyComponent={<Text style={styles.emptyText}>선택 가능한 루틴이 없습니다.</Text>}
-          showsHorizontalScrollIndicator={false}
         />
+      </ScrollView>
+      {/* workout 기록 */}
+      <ScrollView contentContainerStyle={styles.containerContent}>
+        <Text style={styles.secondaryTitle}>{formatMonthDay(selectedDate)} 기록</Text>
 
-        <Text style={styles.label}>개별 운동(콤마 구분)</Text>
-        <Input value={exerciseInput} onChangeText={setExerciseInput} placeholder="예: 푸쉬업, 플랭크" />
-
-        <Text style={styles.label}>운동별 세트 값</Text>
-        {exerciseSetConfigs.length ? (
-          <View style={styles.setConfigList}>
-            {exerciseSetConfigs.map((config) => (
-              <View key={`${config.order}-${config.exerciseName}`} style={styles.setConfigCard}>
-                <Text style={styles.setConfigTitle}>
-                  {config.order}. {config.exerciseName}
-                </Text>
-                <View style={styles.inlineRow}>
-                  <Input
-                    value={config.setCountInput}
-                    onChangeText={(value) => updateSetConfig(config.order, 'setCountInput', value)}
-                    style={[styles.flex1]}
-                    keyboardType="number-pad"
-                    placeholder="세트수"
-                  />
-                  <Input
-                    value={config.weightInput}
-                    onChangeText={(value) => updateSetConfig(config.order, 'weightInput', value)}
-                    style={[styles.flex1]}
-                    keyboardType="decimal-pad"
-                    placeholder="무게"
-                  />
-                  <Input
-                    value={config.repsInput}
-                    onChangeText={(value) => updateSetConfig(config.order, 'repsInput', value)}
-                    style={[styles.flex1]}
-                    keyboardType="number-pad"
-                    placeholder="횟수"
-                  />
-                </View>
-              </View>
-            ))}
+        {isInitialLoading && (
+          <View style={styles.centeredInline}>
+            <ActivityIndicator size="small" color="#E60023" />
           </View>
-        ) : (
-          <Text style={styles.emptyText}>운동을 입력하면 세트 값을 개별 설정할 수 있어요.</Text>
         )}
 
-        <View style={styles.actionsRow}>
-          <Button
-            label={isSaving ? '저장 중...' : workout?.id ? '운동 수정' : '운동 생성'}
-            onPress={handleSave}
-            disabled={isSaving}
-          />
-          <Button label="삭제" onPress={handleDelete} disabled={isSaving} variant="tertiary" />
-        </View>
-      </View>
+        {!workoutByDate ? (
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>저장된 운동 기록이 없습니다.</Text>
+            <Text style={styles.emptyText}>아래에서 바로 새 운동 기록을 생성할 수 있습니다.</Text>
+            <Button label="운동 기록 생성하기" onPress={() => setSheetMode('create')} variant="secondary" />
+          </View>
+        ) : null}
 
-      <View style={styles.summaryCard}>
-        <Text style={styles.summaryTitle}>현재 상태</Text>
-        <Text style={styles.summaryText}>기록 ID: {workout?.id ?? '없음'}</Text>
-        <Text style={styles.summaryText}>선택 루틴 수: {selectedRoutineIds.length}</Text>
-        <Text style={styles.summaryText}>개별 운동 수: {exercisePayload.length}</Text>
-        <Text style={styles.summaryText}>입력 세트(총합): {totalPlannedSets}세트</Text>
-      </View>
+        {workoutByDate?.routines && (
+          <>
+            {workoutByDate?.routines.length > 0 &&
+              workoutByDate?.routines.map((routine) => (
+                <WorkoutRoutineCardWithSets
+                  key={routine.routineId}
+                  title={routine.routineName ?? '루틴'}
+                  exercises={routine.exercises}
+                />
+              ))}
+          </>
+        )}
+        {workoutByDate?.exercises && (
+          <WorkoutRoutineCardWithSets title={'루틴외 운동'} exercises={workoutByDate.exercises} />
+        )}
+      </ScrollView>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="하단 시트 열기"
+        style={styles.sheetHandleTrigger}
+        onPress={() => setSheetMode(workoutByDate ? 'manage' : 'create')}
+      >
+        <AntDesign name="caret-up" size={24} color="black" />
+      </Pressable>
+
+      <DraggableSheet
+        visible={!!sheetMode}
+        onClose={() => setSheetMode(null)}
+        renderContent={() => (
+          <ScrollView contentContainerStyle={styles.sheetContent}>
+            {sheetMode !== 'sets' ? (
+              <WorkoutSheet selectedDate={selectedDate} initialWorkoutData={workoutByDate} />
+            ) : (
+              <Button label="편집 폼 열기" onPress={() => setSheetMode('manage')} variant="secondary" />
+            )}
+          </ScrollView>
+        )}
+      />
     </ScrollView>
   );
 };
@@ -356,54 +128,88 @@ const styles = StyleSheet.create({
   },
   containerContent: {
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 28,
+    gap: 10,
   },
+
   centered: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
   },
+  centeredInline: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+  },
   title: {
     fontSize: 22,
     fontWeight: '700',
     color: '#1A1A1A',
   },
+  secondaryTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
   description: {
-    marginTop: 6,
-    marginBottom: 10,
     color: '#666666',
   },
-  form: {
+
+  sheetHandleTrigger: {
+    position: 'absolute',
+    left: '50%',
+    bottom: 8,
+    marginLeft: -100,
+    width: 200,
+    borderWidth: 1,
+    borderColor: '#E6E6E6',
+    borderRadius: 999,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 6,
+    zIndex: 20,
+  },
+
+  sheetContent: {
+    gap: 10,
+    paddingBottom: 40,
+  },
+  sheetTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1A1A1A',
+  },
+
+  sectionTitle: {
+    marginTop: 4,
+    fontWeight: '700',
+    color: '#1A1A1A',
+  },
+  exerciseRowButton: {
+    justifyContent: 'flex-start',
+  },
+  emptyCard: {
     borderWidth: 1,
     borderColor: '#E6E6E6',
     borderRadius: 8,
-    backgroundColor: '#F7F7F7',
     padding: 12,
-    gap: 10,
-  },
-  inlineRow: {
-    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
     gap: 8,
   },
-
-  flex1: {
-    flex: 1,
-  },
-  label: {
-    fontWeight: '600',
+  emptyTitle: {
+    fontWeight: '700',
     color: '#1A1A1A',
   },
-  routineList: {
-    gap: 8,
+  emptyText: {
+    color: '#666666',
   },
 
-  routineChipTextSelected: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  routineChipTextDefault: {
+  focusedExerciseText: {
     color: '#1A1A1A',
+    fontWeight: '600',
   },
 
   setConfigList: {
@@ -421,28 +227,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1A1A1A',
   },
-  actionsRow: {
+  inlineRow: {
     flexDirection: 'row',
     gap: 8,
   },
-  summaryCard: {
-    marginTop: 12,
-    borderWidth: 1,
-    borderColor: '#E6E6E6',
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    gap: 4,
+  flex1: {
+    flex: 1,
   },
-  summaryTitle: {
-    fontWeight: '700',
-    color: '#1A1A1A',
-  },
-  summaryText: {
-    color: '#666666',
-  },
-  emptyText: {
-    color: '#666666',
-    paddingVertical: 8,
+  actionsRow: {
+    flexDirection: 'row',
+    gap: 8,
   },
 });

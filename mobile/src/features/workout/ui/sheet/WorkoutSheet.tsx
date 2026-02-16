@@ -12,6 +12,7 @@ import { WorkoutRoutineCard } from '../WorkoutRoutineCard';
 interface WorkoutSheetProps {
   selectedDate: Date;
   initialWorkoutData?: WorkoutBydateResponse | null;
+  onSubmitSuccess: (date: Date) => void;
 }
 const nomalizedResponseToPayload = (response: WorkoutBydateResponse): WorkoutPayload => ({
   date: response.date,
@@ -24,7 +25,7 @@ const nomalizedResponseToPayload = (response: WorkoutBydateResponse): WorkoutPay
   })),
 });
 
-export function WorkoutSheet({ selectedDate, initialWorkoutData }: WorkoutSheetProps) {
+export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess }: WorkoutSheetProps) {
   const type = initialWorkoutData ? 'manage' : 'create';
   const [routines, setRoutines] = useState<RoutineItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -111,6 +112,7 @@ export function WorkoutSheet({ selectedDate, initialWorkoutData }: WorkoutSheetP
       );
     } finally {
       setIsSaving(false);
+      onSubmitSuccess(selectedDate);
     }
   };
 

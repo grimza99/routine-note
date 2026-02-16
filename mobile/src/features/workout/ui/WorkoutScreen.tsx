@@ -48,6 +48,31 @@ export const WorkoutScreen = () => {
     );
   }
 
+  const handleDelete = () => {
+    if (!workoutByDate?.id) {
+      Alert.alert('안내', '삭제할 운동 기록이 없습니다.');
+      return;
+    }
+
+    Alert.alert('운동 기록 삭제', '선택한 날짜의 운동 기록을 삭제할까요?', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await workoutApi.remove(workoutByDate.id);
+            await loadWorkoutByDate(formatDate(selectedDate));
+            setSheetMode(null);
+            Alert.alert('완료', '운동 기록을 삭제했습니다.');
+          } catch (error) {
+            Alert.alert('삭제 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
+          }
+        },
+      },
+    ]);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ScrollView contentContainerStyle={styles.containerContent}>
@@ -62,8 +87,14 @@ export const WorkoutScreen = () => {
       </ScrollView>
       {/* workout 기록 */}
       <ScrollView contentContainerStyle={styles.containerContent}>
-        <Text style={styles.secondaryTitle}>{formatMonthDay(selectedDate)} 기록</Text>
-
+        <View style={styles.workoutSectionHeader}>
+          <Text style={styles.secondaryTitle}>{formatMonthDay(selectedDate)} 기록</Text>
+          <Button
+            label="운동 기록 전체 삭제"
+            onPress={handleDelete}
+            style={{ paddingHorizontal: 6, paddingVertical: 4 }}
+          />
+        </View>
         {isInitialLoading && (
           <View style={styles.centeredInline}>
             <ActivityIndicator size="small" color="#E60023" />
@@ -110,7 +141,14 @@ export const WorkoutScreen = () => {
         renderContent={() => (
           <ScrollView contentContainerStyle={styles.sheetContent}>
             {sheetMode !== 'sets' ? (
-              <WorkoutSheet selectedDate={selectedDate} initialWorkoutData={workoutByDate} />
+              <WorkoutSheet
+                selectedDate={selectedDate}
+                initialWorkoutData={workoutByDate}
+                onSubmitSuccess={async (date) => {
+                  await loadWorkoutByDate(formatDate(date));
+                  setSheetMode(null);
+                }}
+              />
             ) : (
               <Button label="편집 폼 열기" onPress={() => setSheetMode('manage')} variant="secondary" />
             )}
@@ -131,6 +169,12 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
     gap: 10,
   },
+  workoutSectionHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 
   centered: {
     flex: 1,
@@ -149,7 +193,7 @@ const styles = StyleSheet.create({
     color: '#1A1A1A',
   },
   secondaryTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: '#1A1A1A',
   },

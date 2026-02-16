@@ -1,26 +1,13 @@
 import { apiClient } from '../../../shared/libs/network';
 import type { RoutineItem, RoutinePayload } from '../../../shared/types/routine';
 
-const parseExercises = (input: string) =>
-  input
-    .split(',')
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .map((exerciseName, index) => ({
-      exerciseName,
-      order: index + 1,
-    }));
-
 export const routineApi = {
-  parseExercises,
-
   async list() {
     const response = await apiClient.request<RoutineItem[]>('/api/routines');
 
     if (response.error) {
       throw new Error(response.error.message);
     }
-
     return response.data ?? [];
   },
 

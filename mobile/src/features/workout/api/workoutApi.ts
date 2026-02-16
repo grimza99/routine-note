@@ -1,5 +1,5 @@
 import { apiClient } from '../../../shared/libs/network';
-import type { WorkoutItem, WorkoutPayload, WorkoutSetPayload } from '../../../shared/types/workout';
+import type { WorkoutBydateResponse, WorkoutPayload, WorkoutSetPayload } from '../../../shared/types/workout';
 
 const toDate = (value: Date) => {
   const year = value.getFullYear();
@@ -24,7 +24,7 @@ export const workoutApi = {
   parseExercises,
 
   async getByDate(date: string) {
-    const response = await apiClient.request<WorkoutItem>(`/api/workouts?date=${date}`);
+    const response = await apiClient.request<WorkoutBydateResponse>(`/api/workouts?date=${date}`);
 
     if (response.error) {
       throw new Error(response.error.message);
@@ -39,7 +39,7 @@ export const workoutApi = {
   },
 
   async create(payload: WorkoutPayload) {
-    const response = await apiClient.request<WorkoutItem>('/api/workouts', {
+    const response = await apiClient.request<WorkoutBydateResponse>('/api/workouts', {
       method: 'POST',
       body: JSON.stringify(payload),
     });
@@ -52,7 +52,7 @@ export const workoutApi = {
   },
 
   async update(workoutId: string, payload: WorkoutPayload) {
-    const response = await apiClient.request<WorkoutItem>(`/api/workouts/${workoutId}`, {
+    const response = await apiClient.request<WorkoutBydateResponse>(`/api/workouts/${workoutId}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     });

@@ -5,7 +5,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { workoutApi } from '../api/workoutApi';
 import { Button, DraggableSheet } from '../../../shared/ui';
 import { WorkoutCalendar } from './WorkoutCalendar';
-import { formatDate, formatMonthDay } from '../../../shared/libs';
+import { formatDate, formatMonthDay, trackEvent } from '../../../shared/libs';
 import { WorkoutRoutineCardWithSets } from './WorkoutRoutineCardWithSets';
 import { WorkoutBydateResponse } from '../../../shared/types';
 import { WorkoutSheet } from './sheet/WorkoutSheet';
@@ -65,6 +65,9 @@ export const WorkoutScreen = () => {
             await loadWorkoutByDate(formatDate(selectedDate));
             setSheetMode(null);
             Alert.alert('완료', '운동 기록을 삭제했습니다.');
+            void trackEvent('workout_created', {
+              date: formatDate(selectedDate),
+            });
           } catch (error) {
             Alert.alert('삭제 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
           }
@@ -74,8 +77,8 @@ export const WorkoutScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <ScrollView contentContainerStyle={styles.containerContent}>
+    <View style={styles.container}>
+      <View style={styles.containerContent}>
         <Text style={styles.title}>운동 기록</Text>
         <Text style={styles.description}>하단 시트에서 운동 기록을 관리할수있어요!</Text>
         <WorkoutCalendar
@@ -84,9 +87,9 @@ export const WorkoutScreen = () => {
             setSelectedDate(selectedDate);
           }}
         />
-      </ScrollView>
+      </View>
       {/* workout 기록 */}
-      <ScrollView contentContainerStyle={[styles.containerContent, { paddingBottom: 20 }]}>
+      <View style={styles.workoutSection}>
         <View style={styles.workoutSectionHeader}>
           <Text style={styles.secondaryTitle}>{formatMonthDay(selectedDate)} 기록</Text>
           <Button
@@ -95,36 +98,38 @@ export const WorkoutScreen = () => {
             style={{ paddingHorizontal: 6, paddingVertical: 4 }}
           />
         </View>
-        {isInitialLoading && (
-          <View style={styles.centeredInline}>
-            <ActivityIndicator size="small" color="#E60023" />
-          </View>
-        )}
+        <ScrollView contentContainerStyle={styles.workoutListContent} style={styles.workoutList}>
+          {isInitialLoading && (
+            <View style={styles.centeredInline}>
+              <ActivityIndicator size="small" color="#E60023" />
+            </View>
+          )}
 
-        {!workoutByDate ? (
-          <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>저장된 운동 기록이 없습니다.</Text>
-            <Text style={styles.emptyText}>아래에서 바로 새 운동 기록을 생성할 수 있습니다.</Text>
-            <Button label="운동 기록 생성하기" onPress={() => setSheetMode('create')} variant="secondary" />
-          </View>
-        ) : null}
+          {!workoutByDate ? (
+            <View style={styles.emptyCard}>
+              <Text style={styles.emptyTitle}>저장된 운동 기록이 없습니다.</Text>
+              <Text style={styles.emptyText}>아래에서 바로 새 운동 기록을 생성할 수 있습니다.</Text>
+              <Button label="운동 기록 생성하기" onPress={() => setSheetMode('create')} variant="secondary" />
+            </View>
+          ) : null}
 
-        {workoutByDate?.routines && (
-          <>
-            {workoutByDate?.routines.length > 0 &&
-              workoutByDate?.routines.map((routine) => (
-                <WorkoutRoutineCardWithSets
-                  key={routine.routineId}
-                  title={routine.routineName ?? '루틴'}
-                  exercises={routine.exercises}
-                />
-              ))}
-          </>
-        )}
-        {workoutByDate?.exercises && (
-          <WorkoutRoutineCardWithSets title={'루틴외 운동'} exercises={workoutByDate.exercises} />
-        )}
-      </ScrollView>
+          {workoutByDate?.routines && (
+            <>
+              {workoutByDate?.routines.length > 0 &&
+                workoutByDate?.routines.map((routine) => (
+                  <WorkoutRoutineCardWithSets
+                    key={routine.routineId}
+                    title={routine.routineName ?? '루틴'}
+                    exercises={routine.exercises}
+                  />
+                ))}
+            </>
+          )}
+          {workoutByDate?.exercises && (
+            <WorkoutRoutineCardWithSets title={'루틴외 운동'} exercises={workoutByDate.exercises} />
+          )}
+        </ScrollView>
+      </View>
 
       <Pressable
         accessibilityRole="button"
@@ -155,7 +160,7 @@ export const WorkoutScreen = () => {
           </ScrollView>
         )}
       />
-    </ScrollView>
+    </View>
   );
 };
 
@@ -168,6 +173,18 @@ const styles = StyleSheet.create({
   containerContent: {
     padding: 16,
     gap: 10,
+  },
+  workoutSection: {
+    flex: 1,
+    paddingHorizontal: 16,
+    gap: 10,
+  },
+  workoutList: {
+    flex: 1,
+    minHeight: 0,
+  },
+  workoutListContent: {
+    paddingBottom: 20,
   },
   workoutSectionHeader: {
     display: 'flex',

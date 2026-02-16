@@ -86,7 +86,7 @@ export const WorkoutScreen = () => {
         />
       </ScrollView>
       {/* workout 기록 */}
-      <ScrollView contentContainerStyle={styles.containerContent}>
+      <ScrollView contentContainerStyle={[styles.containerContent, { paddingBottom: 20 }]}>
         <View style={styles.workoutSectionHeader}>
           <Text style={styles.secondaryTitle}>{formatMonthDay(selectedDate)} 기록</Text>
           <Button
@@ -163,10 +163,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingBottom: 30,
   },
   containerContent: {
     padding: 16,
-    paddingBottom: 28,
     gap: 10,
   },
   workoutSectionHeader: {
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   sheetHandleTrigger: {
     position: 'absolute',
     left: '50%',
-    bottom: 8,
+    bottom: 6,
     marginLeft: -100,
     width: 200,
     borderWidth: 1,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 6,
+    paddingVertical: 2,
     zIndex: 20,
   },
 

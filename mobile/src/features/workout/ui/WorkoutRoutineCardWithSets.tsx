@@ -6,7 +6,7 @@ interface WorkoutRoutineCardProps {
   exercises: WorkoutExerciseItem[];
 }
 
-export function WorkoutRoutineCard({ title, exercises }: WorkoutRoutineCardProps) {
+export function WorkoutRoutineCardWithSets({ title, exercises }: WorkoutRoutineCardProps) {
   if (exercises.length < 1) {
     return null;
   }
@@ -18,7 +18,7 @@ export function WorkoutRoutineCard({ title, exercises }: WorkoutRoutineCardProps
         {exercises.map((exercise) => (
           <View key={exercise.id} style={styles.exerciseItem}>
             <Text style={[styles.text, styles.ellipsizeText]} numberOfLines={1} ellipsizeMode="tail">
-              {exercise.name}
+              {exercise.exerciseName}
             </Text>
             {exercise.sets && <Text style={styles.text}>{exercise.sets.length}세트</Text>}
           </View>
@@ -66,3 +66,5 @@ const styles = StyleSheet.create({
     maxWidth: 100,
   },
 });
+
+export const WorkoutRoutineCardStyle = styles;

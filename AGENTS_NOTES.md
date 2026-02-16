@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-02-13] [mobile] DraggableSheet 공통 컴포넌트 신규 추가
+  - 영향/증상/개요 (필수): 날짜 중심 워크아웃 UX 개편을 위해 하단에서 드래그로 접고 펼치는 공통 시트 UI 필요.
+  - 결정/조치 (필수): `mobile/src/shared/ui/draggable-sheet/DraggableSheet.tsx`를 추가해 `visible/onClose` 기반 열림/닫힘, backdrop 탭 닫기, 아래로 드래그 닫기, `children` 또는 `renderContent(close)` 전달 방식을 지원. `shared/ui/index.ts` export 반영 및 타입체크 통과.
+  - 관련 파일/링크 (선택): `mobile/src/shared/ui/draggable-sheet/DraggableSheet.tsx`, `mobile/src/shared/ui/index.ts`
+
 - [2026-02-13] [mobile] 공통 Button 이후 Input 공통 컴포넌트 추가 적용
   - 영향/증상/개요 (필수): `RoutineScreen`, `WorkoutScreen`에서 `TextInput` 스타일/속성 패턴이 반복되어 유지보수 비용 증가.
   - 결정/조치 (필수): `mobile/src/shared/ui/input/Input.tsx`를 추가하고 두 화면의 입력 필드를 `Input`으로 교체. `shared/ui/index.ts` export 반영 및 모바일 타입체크(`pnpm --filter routine-note-mobile exec tsc --noEmit`) 통과.

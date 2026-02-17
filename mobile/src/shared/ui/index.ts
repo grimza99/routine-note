@@ -11,3 +11,6 @@ export { Input } from './input/Input';
 
 // draggable-sheet
 export { DraggableSheet } from './draggable-sheet/DraggableSheet';
+
+// stepper
+export { NumberStepper } from './stepper/NumberStepper';

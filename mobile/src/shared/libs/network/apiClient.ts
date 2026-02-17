@@ -21,38 +21,52 @@ type AuthRefreshResponse = {
 
 const getPlatformHeader = () => (Platform.OS === 'ios' ? CLIENT_PLATFORM.IOS : CLIENT_PLATFORM.ANDROID);
 
+let refreshInFlight: Promise<boolean> | null = null;
+
 const refreshAccessToken = async (): Promise<boolean> => {
-  const tokens = await tokenStorage.read();
-  if (!tokens?.refreshToken) {
-    return false;
+  if (refreshInFlight) {
+    return refreshInFlight;
   }
 
-  const response = await fetch(`${appEnv.apiBaseUrl}/api/auth/refresh`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      [MOBILE_META_HEADERS.PLATFORM]: getPlatformHeader(),
-      [MOBILE_META_HEADERS.APP_VERSION]: appEnv.appVersion,
-      [MOBILE_META_HEADERS.APP_BUILD]: appEnv.appBuild,
-    },
-    body: JSON.stringify({ refreshToken: tokens.refreshToken }),
-  });
+  refreshInFlight = (async () => {
+    const tokens = await tokenStorage.read();
+    if (!tokens?.refreshToken) {
+      return false;
+    }
 
-  if (!response.ok) {
-    return false;
+    const response = await fetch(`${appEnv.apiBaseUrl}/api/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        [MOBILE_META_HEADERS.PLATFORM]: getPlatformHeader(),
+        [MOBILE_META_HEADERS.APP_VERSION]: appEnv.appVersion,
+        [MOBILE_META_HEADERS.APP_BUILD]: appEnv.appBuild,
+      },
+      body: JSON.stringify({ refreshToken: tokens.refreshToken }),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const payload = (await response.json().catch(() => null)) as AuthRefreshResponse | null;
+    if (!payload?.token) {
+      return false;
+    }
+
+    await tokenStorage.save({
+      accessToken: payload.token,
+      refreshToken: payload.refresh_token ?? tokens.refreshToken,
+    });
+
+    return true;
+  })();
+
+  try {
+    return await refreshInFlight;
+  } finally {
+    refreshInFlight = null;
   }
-
-  const payload = (await response.json().catch(() => null)) as AuthRefreshResponse | null;
-  if (!payload?.token) {
-    return false;
-  }
-
-  await tokenStorage.save({
-    accessToken: payload.token,
-    refreshToken: payload.refresh_token ?? tokens.refreshToken,
-  });
-
-  return true;
 };
 
 export const apiClient = {
@@ -85,7 +99,7 @@ export const apiClient = {
         }
       }
 
-      const error = payload && typeof payload === 'object' && 'error' in payload ? payload.error ?? null : null;
+      const error = payload && typeof payload === 'object' && 'error' in payload ? (payload.error ?? null) : null;
       return {
         data: null,
         error: error ?? {

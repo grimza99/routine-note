@@ -14,9 +14,14 @@ export const authApi = {
       throw new Error(response.error?.message ?? '로그인에 실패했습니다.');
     }
 
+    if (!response.data.refresh_token) {
+      await tokenStorage.clear();
+      throw new Error('로그인 응답에 refresh token이 없습니다.');
+    }
+
     await tokenStorage.save({
       accessToken: response.data.access_token,
-      refreshToken: response.data.refresh_token ?? response.data.access_token,
+      refreshToken: response.data.refresh_token,
     });
 
     return response.data;

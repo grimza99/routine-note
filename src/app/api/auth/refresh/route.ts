@@ -9,8 +9,7 @@ export async function POST(request: NextRequest) {
   const cookieStore = request.cookies;
   const requestBody = (await request.json().catch(() => null)) as { refreshToken?: string } | null;
   const bodyRefreshToken = requestBody?.refreshToken?.trim() ? requestBody.refreshToken.trim() : null;
-
-  const refreshToken = cookieStore.get('sb_refresh_token')?.value ?? bodyRefreshToken;
+  const refreshToken = bodyRefreshToken ?? cookieStore.get('sb_refresh_token')?.value;
 
   if (!refreshToken) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing refresh token' } });

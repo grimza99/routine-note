@@ -21,7 +21,12 @@ type AuthRefreshResponse = {
 
 const getPlatformHeader = () => (Platform.OS === 'ios' ? CLIENT_PLATFORM.IOS : CLIENT_PLATFORM.ANDROID);
 
+let authExpiredHandler: (() => void) | null = null;
 let refreshInFlight: Promise<boolean> | null = null;
+
+export const setAuthExpiredHandler = (handler: (() => void) | null) => {
+  authExpiredHandler = handler;
+};
 
 const refreshAccessToken = async (): Promise<boolean> => {
   if (refreshInFlight) {
@@ -69,6 +74,14 @@ const refreshAccessToken = async (): Promise<boolean> => {
   }
 };
 
+export const validateStoredSession = async (): Promise<boolean> => {
+  const refreshed = await refreshAccessToken();
+  if (!refreshed) {
+    await tokenStorage.clear();
+  }
+  return refreshed;
+};
+
 export const apiClient = {
   async request<TResponse>(
     path: string,
@@ -97,6 +110,8 @@ export const apiClient = {
         if (refreshed) {
           return apiClient.request<TResponse>(path, { ...init, retry: true });
         }
+        await tokenStorage.clear();
+        authExpiredHandler?.();
       }
 
       const error = payload && typeof payload === 'object' && 'error' in payload ? (payload.error ?? null) : null;

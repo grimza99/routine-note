@@ -3,6 +3,7 @@ import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useSt
 import { authApi } from '../api/authApi';
 import { trackEvent } from '../../../shared/libs/analytics/track';
 import { tokenStorage } from '../../../shared/libs/storage/tokenStorage';
+import { setAuthExpiredHandler, validateStoredSession } from '../../../shared/libs/network/apiClient';
 
 type AuthContextValue = {
   isInitialized: boolean;
@@ -18,14 +19,31 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    setAuthExpiredHandler(() => {
+      setIsAuthenticated(false);
+    });
+
     const bootstrap = async () => {
       const tokens = await tokenStorage.read();
-      setIsAuthenticated(Boolean(tokens?.accessToken));
+
+      if (!tokens?.refreshToken) {
+        setIsAuthenticated(false);
+        setIsInitialized(true);
+        void trackEvent('app_open');
+        return;
+      }
+
+      const isSessionValid = await validateStoredSession();
+      setIsAuthenticated(isSessionValid);
       setIsInitialized(true);
       void trackEvent('app_open');
     };
 
     void bootstrap();
+
+    return () => {
+      setAuthExpiredHandler(null);
+    };
   }, []);
 
   const value = useMemo<AuthContextValue>(

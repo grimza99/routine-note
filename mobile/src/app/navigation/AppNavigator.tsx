@@ -8,11 +8,13 @@ import { WebFallbackScreen } from '../../features/webview/ui/WebFallbackScreen';
 import type { MainTabParamList, RootStackParamList } from './types';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { Button } from '../../shared/ui';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const MainTabs = createBottomTabNavigator<MainTabParamList>();
 
 const MainTabsScreen = () => {
+  const { logout } = useAuthSession();
   return (
     <MainTabs.Navigator
       screenOptions={() => ({
@@ -58,7 +60,12 @@ const MainTabsScreen = () => {
           title: '마이페이지',
           tabBarIcon: ({ size, color }) => <FontAwesome6 name="user" size={size} color={color} />,
         }}
-        children={() => <WebFallbackScreen path="MYPAGE" />}
+        children={() => (
+          <>
+            <WebFallbackScreen path="MYPAGE" />
+            <Button label="로그아웃" onPress={logout} style={{ margin: 10 }} />
+          </>
+        )}
       />
     </MainTabs.Navigator>
   );

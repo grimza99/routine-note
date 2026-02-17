@@ -34,7 +34,7 @@ export default function MyPageProfile({ imageUrl, nickname, workoutDays }: MyPag
           className="w-20 h-20 rounded-full border-2 border-primary object-cover object-center"
         />
       ) : (
-        <DefaultProfile size={20} />
+        <DefaultProfile />
       )}
 
       <div className="flex flex-col items-center lg:items-start space-y-2">

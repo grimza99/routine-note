@@ -198,6 +198,8 @@ const styles = StyleSheet.create({
     minHeight: 0,
   },
   workoutListContent: {
+    display: 'flex',
+    gap: 12,
     paddingBottom: 20,
   },
   workoutSectionHeader: {

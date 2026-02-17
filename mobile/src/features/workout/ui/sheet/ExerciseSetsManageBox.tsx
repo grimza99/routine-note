@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { formatDate, trackEvent } from '../../../../shared/libs';
 import { workoutApi } from '../../api/workoutApi';
 import { Button, Input, NumberStepper } from '../../../../shared/ui';
-import { WorkoutExerciseItem, WorkoutSetPayload } from '../../../../shared/types';
+import { WorkoutExerciseItem } from '../../../../shared/types';
 import SetBox from './SetBox';
 
 interface ExerciseSetsSheetProps {
@@ -80,6 +80,10 @@ export function ExerciseSetsManageBox({
           if (initialSetsIds.includes(set.id)) {
             // 기존 세트 업데이트 API 호출
             await workoutApi.updateSet(set.id, { weight: set.weight, reps: set.reps });
+            void trackEvent('workout_sets_updated', {
+              date: formatDate(selectedDate),
+              ...set,
+            });
             continue;
           }
           //새로 추가된

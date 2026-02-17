@@ -31,7 +31,7 @@ export const useCreateWorkoutMutation = () => {
     },
     onSuccess: (_data, variables) => {
       void trackEvent({
-        eventName: ANALYTICS_EVENTS.WORKOUT_SAVED,
+        eventName: ANALYTICS_EVENTS.WORKOUT_CREATED,
         source: 'web-workout-create',
         properties: {
           date: variables.date,
@@ -79,7 +79,7 @@ export const useUpdateWorkoutMutation = (workoutId: string | undefined) => {
     },
     onSuccess: (_data, variables) => {
       void trackEvent({
-        eventName: ANALYTICS_EVENTS.WORKOUT_SAVED,
+        eventName: ANALYTICS_EVENTS.WORKOUT_UPDATED,
         source: 'web-workout-update',
         properties: {
           date: variables.date,

@@ -1,6 +1,12 @@
 import type { RouteContractItem } from '../../shared/types/routing';
+import { ROUTE_CONTRACT_FROZEN_AT, ROUTE_CONTRACT_VERSION } from '../../shared/types/routing';
 
-export const routeContract: RouteContractItem[] = [
+export const routeContractMetadata = {
+  version: ROUTE_CONTRACT_VERSION,
+  frozenAt: ROUTE_CONTRACT_FROZEN_AT,
+} as const;
+
+export const routeContract: ReadonlyArray<RouteContractItem> = [
   { key: 'auth.login', path: 'auth/login', resolution: 'native' },
   { key: 'workout.record', path: 'workout/record', resolution: 'native' },
   { key: 'routine.list', path: 'routine/list', resolution: 'native' },

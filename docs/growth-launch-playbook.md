@@ -1,5 +1,7 @@
 # 클로즈드 테스트 기반 출시/홍보 플레이북
 
+> iOS 출시 전체 일정/게이트/검증 기준은 `docs/ios-mvp-launch-plan.md`를 기준으로 운영한다.
+
 ## 1) 목표
 
 - 출시 전 사용자 피드백을 확보해 공개 출시 품질과 평점을 올린다.
@@ -47,8 +49,12 @@
 ## 6) 추적 이벤트
 
 - `app_install`
-- `app_open`
-- `login_success`
-- `workout_saved`
-- `routine_applied`
-- `report_viewed`
+- `app_open`,
+- `login_success`,
+- `workout_created`,
+- `workout_updated`,
+- `workout_removed`,
+- `routine_applied`,
+- `report_viewed`,
+- `workout_sets_created`,
+- `workout_sets_updated`,

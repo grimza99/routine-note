@@ -93,7 +93,7 @@ export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess
       setIsSaving(true);
       if (type === 'manage' && initialWorkoutData) {
         await workoutApi.update(initialWorkoutData.id, payload);
-        void trackEvent('workout_update', {
+        void trackEvent('workout_updated', {
           selectedDate,
           ...payload,
         });

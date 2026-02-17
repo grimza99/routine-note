@@ -5,6 +5,7 @@ export type ClientMeta = {
   platform: ClientPlatform;
   appVersion: string | null;
   appBuild: string | null;
+  missingHeaders: string[];
 };
 
 const isClientPlatform = (value: string): value is ClientPlatform =>
@@ -14,12 +15,35 @@ const isClientPlatform = (value: string): value is ClientPlatform =>
   value === CLIENT_PLATFORM.UNKNOWN;
 
 export const getClientMeta = (request: NextRequest): ClientMeta => {
-  const platformHeader = request.headers.get(MOBILE_META_HEADERS.PLATFORM) ?? CLIENT_PLATFORM.UNKNOWN;
-  const platform = isClientPlatform(platformHeader) ? platformHeader : CLIENT_PLATFORM.UNKNOWN;
+  const platformHeader = request.headers.get(MOBILE_META_HEADERS.PLATFORM);
+  const appVersionHeader = request.headers.get(MOBILE_META_HEADERS.APP_VERSION);
+  const appBuildHeader = request.headers.get(MOBILE_META_HEADERS.APP_BUILD);
+  const missingHeaders: string[] = [];
+
+  if (!platformHeader) missingHeaders.push(MOBILE_META_HEADERS.PLATFORM);
+  if (!appVersionHeader) missingHeaders.push(MOBILE_META_HEADERS.APP_VERSION);
+  if (!appBuildHeader) missingHeaders.push(MOBILE_META_HEADERS.APP_BUILD);
+
+  const normalizedPlatform = platformHeader ?? CLIENT_PLATFORM.UNKNOWN;
+  const platform = isClientPlatform(normalizedPlatform) ? normalizedPlatform : CLIENT_PLATFORM.UNKNOWN;
 
   return {
     platform,
-    appVersion: request.headers.get(MOBILE_META_HEADERS.APP_VERSION),
-    appBuild: request.headers.get(MOBILE_META_HEADERS.APP_BUILD),
+    appVersion: appVersionHeader,
+    appBuild: appBuildHeader,
+    missingHeaders,
   };
+};
+
+export const warnMissingClientMetaHeaders = (request: NextRequest, route: string) => {
+  const { missingHeaders } = getClientMeta(request);
+
+  if (missingHeaders.length === 0) {
+    return;
+  }
+
+  console.warn(`[api][${route}] missing client meta headers`, {
+    missingHeaders,
+    userAgent: request.headers.get('user-agent'),
+  });
 };

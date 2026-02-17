@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-02-17] [release] iOS MVP 출시 플랜 실행 문서/계약 반영
+  - 영향/증상/개요 (필수): 사용자 요청으로 KR TestFlight 2주 + 6주 일정의 출시 플랜을 실제 운영 가능한 문서/계약으로 코드베이스에 고정할 필요.
+  - 결정/조치 (필수): `docs/ios-mvp-launch-plan.md`를 신설하고, `/api/events` 스키마에 `sessionId/screenName/funnelStep/errorCode`를 확장. 모바일 메타 헤더 누락 시 경고 로그를 남기도록 서버 유틸/라우트를 보강하고, 라우팅 계약 동결 버전을 타입/문서에 명시.
+  - 관련 파일/링크 (선택): `docs/ios-mvp-launch-plan.md`, `src/app/api/events/route.ts`, `src/shared/libs/api-route/header/getClientMeta.ts`, `docs/mobile-routing-contract.md`
+
 - [2026-02-13] [mobile] DraggableSheet 공통 컴포넌트 신규 추가
   - 영향/증상/개요 (필수): 날짜 중심 워크아웃 UX 개편을 위해 하단에서 드래그로 접고 펼치는 공통 시트 UI 필요.
   - 결정/조치 (필수): `mobile/src/shared/ui/draggable-sheet/DraggableSheet.tsx`를 추가해 `visible/onClose` 기반 열림/닫힘, backdrop 탭 닫기, 아래로 드래그 닫기, `children` 또는 `renderContent(close)` 전달 방식을 지원. `shared/ui/index.ts` export 반영 및 타입체크 통과.
@@ -46,7 +51,7 @@
 
 - [2026-02-13] [mobile] 모바일 Native 화면에 운동기록/루틴 CRUD API 연동 추가
   - 영향/증상/개요 (필수): 하이브리드 앱 골격 이후 실제 사용 가능한 CRUD(루틴 생성/수정/삭제, 날짜별 운동 생성/수정/삭제) 연결이 필요.
-  - 결정/조치 (필수): `mobile`에 `routineApi/workoutApi`를 추가하고 `RoutineScreen`, `WorkoutScreen`을 폼+목록 기반 CRUD 화면으로 교체. 저장 후 이벤트(`workout_saved`, `routine_applied`) 전송 연결.
+  - 결정/조치 (필수): `mobile`에 `routineApi/workoutApi`를 추가하고 `RoutineScreen`, `WorkoutScreen`을 폼+목록 기반 CRUD 화면으로 교체. 저장 후 이벤트(`workout_created`, `routine_applied`) 전송 연결.
   - 관련 파일/링크 (선택): `mobile/src/features/routine/ui/RoutineScreen.tsx`, `mobile/src/features/workout/ui/WorkoutScreen.tsx`, `mobile/src/features/routine/api/routineApi.ts`, `mobile/src/features/workout/api/workoutApi.ts`
 
 - [2026-02-13] [env] 워크스페이스 의존성 설치 실패 (npm registry DNS)

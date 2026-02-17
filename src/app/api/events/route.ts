@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
 import { ANALYTICS_EVENT_NAMES } from '@/shared/constants';
-import { getClientMeta, json } from '@/shared/libs/api-route';
+import { getClientMeta, json, warnMissingClientMetaHeaders } from '@/shared/libs/api-route';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 
 const eventSchema = z.object({
@@ -12,11 +12,17 @@ const eventSchema = z.object({
   platform: z.string().min(1).max(20).optional(),
   appVersion: z.string().min(1).max(40).optional(),
   appBuild: z.string().min(1).max(40).optional(),
+  sessionId: z.string().min(1).max(120).optional(),
+  screenName: z.string().min(1).max(120).optional(),
+  funnelStep: z.string().min(1).max(120).optional(),
+  errorCode: z.string().min(1).max(120).optional(),
   timestamp: z.string().datetime().optional(),
   properties: z.record(z.string(), z.unknown()).optional(),
 });
 
 export async function POST(request: NextRequest) {
+  warnMissingClientMetaHeaders(request, 'events');
+
   const parsed = eventSchema.safeParse(await request.json().catch(() => null));
 
   if (!parsed.success) {
@@ -34,7 +40,13 @@ export async function POST(request: NextRequest) {
     platform: payload.platform ?? clientMeta.platform,
     app_version: payload.appVersion ?? clientMeta.appVersion,
     app_build: payload.appBuild ?? clientMeta.appBuild,
-    properties: payload.properties ?? {},
+    properties: {
+      ...payload.properties,
+      sessionId: payload.sessionId ?? null,
+      screenName: payload.screenName ?? null,
+      funnelStep: payload.funnelStep ?? null,
+      errorCode: payload.errorCode ?? null,
+    },
     event_at: payload.timestamp ?? new Date().toISOString(),
     ip_address: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
     user_agent: request.headers.get('user-agent') ?? null,

@@ -6,6 +6,10 @@ type TrackEventPayload = {
   eventName: AnalyticsEventName;
   userId?: string;
   source?: string;
+  sessionId?: string;
+  screenName?: string;
+  funnelStep?: string;
+  errorCode?: string;
   timestamp?: string;
   properties?: Record<string, unknown>;
 };

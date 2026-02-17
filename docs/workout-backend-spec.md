@@ -7,10 +7,11 @@
 - Base URL: `/api`
 - Auth: `Authorization: Bearer <token>`
 - 시간 포맷: `YYYY-MM-DD`, 월 포맷: `YYYY-MM`
-- 클라이언트 메타 헤더(권장)
+- 클라이언트 메타 헤더(필수)
   - `x-client-platform`: `ios | android | web`
   - `x-app-version`: 앱/웹 버전 문자열 (`1.0.0`, `web`)
   - `x-app-build`: 빌드 번호/식별자
+  - 누락 시: 요청은 처리하되 서버 경고 로그를 남긴다.
 - 에러 응답 예시
 
 ```json
@@ -809,6 +810,10 @@
   "platform": "web",
   "appVersion": "web",
   "appBuild": "local",
+  "sessionId": "session-uuid-or-random",
+  "screenName": "LoginScreen",
+  "funnelStep": "login_success",
+  "errorCode": "NETWORK_TIMEOUT",
   "timestamp": "2026-02-13T12:00:00.000Z",
   "properties": {
     "month": "2026-02"
@@ -822,8 +827,13 @@
 - `app_open`
 - `login_success`
 - `workout_saved`
+- `workout_created`
+- `workout_updated`
+- `workout_removed`
 - `routine_applied`
 - `report_viewed`
+- `workout_sets_created`
+- `workout_sets_updated`
 
 응답
 
@@ -835,6 +845,7 @@
 
 - `analytics_events`
   - `event_name`, `user_id?`, `source?`, `platform?`, `app_version?`, `app_build?`, `properties(jsonb)`, `event_at`
+  - `sessionId/screenName/funnelStep/errorCode`는 v1에서 `properties` 내부 키로 저장
 
 ## 2) DB 스키마 (Postgres 초안)
 

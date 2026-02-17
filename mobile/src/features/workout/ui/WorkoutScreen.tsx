@@ -66,7 +66,7 @@ export const WorkoutScreen = () => {
             await loadWorkoutByDate(formatDate(selectedDate));
             setSheetMode(null);
             Alert.alert('완료', '운동 기록을 삭제했습니다.');
-            void trackEvent('workout_created', {
+            void trackEvent('workout_removed', {
               date: formatDate(selectedDate),
             });
           } catch (error) {

@@ -8,4 +8,4 @@ export { getDayLabel } from './date/getDayLabel';
 export { getMaxConsecutiveDays } from './report/getMaxConsecutiveDays'; // 'YYYY-MM-DD' 배열 -> 최장 연속 날짜 수
 
 // header utils
-export { getClientMeta, type ClientMeta } from './header/getClientMeta';
+export { getClientMeta, type ClientMeta, warnMissingClientMetaHeaders } from './header/getClientMeta';

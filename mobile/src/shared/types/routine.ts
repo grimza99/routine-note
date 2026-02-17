@@ -4,7 +4,7 @@ export interface RoutineExercise {
   exerciseName: string;
   order?: number;
   note?: string;
-  sets?: { id: string; weight: number; reps: number; note?: string }[];
+  sets: { id: string; weight: number; reps: number; note?: string }[];
 }
 export interface RoutineItem {
   routineId: string;

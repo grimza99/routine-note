@@ -12,10 +12,10 @@ export interface WorkoutExerciseItem {
   exerciseName: string;
   note?: string;
   order?: number;
-  sets?: {
+  sets: {
     id: string;
-    weight: number | null;
-    reps: number | null;
+    weight: number;
+    reps: number;
   }[];
 }
 

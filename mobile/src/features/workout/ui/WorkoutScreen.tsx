@@ -9,6 +9,7 @@ import { formatDate, formatMonthDay, trackEvent } from '../../../shared/libs';
 import { WorkoutRoutineCardWithSets } from './WorkoutRoutineCardWithSets';
 import { WorkoutBydateResponse } from '../../../shared/types';
 import { WorkoutSheet } from './sheet/WorkoutSheet';
+import { WorkoutSetsSheet } from './sheet/WorkoutSetsSheet';
 
 export const WorkoutScreen = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -93,6 +94,12 @@ export const WorkoutScreen = () => {
         <View style={styles.workoutSectionHeader}>
           <Text style={styles.secondaryTitle}>{formatMonthDay(selectedDate)} 기록</Text>
           <Button
+            label="세트 기록 하기"
+            onPress={() => setSheetMode('sets')}
+            style={{ paddingHorizontal: 6, paddingVertical: 4 }}
+            variant="secondary"
+          />
+          <Button
             label="운동 기록 전체 삭제"
             onPress={handleDelete}
             style={{ paddingHorizontal: 6, paddingVertical: 4 }}
@@ -155,7 +162,14 @@ export const WorkoutScreen = () => {
                 }}
               />
             ) : (
-              <Button label="편집 폼 열기" onPress={() => setSheetMode('manage')} variant="secondary" />
+              <WorkoutSetsSheet
+                selectedDate={selectedDate}
+                initialWorkoutData={workoutByDate}
+                onSubmitSuccess={async (date) => {
+                  await loadWorkoutByDate(formatDate(date));
+                  setSheetMode(null);
+                }}
+              />
             )}
           </ScrollView>
         )}

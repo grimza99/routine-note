@@ -18,7 +18,7 @@ export default function ChallengePage() {
     {
       title: '참가자',
       iconSrc: '/icons/calendar.svg',
-      value: (challengeData?.totalParticipants || 0).toString(),
+      value: (challengeData?.totalParticipants || 0).toString() + '명',
     },
     {
       title: '진행 중인 챌린지',
@@ -33,7 +33,7 @@ export default function ChallengePage() {
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4 md:gap-8">
       <section className="flex flex-wrap gap-4 w-full">
         {summaryData.map((data) => (
           <SummaryCard
@@ -49,7 +49,7 @@ export default function ChallengePage() {
       <section>
         <Tabs items={tabItems} activeId={activeTab} onChange={(id) => setActiveTab(id as TabItem)} />
       </section>
-      <span className="text-text-secondary">한달간 가장 활발하게 운동한 유저들 이에요</span>
+      <span className="text-sm md:text-base text-text-secondary">한달간 가장 활발하게 운동한 유저들 이에요</span>
       <section>{activeTab === 'leaderBoard' ? <LeaderBoard /> : <PreparingCard />}</section>
     </div>
   );

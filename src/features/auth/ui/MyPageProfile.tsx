@@ -27,7 +27,7 @@ export default function MyPageProfile({ imageUrl, nickname, workoutDays }: MyPag
   };
 
   return (
-    <section className="flex flex-col lg:flex-row items-center border-2 border-secondary rounded-lg p-6 gap-3">
+    <section className="flex flex-col lg:flex-row items-center border-2 border-secondary rounded-lg p-2 md:p-6 gap-3">
       {imageUrl ? (
         <img
           src={imageUrl || '/icons/user.default.svg'}

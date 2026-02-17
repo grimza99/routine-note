@@ -22,7 +22,7 @@ export function PrevMonthsReports() {
           />
         ))
       ) : (
-        <p className="text-text-secondary w-full text-center min-h-60">지난 리포트가 없습니다.</p>
+        <p className="text-sm md:text-base text-text-secondary w-full text-center min-h-60">지난 리포트가 없습니다.</p>
       )}
     </section>
   );

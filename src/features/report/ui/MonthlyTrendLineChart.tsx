@@ -42,7 +42,6 @@ export function MonthlyTrendLineChart({ data }: MonthlyTrendLineChartProps) {
               dataKey={line.id}
               stroke={COLORS[index % COLORS.length]}
               strokeWidth={2}
-              activeDot={{ r: 8 }}
             />
           ))}
         </LineChart>

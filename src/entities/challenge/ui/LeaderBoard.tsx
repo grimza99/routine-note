@@ -9,7 +9,7 @@ export function LeaderBoard() {
     return <Spinner />;
   }
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 md:gap-4">
       {rankListData.map((rank) => (
         <Rank
           key={rank.nickname}

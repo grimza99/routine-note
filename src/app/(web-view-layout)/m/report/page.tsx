@@ -15,7 +15,7 @@ export default function ReportPage() {
   const { currentMonth, monthLabel, handlePrevMonth, handleNextMonth } = useMonth();
 
   return (
-    <div className="flex flex-col gap-15 md:gap-20">
+    <div className="flex flex-col gap-5 md:gap-20">
       <div>
         <Tabs items={tabItems} activeId={activeTab} onChange={(id) => setActiveTab(id as 'prev' | 'current')} />
         {activeTab === 'current' && (
@@ -34,7 +34,7 @@ export default function ReportPage() {
         <MonthReport intialMonth={currentMonth} />
       ) : (
         <div className="flex flex-col gap-8 lg:gap-15 items-center">
-          <h2 className="text-3xl font-bold">지난 리포트</h2>
+          <h2 className="text-xl md:text-3xl font-bold">지난 리포트</h2>
           <PrevMonthsReports />
         </div>
       )}

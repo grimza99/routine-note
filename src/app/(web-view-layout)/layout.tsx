@@ -4,5 +4,5 @@ export default function WebViewLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main className="px-4 py-10 w-full">{children}</main>;
+  return <main className="p-4 w-full">{children}</main>;
 }

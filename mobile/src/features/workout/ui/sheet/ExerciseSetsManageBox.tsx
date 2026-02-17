@@ -1,25 +1,29 @@
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 
-import { trackEvent } from '../../../../shared/libs';
+import { formatDate, trackEvent } from '../../../../shared/libs';
 import { workoutApi } from '../../api/workoutApi';
 import { Button, Input, NumberStepper } from '../../../../shared/ui';
 import { WorkoutExerciseItem, WorkoutSetPayload } from '../../../../shared/types';
 import SetBox from './SetBox';
 
 interface ExerciseSetsSheetProps {
-  workoutId: string;
+  type: 'routine-exercise' | 'standalone-exercise';
   label: string;
   selectedDate: Date;
   initialExercises: WorkoutExerciseItem[];
+  initialNote?: string; //standalone-exercise는 note 설정 x
   onSubmitSuccess: (date: Date) => void;
+  workoutRoutineId?: string; //standalone-exercise는 workoutRoutineId 없음
 }
 
 export function ExerciseSetsManageBox({
-  workoutId,
+  type,
   label,
   selectedDate,
   initialExercises,
+  initialNote,
+  workoutRoutineId,
   onSubmitSuccess,
 }: ExerciseSetsSheetProps) {
   if (initialExercises.length === 0) {
@@ -28,8 +32,7 @@ export function ExerciseSetsManageBox({
   const [exercisesState, setExercisesState] = useState(initialExercises);
   const [isSaving, setIsSaving] = useState(false);
 
-  const [payload, setPayload] = useState<WorkoutSetPayload>();
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState(initialNote || '');
 
   const initialSetsIds = initialExercises.flatMap((exercise) => exercise.sets.map((set) => set.id));
 
@@ -42,7 +45,7 @@ export function ExerciseSetsManageBox({
           if (exercise.id === exerciseId) {
             const updatedSets = exercise.sets.map((set) => {
               if (set.id === setId) {
-                return { ...set, weightNum, repsNum };
+                return { ...set, weight: weightNum, reps: repsNum };
               }
               return set;
             });
@@ -64,35 +67,43 @@ export function ExerciseSetsManageBox({
         // 삭제된 세트 처리
         if (removedSets && removedSets.length > 0) {
           for (const set of removedSets) {
-            // await workoutApi.deleteSet(set.id); //삭제 api
+            await workoutApi.deleteSet(set.id);
           }
         }
+        // 추가 및 업데이트된 세트 처리
         for (const set of exercise.sets) {
-          if (set.reps === 0) {
-            Alert.alert('횟수는 0보다 커야 합니다.');
+          if (set.reps === 0 && set.weight === 0) {
+            Alert.alert('세트 값 이상', '세트값에는 0이 들어갈수없어요. 세트를 삭제하시려면 - 버튼을 눌러주세요.');
             continue;
           }
+          //기존에 존재하는 세트이므로 업데이트
           if (initialSetsIds.includes(set.id)) {
             // 기존 세트 업데이트 API 호출
-            // await workoutApi.updateSet(set.id, { weight: set.weight, reps: set.reps, note: set.note });
+            await workoutApi.updateSet(set.id, { weight: set.weight, reps: set.reps });
             continue;
           }
-          await workoutApi.createSet(workoutId, set);
-          void trackEvent('workout_created', {
-            ...payload,
+          //새로 추가된
+          await workoutApi.createSet(exercise.id, set);
+          void trackEvent('workout_sets_created', {
+            date: formatDate(selectedDate),
+            ...set,
           });
           Alert.alert('완료', '운동 기록을 생성했습니다.');
         }
       }
-      if (note.trim() !== '') {
-        // 노트 업데이트 API 호출
-        // await workoutApi.updateNote(workoutId, note);
+      //note
+      try {
+        if (note.trim() !== '' && note !== initialNote && workoutRoutineId) {
+          await workoutApi.createWorkoutRoutineNote(workoutRoutineId, note);
+        }
+      } catch (error) {
+        Alert.alert('메모 저장 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
       }
+      onSubmitSuccess(selectedDate);
     } catch (error) {
       Alert.alert('세트 관리 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
     } finally {
       setIsSaving(false);
-      onSubmitSuccess(selectedDate);
     }
   };
 
@@ -155,13 +166,15 @@ export function ExerciseSetsManageBox({
           );
         })}
       </View>
-      <Input
-        placeholder="루틴, 운동에 대한 메모를 자유롭게 남겨주세요."
-        value={note}
-        onChange={(text) => setNote(text.nativeEvent.text)}
-        multiline
-        style={{ height: 60, textAlignVertical: 'top' }}
-      />
+      {type === 'routine-exercise' && (
+        <Input
+          placeholder="루틴에 대한 메모를 자유롭게 남겨주세요."
+          value={note}
+          onChange={(text) => setNote(text.nativeEvent.text)}
+          multiline
+          style={{ height: 60, textAlignVertical: 'top' }}
+        />
+      )}
       <View style={styles.buttonArea}>
         <Button label={'취소'} onPress={handleSubmit} disabled={isSaving} variant="tertiary" />
         <Button label={isSaving ? '...' : '저장'} onPress={handleSubmit} disabled={isSaving} />

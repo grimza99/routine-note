@@ -21,16 +21,18 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
         {routines.map((routine) => (
           <ExerciseSetsManageBox
             key={routine.routineId}
+            type="routine-exercise"
             label={routine.routineName}
-            workoutId={initialWorkoutData?.id || ''}
             selectedDate={selectedDate}
             initialExercises={routine.exercises}
+            initialNote={routine.note}
+            workoutRoutineId={routine.id}
             onSubmitSuccess={onSubmitSuccess}
           />
         ))}
         <ExerciseSetsManageBox
           label={'루틴 외 운동'}
-          workoutId={initialWorkoutData?.id || ''}
+          type="standalone-exercise"
           selectedDate={selectedDate}
           initialExercises={standaloneExercises}
           onSubmitSuccess={onSubmitSuccess}

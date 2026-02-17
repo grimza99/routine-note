@@ -62,5 +62,8 @@ const styles = StyleSheet.create({
   input: {
     width: 60,
     height: 20,
+    paddingHorizontal: 4,
+    paddingVertical: 0,
+    color: '#000',
   },
 });

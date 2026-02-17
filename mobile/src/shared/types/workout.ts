@@ -2,7 +2,7 @@ export interface WorkoutRoutineItem {
   id?: string;
   routineId: string;
   routineName: string;
-  note?: string | null;
+  note: string;
   order?: number;
   exercises: WorkoutExerciseItem[];
 }

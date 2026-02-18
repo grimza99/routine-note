@@ -13,6 +13,7 @@ const eventSchema = z.object({
   appVersion: z.string().min(1).max(40).optional(),
   appBuild: z.string().min(1).max(40).optional(),
   sessionId: z.string().min(1).max(120).optional(),
+  installId: z.string().min(1).max(120).optional(),
   screenName: z.string().min(1).max(120).optional(),
   funnelStep: z.string().min(1).max(120).optional(),
   errorCode: z.string().min(1).max(120).optional(),
@@ -43,6 +44,7 @@ export async function POST(request: NextRequest) {
     properties: {
       ...payload.properties,
       sessionId: payload.sessionId ?? null,
+      installId: payload.installId ?? null,
       screenName: payload.screenName ?? null,
       funnelStep: payload.funnelStep ?? null,
       errorCode: payload.errorCode ?? null,

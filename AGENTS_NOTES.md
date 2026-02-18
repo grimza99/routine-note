@@ -19,6 +19,11 @@
 
 ## 노트
 
+- [2026-02-18] [android-release] Android 클로즈드 테스트 플랜 구현 반영
+  - 영향/증상/개요 (필수): 사용자가 안드로이드 2주 출시 플랜의 코드/문서 구현을 요청해 설치 이벤트 계측(`app_install`, `installId`)과 Android KPI 문서를 즉시 반영할 필요.
+  - 결정/조치 (필수): 모바일 트래킹 메타에 `installId`를 추가하고, SecureStore 기반 `installStorage`를 신설해 최초 실행 시 `app_install` 1회 전송/성공 플래그 저장 규칙을 `useAuthSession`에 적용. 서버 `/api/events` 스키마에 `installId` optional 필드를 추가하고 `docs/android-kpi-dashboard-sql.md` 문서를 신설.
+  - 관련 파일/링크 (선택): `mobile/src/shared/libs/analytics/track.ts`, `mobile/src/shared/libs/storage/installStorage.ts`, `mobile/src/features/auth/model/useAuthSession.tsx`, `src/app/api/events/route.ts`, `docs/android-kpi-dashboard-sql.md`
+
 - [2026-02-17] [release] iOS MVP 출시 플랜 실행 문서/계약 반영
   - 영향/증상/개요 (필수): 사용자 요청으로 KR TestFlight 2주 + 6주 일정의 출시 플랜을 실제 운영 가능한 문서/계약으로 코드베이스에 고정할 필요.
   - 결정/조치 (필수): `docs/ios-mvp-launch-plan.md`를 신설하고, `/api/events` 스키마에 `sessionId/screenName/funnelStep/errorCode`를 확장. 모바일 메타 헤더 누락 시 경고 로그를 남기도록 서버 유틸/라우트를 보강하고, 라우팅 계약 동결 버전을 타입/문서에 명시.

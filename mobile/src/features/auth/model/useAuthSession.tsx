@@ -2,7 +2,7 @@ import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useSt
 
 import { authApi } from '../api/authApi';
 import { trackEvent } from '../../../shared/libs/analytics/track';
-import { tokenStorage } from '../../../shared/libs/storage/tokenStorage';
+import { installStorage, tokenStorage } from '../../../shared/libs/storage';
 import { setAuthExpiredHandler, validateStoredSession } from '../../../shared/libs/network/apiClient';
 
 type AuthContextValue = {
@@ -24,19 +24,33 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     });
 
     const bootstrap = async () => {
+      const installId = await installStorage.getOrCreateInstallId();
+      void (async () => {
+        const isInstallTracked = await installStorage.isInstallTracked();
+
+        if (isInstallTracked) {
+          return;
+        }
+
+        const installTracked = await trackEvent('app_install', undefined, { installId });
+        if (installTracked) {
+          await installStorage.markInstallTracked();
+        }
+      })();
+
       const tokens = await tokenStorage.read();
 
       if (!tokens?.refreshToken) {
         setIsAuthenticated(false);
         setIsInitialized(true);
-        void trackEvent('app_open');
+        void trackEvent('app_open', undefined, { installId });
         return;
       }
 
       const isSessionValid = await validateStoredSession();
       setIsAuthenticated(isSessionValid);
       setIsInitialized(true);
-      void trackEvent('app_open');
+      void trackEvent('app_open', undefined, { installId });
     };
 
     void bootstrap();
@@ -53,7 +67,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       login: async (email: string, password: string) => {
         await authApi.login({ email, password });
         setIsAuthenticated(true);
-        void trackEvent('login_success');
+        const installId = await installStorage.getOrCreateInstallId();
+        void trackEvent('login_success', undefined, { installId });
       },
       logout: async () => {
         await authApi.logout();

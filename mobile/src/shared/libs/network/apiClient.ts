@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 
 import { appEnv } from '../../config/env';
 import { CLIENT_PLATFORM, MOBILE_META_HEADERS } from '../../constants/headers';
-import { tokenStorage } from '../storage/tokenStorage';
+import { tokenStorage } from '../storage';
 
 type ApiError = {
   code: string;

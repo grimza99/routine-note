@@ -5,6 +5,7 @@ type TrackEventMeta = {
   screenName?: string;
   funnelStep?: string;
   errorCode?: string;
+  installId?: string;
 };
 
 export const trackEvent = async (
@@ -12,7 +13,7 @@ export const trackEvent = async (
   properties?: Record<string, unknown>,
   meta: TrackEventMeta = {},
 ) => {
-  await apiClient.request('/api/events', {
+  const response = await apiClient.request('/api/events', {
     method: 'POST',
     body: JSON.stringify({
       eventName,
@@ -22,8 +23,11 @@ export const trackEvent = async (
       screenName: meta.screenName,
       funnelStep: meta.funnelStep,
       errorCode: meta.errorCode,
+      installId: meta.installId,
       timestamp: new Date().toISOString(),
     }),
     auth: false,
   });
+
+  return !response.error;
 };

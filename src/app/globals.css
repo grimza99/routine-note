@@ -9,7 +9,6 @@
   --border: #c6c3c3;
   --primary: #e60023;
   --secondary: rgba(230, 0, 35, 0.246);
-  --disabled: #e0e0e0;
   --radius-base: 8px;
   --focus-ring: rgba(230, 0, 35, 0.3);
   --error: #a5041c;
@@ -28,7 +27,6 @@
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
 
-  --color-disabled: var(--disabled);
   --color-error: var(--error);
   --color-focus-ring: var(--focus-ring);
 

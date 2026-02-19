@@ -63,7 +63,7 @@ export default function RecordWorkoutModal({
 
   const handleExerciseChange = (targetId: string, value: string) => {
     setAddedExercises((prev) =>
-      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, name: value } : exercise)),
+      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, exerciseName: value } : exercise)),
     );
   };
 

@@ -3,7 +3,6 @@
 :root {
   --white: #ffffff;
   --black: #000000;
-  --background: #ffffff;
   --surface: #f7f7f7;
   --text-primary: #1a1a1a;
   --text-secondary: #868484;
@@ -20,7 +19,6 @@
 @theme {
   --color-black: var(--black);
   --color-white: var(--white);
-  --color-background: var(--background);
   --color-gray900: var(--gray900);
   --color-surface: var(--surface);
   --color-text-primary: var(--text-primary);
@@ -38,7 +36,7 @@
 }
 
 body {
-  background: var(--background);
+  background: var(--color-gray-50);
   color: var(--text-primary);
   font-family: 'Pretendard', Arial, Helvetica, sans-serif;
 }

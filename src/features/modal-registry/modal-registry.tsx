@@ -1,5 +1,5 @@
 import { CommonConfirmModal } from '@/shared/ui/modals/CommonConfirmModal';
-import RecordWorkoutModal from '../workout/ui/RecordWorkoutModal';
+import RecordWorkoutModal, { RecordWorkoutModalProps } from '../workout/ui/RecordWorkoutModal';
 import { ModalRegistry } from './modal-registry.type';
 import { WorkoutManageModal } from '../workout';
 import { CreateRoutineModal, EditRoutineModal } from '../routine';
@@ -10,12 +10,13 @@ import { IExercise } from '@/shared/types';
 
 //-------------------------------workout modals types-------------------------------//
 type DeleteWorkoutPayload = { description: string; onConfirm: () => void };
-type RecordWorkoutPayload = {
-  selectedDate: Date;
+interface IRecordWorkoutPayload extends Omit<RecordWorkoutModalProps, 'onClose'> {
+  date: Date;
   currentRoutineIds: string[];
   currentExercises: IExercise[];
   workoutId?: string;
-};
+}
+
 type ManageRoutinePayload = {
   title: string;
   initialExercises: IExercise[] | null;
@@ -46,16 +47,8 @@ export const modalRegistry: ModalRegistry = {
   recordWorkout: {
     modalId: 'recordWorkout',
     render: (payload, { closeModal }) => {
-      const data = payload as RecordWorkoutPayload;
-      return (
-        <RecordWorkoutModal
-          date={data.selectedDate}
-          onClose={closeModal}
-          currentRoutineIds={data.currentRoutineIds}
-          currentExercises={data.currentExercises}
-          workoutId={data.workoutId}
-        />
-      );
+      const data = payload as IRecordWorkoutPayload;
+      return <RecordWorkoutModal onClose={closeModal} {...data} />;
     },
   },
   manageWorkout: {

@@ -8,6 +8,7 @@ export interface IExercise {
 
 export interface IRoutine {
   id: string;
+  routineId: string;
   routineName: string;
   order: number;
   exercises: IExercise[];

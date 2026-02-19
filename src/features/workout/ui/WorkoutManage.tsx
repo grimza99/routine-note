@@ -11,7 +11,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
 
   const { openModal } = useModal();
 
-  const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.id) || [];
+  const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.routineId) || [];
   const currentExercises = workoutByDateData?.exercises || [];
 
   return (

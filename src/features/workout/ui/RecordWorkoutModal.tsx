@@ -8,7 +8,7 @@ import { cn, formatDate } from '@/shared/libs';
 import { IExercise } from '@/shared/types';
 import { useToast } from '@/shared/hooks';
 import { PATHS } from '@/shared/constants';
-interface RecordWorkoutModalProps {
+export interface RecordWorkoutModalProps {
   date: Date;
   currentRoutineIds: string[];
   currentExercises: IExercise[];
@@ -91,6 +91,7 @@ export default function RecordWorkoutModal({
 
   const isSelected = (routineId: string) => selectedRoutineIds.includes(routineId);
 
+  console.log(selectedRoutineIds, routineTemplate);
   return (
     <div className="flex flex-col gap-4 p-6">
       <h2 className="text-lg font-semibold text-text-primary">루틴 선택</h2>
@@ -103,7 +104,7 @@ export default function RecordWorkoutModal({
                 <RoutineCard
                   routineName={routine.routineName}
                   exercises={routine.exercises}
-                  className={cn(isSelected(routine.routineId) && 'scale-[1.02] border-3 shadow-lg')}
+                  className={cn(isSelected(routine.routineId) && 'scale-[1.02] border-3 border-primary shadow-lg')}
                 />
               </div>
             ))}

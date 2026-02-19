@@ -13,7 +13,7 @@ export default function Footer() {
   const modalData = useMemo(() => (activePolicy ? POLICIES[activePolicy] : null), [activePolicy]);
 
   return (
-    <footer className="bg-gray900 text-text-secondary">
+    <footer className="absolute bottom-0 md:h-53 w-full bg-gray900 text-text-secondary">
       <div className="mx-auto flex w-full max-w-300 flex-col items-center gap-10 px-6 py-10 md:py-15 ">
         <div className="flex md:justify-between w-full flex-col md:flex-row gap-6 items-center">
           <h1 className="text-xl text-white md:text-2xl font-bold flex items-center gap-3">

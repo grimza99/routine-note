@@ -179,7 +179,11 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
   }
 
   const supabase = getSupabaseAdmin();
-  const { error } = await supabase.from('routines').delete().eq('id', routineId).eq('user_id', userId);
+  const { error } = await supabase
+    .from('routines')
+    .update({ deleted_at: new Date() })
+    .eq('id', routineId)
+    .eq('user_id', userId);
 
   if (error) {
     return json(500, { error: { code: 'DB_ERROR', message: error.message } });

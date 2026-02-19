@@ -19,7 +19,7 @@ export function RoutineCard({ routineName, exercises, className }: RoutineCardPr
   return (
     <div
       className={cn(
-        'w-full max-w-100 rounded-xl border p-4 shadow-md border-primary bg-white text-primary hover:shadow-xl hover:scale-[1.02] transition-transform duration-200',
+        'w-full max-w-100 rounded-xl border p-4 shadow-md border-border bg-white text-primary hover:shadow-xl hover:scale-[1.02] transition-transform duration-200',
         className,
       )}
     >

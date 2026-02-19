@@ -54,23 +54,20 @@ export function Calendar({ value, onSelectDate, recordDates, className }: Calend
 
   return (
     <section
-      className={cn('w-full max-w-200 min-h-100 rounded-xl border bg-white p-4 md:p-10 border-primary', className)}
+      className={cn(
+        'w-full max-w-200 min-h-80 md:min-h-92 rounded-xl border-2 bg-white p-4 md:p-10 border-primary',
+        className,
+      )}
     >
       <header className="flex items-center justify-center w-full relative mb-10">
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={handlePrevMonth}
-            className={cn('flex p-1 items-center justify-center rounded border-primary border')}
-            aria-label="이전 달"
-          >
+        <div className="flex items-center gap-1 md:gap-4">
+          <button onClick={handlePrevMonth} className={cn('flex p-1 items-center justify-center')} aria-label="이전 달">
             <img src="/icons/craft.left.svg" alt="이전 달" className="w-4 h-4 md:w-7 md:h-7" />
           </button>
-          <span className="font-semibold text-xl md:text-3xl text-primary">{monthLabel}</span>
+          <span className="font-semibold text-lg md:text-2xl lg:text-3xl text-primary">{monthLabel}</span>
           <button
-            type="button"
             onClick={() => handleNextMonth()}
-            className={cn('flex p-1 items-center justify-center rounded border-primary border')}
+            className={cn('flex p-1 items-center justify-center')}
             aria-label="다음 달"
           >
             <img src="/icons/craft.right.svg" alt="다음 달" className="w-4 h-4 md:w-7 md:h-7" />
@@ -79,10 +76,9 @@ export function Calendar({ value, onSelectDate, recordDates, className }: Calend
 
         <Button
           label="오늘"
-          type="button"
           onClick={handleToday}
           variant="primary"
-          className={cn('absolute right-0 w-fit')}
+          className={cn('absolute right-0 w-fit px-2 md:px-4')}
         />
       </header>
 
@@ -113,6 +109,7 @@ export function Calendar({ value, onSelectDate, recordDates, className }: Calend
               className={cn(
                 'text-sm border-none',
                 isSelected ? 'text-white bg-primary' : isCurrentMonth ? 'text-primary' : 'text-text-secondary',
+                !isCurrentMonth && 'bg-white',
               )}
               disabled={!isCurrentMonth}
             />

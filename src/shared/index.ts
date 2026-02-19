@@ -3,7 +3,6 @@ export { CopyableField } from './ui/fields/CopyableField';
 export { InputField } from './ui/fields/InputField';
 export { TextareaField } from './ui/fields/TextareaField';
 export { Button } from './ui/buttons/Button';
-export { Calendar } from './ui/calendar/Calendar';
 export { ToastProvider } from './ui/toast/ToastProvider';
 export { Spinner } from './ui/loaders/Spinner';
 export { BouncingDots } from './ui/loaders/BouncingDots';
@@ -21,9 +20,6 @@ export { PreparingCard } from './ui/cards/PreparingCard';
 //ui - badges
 export { NoteBadge } from './ui/badges/NoteBadge';
 export { ConsecutiveWorkoutDaysBadge } from './ui/badges/ConsecutiveWorkoutDaysBadge';
-
-// ui - profile
-export { DefaultProfile } from './ui/profile/DefaultProfile';
 
 //ui - modals
 export { CommonConfirmModal } from './ui/modals/CommonConfirmModal';

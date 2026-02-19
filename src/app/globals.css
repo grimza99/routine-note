@@ -3,24 +3,22 @@
 :root {
   --white: #ffffff;
   --black: #000000;
-  --background: #ffffff;
   --surface: #f7f7f7;
   --text-primary: #1a1a1a;
   --text-secondary: #868484;
   --border: #c6c3c3;
   --primary: #e60023;
   --secondary: rgba(230, 0, 35, 0.246);
-  --disabled: #e0e0e0;
   --radius-base: 8px;
   --focus-ring: rgba(230, 0, 35, 0.3);
   --error: #a5041c;
+  --gray900: #1a1a1a;
 }
 
 @theme {
   --color-black: var(--black);
   --color-white: var(--white);
-  --color-background: var(--background);
-  --color-gray900: #1a1a1a;
+  --color-gray900: var(--gray900);
   --color-surface: var(--surface);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
@@ -29,16 +27,16 @@
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
 
-  --color-disabled: var(--disabled);
   --color-error: var(--error);
   --color-focus-ring: var(--focus-ring);
 
   --radius-base: var(--radius-base);
 }
+
 body {
-  background: var(--background);
+  background: var(--color-gray-50);
   color: var(--text-primary);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Pretendard', Arial, Helvetica, sans-serif;
 }
 
 input:focus-visible,
@@ -52,4 +50,49 @@ input:-webkit-autofill {
   box-shadow: 0 0 0px 1000px var(--white) inset !important;
   -webkit-text-fill-color: var(--text-primary) !important;
   caret-color: var(--color-gray100) !important;
+}
+@layer utilities {
+  /* 페이드 업 애니메이션 */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .fade-up.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff2') format('woff2');
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Medium.woff2') format('woff2');
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff2') format('woff2');
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Bold.woff2') format('woff2');
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }

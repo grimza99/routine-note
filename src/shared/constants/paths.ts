@@ -1,13 +1,16 @@
 const PATHS = {
   HOME: '/',
   AUTH: '/auth',
-  ACCOUNT: {
-    MYPAGE: '/mypage',
-    PASSWORD_RESET: '/password-reset',
+
+  ROUTINE: '/routine',
+  WORKOUT: {
+    CAL: '/workout/workout-cal',
   },
-  ROUTINE: {
-    CAL: '/routine/routine-cal',
-    MANAGE: '/routine/manage',
+  REPORT: '/report',
+  CHALLENGE: '/challenge',
+  MYPAGE: '/mypage',
+  ACCOUNT: {
+    PASSWORD_RESET: '/password-reset',
   },
 };
 

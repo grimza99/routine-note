@@ -9,13 +9,5 @@ export function ResetPasswordRequestButton() {
     await passwordResetRequest();
   };
 
-  return (
-    <Button
-      type="button"
-      disabled={isPending}
-      onClick={handleSubmit}
-      label="비밀번호 재설정 이메일 전송"
-      className="w-fit"
-    />
-  );
+  return <Button type="button" disabled={isPending} onClick={handleSubmit} label="비밀번호 재설정" className="w-fit" />;
 }

@@ -1,9 +1,9 @@
 'use client';
 import { usePathname } from 'next/navigation';
 
-const EXCLUDE_PATHS = ['password-reset'];
+const EXCLUDE_PATHS = ['password-reset', 'privacy'];
 
-type TPageHeaderBannerVariant = 'routine-cal' | 'manage' | 'mypage' | 'report' | 'challenge';
+type TPageHeaderBannerVariant = 'workout-cal' | 'routine' | 'mypage' | 'report' | 'challenge';
 
 interface PageHeaderBannerContent {
   title: string;
@@ -11,25 +11,25 @@ interface PageHeaderBannerContent {
 }
 
 const PAGE_HEADER_BANNER_CONTENT: Record<TPageHeaderBannerVariant, PageHeaderBannerContent> = {
-  'routine-cal': {
-    title: '루틴 캘린더',
-    subtitle: '나의 루틴을 기록하세요!',
+  'workout-cal': {
+    title: 'Workout Calendar',
+    subtitle: '나의 루틴으로 운동기록하기',
   },
-  manage: {
-    title: '나의 루틴',
-    subtitle: '나의 루틴을 체계적으로 관리해보세요!',
+  routine: {
+    title: 'Routine',
+    subtitle: '나의 루틴 관리',
   },
   mypage: {
-    title: '마이 페이지',
+    title: 'My Page',
     subtitle: '나의 프로필과 설정',
   },
   report: {
-    title: '리포트',
-    subtitle: '나의 성장을 확인 하세요',
+    title: 'Report',
+    subtitle: '운동 리포트',
   },
   challenge: {
-    title: '챌린지',
-    subtitle: '다른 유저와 경쟁 해보세요!',
+    title: 'Challenge',
+    subtitle: '다른 유저와 경쟁하며 동기부여',
   },
 };
 
@@ -42,9 +42,11 @@ export default function PageHeaderBanner() {
   const { title, subtitle } = PAGE_HEADER_BANNER_CONTENT[variant];
 
   return (
-    <section className="w-full hidden md:flex h-40 lg:h-48 bg-primary text-white px-8 lg:px-16 flex-col justify-center gap-3 font-bold">
-      <h1 className="text-4xl">{title}</h1>
-      <p className="text-xl">{subtitle}</p>
+    <section className="w-full hidden md:flex h-30 lg:h-45 bg-white text-primary italic items-center justify-center font-bold text-center">
+      <div className="mx-auto flex flex-col w-full max-w-300 px-6 py-4 gap-3">
+        <h1 className="text-3xl">{title}</h1>
+        <p>{subtitle}</p>
+      </div>
     </section>
   );
 }

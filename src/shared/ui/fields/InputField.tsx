@@ -5,9 +5,10 @@ type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   helperText?: string;
   className?: string;
+  isValid?: boolean;
 };
 
-export function InputField({ label, helperText, className, ...props }: InputFieldProps) {
+export function InputField({ label, helperText, isValid = true, className, ...props }: InputFieldProps) {
   const isDisabled = Boolean(props.disabled);
 
   return (
@@ -19,19 +20,13 @@ export function InputField({ label, helperText, className, ...props }: InputFiel
       ) : null}
       <input
         {...props}
-        className="w-full rounded px-3 py-2 text-sm"
-        style={{
-          border: `1px solid ${isDisabled ? 'var(--error)' : 'var(--primary)'}`,
-          borderRadius: 'var(--radius-base)',
-          color: isDisabled ? 'var(--disabled)' : 'var(--text-secondary)',
-          background: 'var(--white)',
-        }}
+        className={cn(
+          'bg-white w-full rounded px-3 py-2 text-sm border-border border',
+          !isValid && 'border-primary',
+          isDisabled && 'bg-gray-100 text-text-secondary cursor-not-allowed',
+        )}
       />
-      {helperText ? (
-        <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-          {helperText}
-        </span>
-      ) : null}
+      {helperText ? <span className="text-xs text-text-secondary">{helperText}</span> : null}
     </label>
   );
 }

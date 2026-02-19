@@ -15,11 +15,16 @@ export default function ReportPage() {
   const { currentMonth, monthLabel, handlePrevMonth, handleNextMonth } = useMonth();
 
   return (
-    <div className="flex flex-col gap-15 md:gap-20">
-      <div>
-        <Tabs items={tabItems} activeId={activeTab} onChange={(id) => setActiveTab(id as 'prev' | 'current')} />
-        {activeTab === 'current' && (
-          <div className="flex items-center gap-4 border-2 border-border justify-center py-2 rounded-lg mt-5">
+    <div className="flex flex-col gap-5 md:gap-10">
+      <Tabs
+        items={tabItems}
+        activeId={activeTab}
+        onChange={(id) => setActiveTab(id as 'prev' | 'current')}
+        className="border-2"
+      />
+      {activeTab === 'current' ? (
+        <>
+          <div className="flex items-center gap-4 border-2 border-border justify-center py-2 rounded-lg bg-white">
             <button type="button" onClick={handlePrevMonth} aria-label="이전 달">
               <img src="/icons/craft.left.svg" alt="이전 달" className="w-6 h-6 md:w-9 md:h-9" />
             </button>
@@ -28,10 +33,8 @@ export default function ReportPage() {
               <img src="/icons/craft.right.svg" alt="다음 달" className="w-6 h-6 md:w-9 md:h-9" />
             </button>
           </div>
-        )}
-      </div>
-      {activeTab === 'current' ? (
-        <MonthReport intialMonth={currentMonth} />
+          <MonthReport intialMonth={currentMonth} />
+        </>
       ) : (
         <div className="flex flex-col gap-8 lg:gap-15 items-center">
           <h2 className="text-3xl font-bold">지난 리포트</h2>

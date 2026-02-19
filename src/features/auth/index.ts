@@ -5,3 +5,6 @@ export { type IAuthResponse, usePasswordResetMutation, usePasswordResetConfirmMu
 export { useMyInfoMutation } from './model/auth.info.mutation';
 export { useProfileImageMutation } from './model/profile-image.mutation';
 export { ResetPasswordRequestButton } from './ui/ResetPasswordRequestButton';
+
+export { default as MyPageProfile } from './ui/MyPageProfile';
+export { default as AccountInfoSection } from './ui/AccountInfoSection';

@@ -1,4 +1,5 @@
-import { cn, ConsecutiveWorkoutDaysBadge, DefaultProfile } from '@/shared';
+import { cn, ConsecutiveWorkoutDaysBadge } from '@/shared';
+import { ProfileImage } from '@/shared/ui';
 
 interface RankClassNames {
   container?: string;
@@ -39,18 +40,7 @@ export function Rank({ imageUrl, nickname, experience, rank, workoutDays, classN
           {rank}
         </div>
         <div className="flex items-center gap-4">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={`${nickname} 프로필`}
-              className={cn(
-                'w-8 h-8 md:w-10 md:h-10 rounded-full border border-border object-cover',
-                classNames?.avatar,
-              )}
-            />
-          ) : (
-            <DefaultProfile />
-          )}
+          <ProfileImage profileImageUrl={imageUrl} className={cn('w-8 h-8 md:w-10 md:h-10', classNames?.avatar)} />
           <div className="flex flex-col">
             <span
               className={cn('text-sm md:text-base font-bold text-text-primary truncate max-w-30', classNames?.name)}

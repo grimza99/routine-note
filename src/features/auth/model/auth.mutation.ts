@@ -60,7 +60,7 @@ export const useSignupMutation = () => {
         });
       }
       showToast({ message: TOAST_MESSAGE.SUCCESS_SIGNUP });
-      router.push(PATHS.ROUTINE.CAL);
+      router.push(PATHS.WORKOUT.CAL);
     },
     onError: (err) => {
       showToast({ message: err.message, variant: 'error' });
@@ -74,9 +74,9 @@ interface LoginPayload {
   password: string;
 }
 const getSafeRedirectPath = (redirectTo?: string) => {
-  if (!redirectTo) return PATHS.ROUTINE.CAL;
-  if (!redirectTo.startsWith('/')) return PATHS.ROUTINE.CAL;
-  if (redirectTo.startsWith('//')) return PATHS.ROUTINE.CAL;
+  if (!redirectTo) return PATHS.WORKOUT.CAL;
+  if (!redirectTo.startsWith('/')) return PATHS.WORKOUT.CAL;
+  if (redirectTo.startsWith('//')) return PATHS.WORKOUT.CAL;
   return redirectTo;
 };
 

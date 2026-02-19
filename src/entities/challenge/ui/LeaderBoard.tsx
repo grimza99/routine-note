@@ -1,4 +1,4 @@
-import { Spinner } from '@/shared';
+import { Spinner } from '@/shared/ui';
 import { useChallengeRankList } from '../model/chellenge.query';
 import { Rank } from './Rank';
 

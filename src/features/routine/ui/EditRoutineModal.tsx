@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '../../../shared/ui/buttons/Button';
-import { InputField } from '../../../shared/ui/fields/InputField';
+
 import { useEditRoutineMutation } from '../model/routine.muation';
-import { BouncingDots, useToast } from '@/shared';
 import { useRoutineDetailQuery } from '@/entities';
+import { Button, InputField, BouncingDots } from '@/shared/ui';
+import { useToast } from '@/shared/hooks';
 
 interface EditRoutinePayload {
   routineName: string;

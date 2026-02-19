@@ -1,9 +1,9 @@
 import { CommonConfirmModal } from '@/shared/ui/modals/CommonConfirmModal';
 import RecordWorkoutModal from '../workout/ui/RecordWorkoutModal';
-import { IExercise } from '@/shared';
 import { ModalRegistry } from './modal-registry.type';
 import { WorkoutManageModal } from '../workout';
 import { CreateRoutineModal, EditRoutineModal } from '../routine';
+import { IExercise } from '@/shared/types';
 
 // modal-registry
 // modalKey 기준으로 여기에 등록합니다.

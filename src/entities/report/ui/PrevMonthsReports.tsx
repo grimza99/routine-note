@@ -1,4 +1,4 @@
-import { LastMonthReportCard, Spinner } from '@/shared';
+import { LastMonthReportCard, Spinner } from '@/shared/ui';
 import { useAllMonthReportsQuery } from '../model/report.query';
 
 export function PrevMonthsReports() {

@@ -1,11 +1,12 @@
 'use client';
-import { useWorkoutQuery } from '@/entities/workout/model/workout.query';
-import { MonthlyTrendLineChart, RoutineDistributionPieChart, WeeklyVolumeBarChart } from '@/features/report';
-import { Spinner, SummaryCard } from '@/shared';
 import { useEffect, useMemo } from 'react';
+
+import { MonthlyTrendLineChart, RoutineDistributionPieChart, WeeklyVolumeBarChart } from '@/features/report';
 import { useMonthlyTrendQuery, useRoutineDistributionQuery, useWeeklyVolumeQuery } from '../model/report.query';
 import { formatDateYearMonth, trackEvent } from '@/shared/libs';
 import { ANALYTICS_EVENTS } from '@/shared/constants';
+import { Spinner, SummaryCard } from '@/shared/ui';
+import { useWorkoutQuery } from '@/entities/workout/model/workout.query';
 
 export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
   const currentMonth = formatDateYearMonth(intialMonth) || formatDateYearMonth(new Date());

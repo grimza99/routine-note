@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes } from 'react';
-import { cn } from '@/shared';
+
+import { cn } from '@/shared/libs';
 
 type ButtonVariant = 'primary' | 'secondary';
 

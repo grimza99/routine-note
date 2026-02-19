@@ -1,5 +1,5 @@
-import { Button, PROJECT } from '@/shared';
-import { AnimatedContainer } from '@/shared/ui';
+import { PROJECT } from '@/shared/constants';
+import { AnimatedContainer, Button } from '@/shared/ui';
 import { Footer } from '@/widgets';
 import Link from 'next/link';
 

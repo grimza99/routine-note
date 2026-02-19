@@ -1,9 +1,13 @@
-import { useRoutineList } from '@/entities';
-import { Button, cn, formatDate, IExercise, InputField, PATHS, RoutineCard, useToast } from '@/shared';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
-import { useCreateWorkoutMutation, useUpdateWorkoutMutation } from '../model/workout.mutation';
 
+import { useRoutineList } from '@/entities';
+import { useCreateWorkoutMutation, useUpdateWorkoutMutation } from '../model/workout.mutation';
+import { Button, InputField, RoutineCard } from '@/shared/ui';
+import { cn, formatDate } from '@/shared/libs';
+import { IExercise } from '@/shared/types';
+import { useToast } from '@/shared/hooks';
+import { PATHS } from '@/shared/constants';
 interface RecordWorkoutModalProps {
   date: Date;
   currentRoutineIds: string[];

@@ -1,7 +1,8 @@
 'use client';
-import { Button, InputField } from '@/shared';
 import { FormEvent, useState } from 'react';
+
 import { useSignupMutation } from '../model/auth.mutation';
+import { Button, InputField } from '@/shared/ui';
 
 export default function SignupForm() {
   const [payload, setPayload] = useState({

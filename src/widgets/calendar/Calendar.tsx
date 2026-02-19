@@ -1,8 +1,8 @@
 'use client';
 import { useMemo } from 'react';
-import { Button, cn, Dot, formatDate } from '@/shared';
 import { useMonth } from '@/shared/hooks';
-import { createDate } from '@/shared/libs';
+import { cn, createDate, formatDate } from '@/shared/libs';
+import { Button, Dot } from '@/shared/ui';
 
 type CalendarProps = {
   value?: Date | null;

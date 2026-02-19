@@ -1,10 +1,7 @@
 'use client';
-import { useMyChallengeRank, useRoutineList, useWorkoutQuery } from '@/entities';
-import useAuthStore from '@/entities/auth/model/useAuthStore';
-import { ResetPasswordRequestButton, useMyInfoMutation } from '@/features/auth';
-import AccountInfoSection from '@/features/auth/ui/AccountInfoSection';
-import MyPageProfile from '@/features/auth/ui/MyPageProfile';
-import { SummaryCard } from '@/shared';
+import { useAuthStore, useMyChallengeRank, useRoutineList, useWorkoutQuery } from '@/entities';
+import { AccountInfoSection, MyPageProfile, ResetPasswordRequestButton, useMyInfoMutation } from '@/features/auth';
+import { SummaryCard } from '@/shared/ui';
 
 export default function MyPage() {
   const { nickname, profile_image, email } = useAuthStore();

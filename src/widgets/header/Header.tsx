@@ -2,9 +2,12 @@
 
 import { useRef, useState } from 'react';
 import Link from 'next/link';
-import { Button, PATHS, PROJECT, useOnClickOutside } from '@/shared';
-import { useLogoutMutation } from '@/features/auth/model/auth.mutation';
 import { XMarkIcon, Bars3Icon, BoltIcon } from '@heroicons/react/24/solid';
+
+import { useLogoutMutation } from '@/features/auth/model/auth.mutation';
+import { PATHS, PROJECT } from '@/shared/constants';
+import { useOnClickOutside } from '@/shared/hooks';
+import { Button } from '@/shared/ui';
 
 type HeaderNavItem = {
   label: string;

@@ -1,10 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, IExercise, NumberStepper, TOAST_MESSAGE, TextareaField, cn, useToast } from '@/shared';
-import SetManageBox from './SetManageBox';
+
 import { useSetsCreateMutation, useSetsDeleteMutation, useSetsEditMutation } from '../model/sets.mutation';
 import { useNoteMutation } from '../model/note.mutation';
+import { Button, NumberStepper, TextareaField } from '@/shared/ui';
+import SetManageBox from './SetManageBox';
+import { IExercise } from '@/shared/types';
+import { useToast } from '@/shared/hooks';
+import { TOAST_MESSAGE } from '@/shared/constants';
+import { cn } from '@/shared/libs';
 
 type RoutineRecordModalContentProps = {
   title: string;

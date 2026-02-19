@@ -3,7 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
 import { INITIAL_STATE, IAuthStore } from './useAuthStore.type';
 
-const useAuthStore = create<IAuthStore>()(
+export const useAuthStore = create<IAuthStore>()(
   devtools(
     persist(
       (set) => ({
@@ -52,5 +52,3 @@ export function useAuthStoreActions() {
     })),
   );
 }
-
-export default useAuthStore;

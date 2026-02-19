@@ -1,9 +1,9 @@
 'use client';
 import { useWorkoutByDate } from '@/entities';
-import { Button, formatDate, formatMonthDay, NoteBadge, Spinner } from '@/shared';
-import { RecordedRoutineCard } from '@/shared/ui/cards/RecordedRoutineCard';
 import { useDeleteWorkoutMutation } from '../model/workout.mutation';
 import { useModal } from '@/shared/hooks';
+import { formatDate, formatMonthDay } from '@/shared/libs';
+import { Button, NoteBadge, Spinner, RecordedRoutineCard } from '@/shared/ui';
 
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
   const { data: workoutByDateData } = useWorkoutByDate(formatDate(selectedDate));

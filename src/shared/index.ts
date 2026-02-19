@@ -21,9 +21,6 @@ export { PreparingCard } from './ui/cards/PreparingCard';
 export { NoteBadge } from './ui/badges/NoteBadge';
 export { ConsecutiveWorkoutDaysBadge } from './ui/badges/ConsecutiveWorkoutDaysBadge';
 
-// ui - profile
-export { DefaultProfile } from './ui/profile/DefaultProfile';
-
 //ui - modals
 export { CommonConfirmModal } from './ui/modals/CommonConfirmModal';
 

@@ -1,6 +1,7 @@
-import { DefaultProfile, Button, BouncingDots } from '@/shared';
+import { Button, BouncingDots } from '@/shared';
 import { useProfileImageMutation } from '@/features/auth';
 import { ChangeEvent, useRef } from 'react';
+import { ProfileImage } from '@/shared/ui';
 
 interface MyPageProfileProps {
   imageUrl: string | null;
@@ -28,15 +29,7 @@ export default function MyPageProfile({ imageUrl, nickname, workoutDays }: MyPag
 
   return (
     <section className="flex flex-col lg:flex-row items-center border-2 border-secondary rounded-lg p-2 md:p-6 gap-3">
-      {imageUrl ? (
-        <img
-          src={imageUrl || '/icons/user.default.svg'}
-          className="w-20 h-20 rounded-full border-2 border-primary object-cover object-center"
-        />
-      ) : (
-        <DefaultProfile />
-      )}
-
+      <ProfileImage profileImageUrl={imageUrl} />
       <div className="flex flex-col items-center lg:items-start space-y-2">
         <span className="text-2xl font-bold">{nickname}</span>
         <span className="text-text-secondary">이번달 {workoutDays || 0}일째 운동 중🔥</span>

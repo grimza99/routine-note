@@ -31,6 +31,9 @@ const API = {
     ROUTINE_DISTRIBUTION: (month: string) => `/api/reports/routine-distribution?month=${month}`,
     WEEKLY_VOLUME: (month: string) => `/api/reports/weekly-volume?month=${month}`,
   },
+  EVENT: {
+    TRACK: '/api/events',
+  },
   CHALLENGE: {
     MONTHLY_RANK: (month: string) => `/api/challenges/monthly-rank?month=${month}`,
     MY_RANK: (month?: string) => `/api/challenges/my-rank${month ? `?month=${month}` : ''}`,

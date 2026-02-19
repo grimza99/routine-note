@@ -27,14 +27,14 @@ export default function MyPageProfile({ imageUrl, nickname, workoutDays }: MyPag
   };
 
   return (
-    <section className="flex flex-col lg:flex-row items-center border-2 border-secondary rounded-lg p-6 gap-3">
+    <section className="flex flex-col lg:flex-row items-center border-2 border-secondary rounded-lg p-2 md:p-6 gap-3">
       {imageUrl ? (
         <img
           src={imageUrl || '/icons/user.default.svg'}
           className="w-20 h-20 rounded-full border-2 border-primary object-cover object-center"
         />
       ) : (
-        <DefaultProfile size={20} />
+        <DefaultProfile />
       )}
 
       <div className="flex flex-col items-center lg:items-start space-y-2">

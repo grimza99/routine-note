@@ -1,4 +1,4 @@
-import { TOKEN } from '@/shared/constants';
+import { CLIENT_PLATFORM, MOBILE_META_HEADERS, TOKEN } from '@/shared/constants';
 import { supabaseClient } from '@/shared/libs/supabase';
 
 type ApiError = {
@@ -15,6 +15,12 @@ type AuthSessionPayload = {
   access_token?: string | null;
   token?: string | null;
 };
+
+const clientMetaHeaders = {
+  [MOBILE_META_HEADERS.PLATFORM]: CLIENT_PLATFORM.WEB,
+  [MOBILE_META_HEADERS.APP_VERSION]: process.env.NEXT_PUBLIC_APP_VERSION ?? 'web',
+  [MOBILE_META_HEADERS.APP_BUILD]: process.env.NEXT_PUBLIC_APP_BUILD ?? 'local',
+} as const;
 
 const getCookieValue = (name: string) => {
   if (typeof document === 'undefined') return null;
@@ -46,7 +52,10 @@ const refreshAccessToken = async () => {
   const response = await fetch('/api/auth/refresh', {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...clientMetaHeaders,
+    },
   });
 
   const json = (await response.json().catch(() => null)) as AuthSessionPayload | { error?: ApiError } | null;
@@ -78,14 +87,23 @@ export const apiFetch = async <TResponse>(
   const { auth = true, retry = false, headers, ...rest } = init;
   const token = auth ? await getAccessToken() : null;
   const shouldSetJsonHeader = !isFormDataBody(rest.body);
+  const requestHeaders = new Headers(headers ?? {});
+
+  if (shouldSetJsonHeader && !requestHeaders.has('Content-Type')) {
+    requestHeaders.set('Content-Type', 'application/json');
+  }
+
+  if (token && !requestHeaders.has('Authorization')) {
+    requestHeaders.set('Authorization', `Bearer ${token}`);
+  }
+
+  requestHeaders.set(MOBILE_META_HEADERS.PLATFORM, clientMetaHeaders[MOBILE_META_HEADERS.PLATFORM]);
+  requestHeaders.set(MOBILE_META_HEADERS.APP_VERSION, clientMetaHeaders[MOBILE_META_HEADERS.APP_VERSION]);
+  requestHeaders.set(MOBILE_META_HEADERS.APP_BUILD, clientMetaHeaders[MOBILE_META_HEADERS.APP_BUILD]);
 
   const response = await fetch(input, {
     ...rest,
-    headers: {
-      ...(shouldSetJsonHeader ? { 'Content-Type': 'application/json' } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(headers ?? {}),
-    },
+    headers: requestHeaders,
   });
 
   const json = (await response.json().catch(() => null)) as TResponse | { error?: ApiError } | null;

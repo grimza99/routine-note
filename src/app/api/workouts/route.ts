@@ -59,7 +59,7 @@ type RequestBody = {
 
 const mapRoutineExercises = (exercise: RoutineExercise) => ({
   id: exercise.id,
-  name: exercise.exercise_name ?? '',
+  exerciseName: exercise.exercise_name ?? '',
   sets:
     exercise.sets?.map((set) => ({
       id: set.id,
@@ -70,7 +70,7 @@ const mapRoutineExercises = (exercise: RoutineExercise) => ({
 
 const mapStandaloneExercise = (exercise: WorkoutStandaloneExercise) => ({
   id: exercise.id,
-  name: exercise.exercise_name ?? '',
+  exerciseName: exercise.exercise_name ?? '',
   note: exercise.note,
   order: exercise.item_order,
   sets: (exercise.sets ?? []).map((set) => ({
@@ -195,14 +195,6 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  for (const exercise of exercises) {
-    if (!exercise.exerciseName?.trim()) {
-      return json(400, {
-        error: { code: 'VALIDATION_ERROR', message: 'exerciseName is required for exercises' },
-      });
-    }
-  }
-
   const supabase = getSupabaseAdmin();
 
   if (routines.length) {
@@ -297,7 +289,9 @@ export async function POST(request: NextRequest) {
 
   for (const [index, exercise] of exercises.entries()) {
     const order = exercise.order ?? index + 1;
-
+    if (!exercise.exerciseName?.trim()) {
+      continue; // Skip exercises with empty or whitespace-only names
+    }
     const { error: exerciseError } = await supabase.from('workout_exercises').insert({
       id: randomUUID(),
       workout_id: workoutId,

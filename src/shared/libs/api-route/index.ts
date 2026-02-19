@@ -6,3 +6,6 @@ export { getCurrentWeekRange } from './date/getWeekRange'; // 현재 주의 { st
 export { getDayLabel } from './date/getDayLabel';
 // report utils
 export { getMaxConsecutiveDays } from './report/getMaxConsecutiveDays'; // 'YYYY-MM-DD' 배열 -> 최장 연속 날짜 수
+
+// header utils
+export { getClientMeta, type ClientMeta, warnMissingClientMetaHeaders } from './header/getClientMeta';

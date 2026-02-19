@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "mobile:start": "pnpm --filter routine-note-mobile start",
+    "mobile:prebuild:android": "pnpm --filter routine-note-mobile exec expo prebuild -p android",
+    "mobile:android": "pnpm --filter routine-note-mobile android",
+    "mobile:ios": "pnpm --filter routine-note-mobile ios",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report"

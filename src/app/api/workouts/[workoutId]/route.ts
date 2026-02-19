@@ -397,8 +397,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
           id,
           weight,
           reps,
-          note,
-          set_order
+          order
         )
       )
       `,

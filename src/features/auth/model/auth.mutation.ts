@@ -1,7 +1,8 @@
 'use client';
 import { useAuthStoreActions } from '@/entities/auth/model/useAuthStore';
 import { API, PATHS, TOAST_MESSAGE, useToast } from '@/shared';
-import { TOKEN } from '@/shared/constants';
+import { ANALYTICS_EVENTS, TOKEN } from '@/shared/constants';
+import { trackEvent } from '@/shared/libs';
 import { api, deleteCookieValue } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -110,6 +111,11 @@ export const useLoginMutation = (redirectTo?: string) => {
           profile_image: data.profile_image,
         });
       }
+      void trackEvent({
+        eventName: ANALYTICS_EVENTS.LOGIN_SUCCESS,
+        userId: data?.id,
+        source: 'web-login-form',
+      });
       router.push(getSafeRedirectPath(redirectTo));
       showToast({ message: TOAST_MESSAGE.SUCCESS_LOGIN });
     },

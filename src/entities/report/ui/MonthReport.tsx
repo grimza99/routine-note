@@ -2,18 +2,26 @@
 import { useWorkoutQuery } from '@/entities/workout/model/workout.query';
 import { MonthlyTrendLineChart, RoutineDistributionPieChart, WeeklyVolumeBarChart } from '@/features/report';
 import { Spinner, SummaryCard } from '@/shared';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useMonthlyTrendQuery, useRoutineDistributionQuery, useWeeklyVolumeQuery } from '../model/report.query';
-import { formatDateYearMonth } from '@/shared/libs';
+import { formatDateYearMonth, trackEvent } from '@/shared/libs';
+import { ANALYTICS_EVENTS } from '@/shared/constants';
 
 export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
   const currentMonth = formatDateYearMonth(intialMonth) || formatDateYearMonth(new Date());
   const todayMonth = formatDateYearMonth(new Date());
-  const [selectedMonth, setSelectedMonth] = useState('');
   const { data: monthlyReportData } = useWorkoutQuery(currentMonth);
-  const { data: weeklyVolume = [], isLoading: isWeeklyLoading } = useWeeklyVolumeQuery(selectedMonth);
   const { data: routineDistribution = [], isLoading: isRoutineLoading } = useRoutineDistributionQuery(currentMonth);
   const { data: monthlyTrends = [], isLoading: isMonthlyTrendLoading } = useMonthlyTrendQuery(currentMonth);
+  const availableMonths = useMemo(() => {
+    const firstSeries = monthlyTrends[0]?.data ?? [];
+    return firstSeries.map((point) => String(point.x));
+  }, [monthlyTrends]);
+  const selectedMonth = useMemo(
+    () => (availableMonths.length ? availableMonths[availableMonths.length - 1] : ''),
+    [availableMonths],
+  );
+  const { data: weeklyVolume = [], isLoading: isWeeklyLoading } = useWeeklyVolumeQuery(selectedMonth);
 
   const summaryData = [
     {
@@ -37,16 +45,16 @@ export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
       value: (monthlyReportData?.bodyFatMassChange || 0).toString(),
     },
   ];
-  const availableMonths = useMemo(() => {
-    const firstSeries = monthlyTrends[0]?.data ?? [];
-    return firstSeries.map((point) => String(point.x));
-  }, [monthlyTrends]);
-
   useEffect(() => {
-    if (!selectedMonth && availableMonths.length) {
-      setSelectedMonth(availableMonths[availableMonths.length - 1]);
-    }
-  }, [availableMonths, selectedMonth]);
+    if (!currentMonth) return;
+    void trackEvent({
+      eventName: ANALYTICS_EVENTS.REPORT_VIEWED,
+      source: 'web-report-month',
+      properties: {
+        month: currentMonth,
+      },
+    });
+  }, [currentMonth]);
 
   return (
     <>

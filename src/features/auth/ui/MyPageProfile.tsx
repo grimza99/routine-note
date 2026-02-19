@@ -29,7 +29,7 @@ export default function MyPageProfile({ imageUrl, nickname, workoutDays }: MyPag
   };
 
   return (
-    <section className="flex flex-col md:flex-row items-center border-2 border-border rounded-lg p-2 md:p-6 gap-3 md:gap-8">
+    <section className="flex flex-col md:flex-row items-center border-2 border-primary rounded-lg p-2 md:p-6 gap-3 md:gap-8">
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
       <div className="relative">
         <ProfileImage profileImageUrl={imageUrl} />

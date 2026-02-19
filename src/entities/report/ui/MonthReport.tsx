@@ -9,7 +9,6 @@ import { ANALYTICS_EVENTS } from '@/shared/constants';
 
 export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
   const currentMonth = formatDateYearMonth(intialMonth) || formatDateYearMonth(new Date());
-  const todayMonth = formatDateYearMonth(new Date());
   const { data: monthlyReportData } = useWorkoutQuery(currentMonth);
   const { data: routineDistribution = [], isLoading: isRoutineLoading } = useRoutineDistributionQuery(currentMonth);
   const { data: monthlyTrends = [], isLoading: isMonthlyTrendLoading } = useMonthlyTrendQuery(currentMonth);
@@ -70,60 +69,56 @@ export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
           />
         ))}
       </section>
-      {currentMonth === todayMonth && (
+      {
         <section className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-text-primary">주간 운동량</h2>
             <span className="text-sm text-text-secondary">세트수 × 무게 기준</span>
           </div>
-          {isWeeklyLoading ? (
-            <div
-              className="flex items-center justify-center rounded-lg border p-8"
-              style={{ borderColor: 'var(--border)' }}
-            >
+          <div className="rounded-lg border-2 border-border p-8 text-sm md:text-base text-text-secondary bg-white">
+            {isWeeklyLoading ? (
               <Spinner size={20} />
-            </div>
-          ) : weeklyVolume.length ? (
-            <WeeklyVolumeBarChart data={weeklyVolume} />
-          ) : (
-            <div className="rounded-lg border p-8 text-sm text-text-secondary" style={{ borderColor: 'var(--border)' }}>
-              표시할 주간 운동량 데이터가 없어요.
-            </div>
-          )}
+            ) : weeklyVolume.length ? (
+              <WeeklyVolumeBarChart data={weeklyVolume} />
+            ) : (
+              <p className="text-center">이번 달의 주간 운동량 데이터가 없어요.</p>
+            )}
+          </div>
         </section>
-      )}
+      }
       <section className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold text-text-primary">월간 목표 달성률 추이</h2>
-        {isMonthlyTrendLoading ? (
-          <div
-            className="flex items-center justify-center rounded-lg border p-8"
-            style={{ borderColor: 'var(--border)' }}
-          >
+        <h2 className="text-lg font-semibold text-text-primary">월간 목표 달성률 추이</h2>{' '}
+        <div className="rounded-lg border-2 border-border p-8 text-sm md:text-base text-text-secondary bg-white">
+          {isMonthlyTrendLoading ? (
             <Spinner size={20} />
-          </div>
-        ) : monthlyTrends.length ? (
-          <MonthlyTrendLineChart data={monthlyTrends} />
-        ) : (
-          <div className="rounded-lg border p-8 text-sm text-text-secondary" style={{ borderColor: 'var(--border)' }}>
-            표시할 월간 데이터가 없어요.
-          </div>
-        )}
+          ) : monthlyTrends.length ? (
+            <MonthlyTrendLineChart data={monthlyTrends} />
+          ) : (
+            <p className="text-center">이번 달의 월간 데이터가 없어요.</p>
+          )}
+        </div>
       </section>
 
       <section className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold text-text-primary">루틴 분포</h2>
-        {isRoutineLoading ? (
-          <div className="flex items-center justify-center rounded-lg border p-8 border-border">
+        <div className="rounded-lg border-2 border-border p-8 text-sm md:text-base text-text-secondary bg-white">
+          {isRoutineLoading ? (
             <Spinner size={20} />
-          </div>
-        ) : routineDistribution.length ? (
-          <RoutineDistributionPieChart data={routineDistribution} />
-        ) : (
-          <div className="rounded-lg border p-8 text-sm text-text-secondary border-border">
-            표시할 루틴 분포 데이터가 없어요.
-          </div>
-        )}
+          ) : routineDistribution.length ? (
+            <RoutineDistributionPieChart data={routineDistribution} />
+          ) : (
+            <p className="text-center">표시할 루틴 분포 데이터가 없어요.</p>
+          )}
+        </div>
       </section>
     </>
   );
 }
+
+const EmptyDataCard = ({ text }: { text: string }) => {
+  return (
+    <div className="rounded-lg border-2 border-border p-8 text-sm md:text-base text-text-secondary bg-white">
+      {text}
+    </div>
+  );
+};

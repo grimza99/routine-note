@@ -65,7 +65,7 @@ export function Modal({ modalId, isOpen, onClose, children, className, overlayCl
         <div
           role="dialog"
           aria-modal="true"
-          className={cn('relative w-full max-w-lg border', className)}
+          className={cn('relative w-full max-w-2xl max-h-180 overflow-y-auto border', className)}
           style={panelStyle}
           ref={modalRef}
         >

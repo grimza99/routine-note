@@ -7,7 +7,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full ">
       <Header />
       <main className="flex h-full flex-col items-center w-full">
         <PageHeaderBanner />

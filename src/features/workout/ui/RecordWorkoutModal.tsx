@@ -112,7 +112,7 @@ export default function RecordWorkoutModal({
               label="루틴 추가하기"
               className="mt-4 w-fit"
               onClick={() => {
-                router.push(PATHS.ROUTINE.MANAGE);
+                router.push(PATHS.ROUTINE);
               }}
             />
           </section>

@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 
 const EXCLUDE_PATHS = ['password-reset', 'privacy'];
 
-type TPageHeaderBannerVariant = 'routine-cal' | 'manage' | 'mypage' | 'report' | 'challenge';
+type TPageHeaderBannerVariant = 'workout-cal' | 'routine' | 'mypage' | 'report' | 'challenge';
 
 interface PageHeaderBannerContent {
   title: string;
@@ -11,11 +11,11 @@ interface PageHeaderBannerContent {
 }
 
 const PAGE_HEADER_BANNER_CONTENT: Record<TPageHeaderBannerVariant, PageHeaderBannerContent> = {
-  'routine-cal': {
+  'workout-cal': {
     title: 'Workout Calendar',
     subtitle: '나의 루틴으로 운동기록하기',
   },
-  manage: {
+  routine: {
     title: 'Routine',
     subtitle: '나의 루틴 관리',
   },

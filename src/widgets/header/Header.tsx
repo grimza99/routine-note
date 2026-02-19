@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import Link from 'next/link';
-import { Button, PROJECT, useOnClickOutside } from '@/shared';
+import { Button, PATHS, PROJECT, useOnClickOutside } from '@/shared';
 import { useLogoutMutation } from '@/features/auth/model/auth.mutation';
 
 type HeaderNavItem = {
@@ -11,11 +11,11 @@ type HeaderNavItem = {
 };
 
 const navItems: HeaderNavItem[] = [
-  { label: '캘린더', href: '/routine/routine-cal' },
-  { label: '루틴', href: '/routine/manage' },
-  { label: '챌린지', href: '/challenge' },
-  { label: '리포트', href: '/report' },
-  { label: '마이페이지', href: '/mypage' },
+  { label: '캘린더', href: PATHS.WORKOUT.CAL },
+  { label: '루틴', href: PATHS.ROUTINE },
+  { label: '챌린지', href: PATHS.CHALLENGE },
+  { label: '리포트', href: PATHS.REPORT },
+  { label: '마이페이지', href: PATHS.MYPAGE },
 ];
 
 export default function Header() {

@@ -11,25 +11,25 @@ import { PATHS } from '@/shared/constants';
 export interface RecordWorkoutModalProps {
   date: Date;
   currentRoutineIds: string[];
-  currentExercises: IExercise[];
+  currentStandaloneExercises: IExercise[];
   onClose: () => void;
   workoutId?: string;
 }
 
 interface Exercise {
   id: string;
-  name: string;
+  exerciseName: string;
 }
 
 export default function RecordWorkoutModal({
   date,
   currentRoutineIds,
-  currentExercises,
+  currentStandaloneExercises,
   onClose,
   workoutId,
 }: RecordWorkoutModalProps) {
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(currentRoutineIds);
-  const [addedExercises, setAddedExercises] = useState<Exercise[]>(currentExercises);
+  const [addedExercises, setAddedExercises] = useState<Exercise[]>(currentStandaloneExercises);
 
   const { showToast } = useToast();
 
@@ -52,7 +52,7 @@ export default function RecordWorkoutModal({
   };
 
   const handleExerciseAdd = () => {
-    const newExercise: Exercise = { id: nextIdRef.current.toString(), name: '' };
+    const newExercise: Exercise = { id: nextIdRef.current.toString(), exerciseName: '' };
     nextIdRef.current += 1;
     setAddedExercises((prev) => [...prev, newExercise]);
   };
@@ -77,13 +77,13 @@ export default function RecordWorkoutModal({
       await updateWorkout({
         date: formatDate(date), // YYYY-MM-DD
         routines: selectedRoutineIds.map((id) => ({ routineId: id })),
-        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.name })),
+        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.exerciseName })),
       });
     } else {
       await createWorkout({
         date: formatDate(date), // YYYY-MM-DD
         routines: selectedRoutineIds.map((id) => ({ routineId: id })),
-        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.name })),
+        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.exerciseName })),
       });
     }
     onClose();
@@ -91,7 +91,6 @@ export default function RecordWorkoutModal({
 
   const isSelected = (routineId: string) => selectedRoutineIds.includes(routineId);
 
-  console.log(selectedRoutineIds, routineTemplate);
   return (
     <div className="flex flex-col gap-4 p-6">
       <h2 className="text-lg font-semibold text-text-primary">루틴 선택</h2>
@@ -134,7 +133,7 @@ export default function RecordWorkoutModal({
               <InputField
                 label={`운동${idx + 1} 이름`}
                 placeholder="예: 스쿼트"
-                value={exercise.name}
+                value={exercise.exerciseName}
                 onChange={(event) => handleExerciseChange(exercise.id, event.target.value)}
                 required
                 className="flex-2"

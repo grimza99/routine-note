@@ -10,12 +10,7 @@ import { IExercise } from '@/shared/types';
 
 //-------------------------------workout modals types-------------------------------//
 type DeleteWorkoutPayload = { description: string; onConfirm: () => void };
-interface IRecordWorkoutPayload extends Omit<RecordWorkoutModalProps, 'onClose'> {
-  date: Date;
-  currentRoutineIds: string[];
-  currentExercises: IExercise[];
-  workoutId?: string;
-}
+interface IRecordWorkoutPayload extends Omit<RecordWorkoutModalProps, 'onClose'> {}
 
 type ManageRoutinePayload = {
   title: string;

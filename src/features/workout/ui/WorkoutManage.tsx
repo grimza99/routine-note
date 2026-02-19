@@ -12,7 +12,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
   const { openModal } = useModal();
 
   const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.routineId) || [];
-  const currentExercises = workoutByDateData?.exercises || [];
+  const currentStandaloneExercises = workoutByDateData?.exercises || [];
 
   return (
     <section className="border-2 rounded-xl border-primary w-full min-h-50 p-4">
@@ -41,7 +41,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
               openModal('recordWorkout', {
                 date: selectedDate,
                 currentRoutineIds: currentRoutineIds,
-                currentExercises: currentExercises,
+                currentStandaloneExercises: currentStandaloneExercises,
                 workoutId: workoutByDateData?.id,
               })
             }
@@ -70,20 +70,20 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
                   <NoteBadge note={routine.note} />
                 </div>
               ))}
-              {currentExercises.length > 0 && (
+              {currentStandaloneExercises.length > 0 && (
                 <div
                   className="flex items-center gap-2"
                   onClick={() =>
                     openModal('manageWorkout', {
                       title: '루틴외에 추가된 운동',
-                      initialExercises: currentExercises,
+                      initialExercises: currentStandaloneExercises,
                     })
                   }
                 >
                   <RecordedRoutineCard
                     key="additional-exercises"
                     title="루틴외에 추가된 운동"
-                    exercises={currentExercises}
+                    exercises={currentStandaloneExercises}
                   />
                 </div>
               )}

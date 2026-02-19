@@ -1,11 +1,12 @@
 'use client';
 import { useWorkoutQuery } from '@/entities';
 import WorkoutManage from '@/features/workout/ui/WorkoutManage';
-import { Calendar, SummaryCard } from '@/shared';
+import { SummaryCard } from '@/shared';
+import { Calendar } from '@/widgets';
 import { useState } from 'react';
 
 //todo monthlyData.goalWorkoutDays 가 null일때 모달로 월 목표 설정 유도
-export default function RoutineCalPage() {
+export default function WorkoutCalPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const currentMonth = new Date().toISOString().slice(0, 7);
   const { data: monthlyData } = useWorkoutQuery(currentMonth);

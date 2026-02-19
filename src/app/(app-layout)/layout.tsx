@@ -11,7 +11,7 @@ export default function RootLayout({
       <Header />
       <main className="flex h-full flex-col items-center w-full mb-53">
         <PageHeaderBanner />
-        <div className="px-4 py-10 md:px-5 md:py-15 lg:px-8 lg:py-20 w-full max-w-250">{children}</div>
+        <div className="px-4 py-10 md:px-5 md:py-10 lg:px-8 w-full max-w-250">{children}</div>
       </main>
       <Footer />
     </div>

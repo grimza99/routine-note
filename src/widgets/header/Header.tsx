@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button, PATHS, PROJECT, useOnClickOutside } from '@/shared';
 import { useLogoutMutation } from '@/features/auth/model/auth.mutation';
+import { XMarkIcon, Bars3Icon, BoltIcon } from '@heroicons/react/24/solid';
 
 type HeaderNavItem = {
   label: string;
@@ -32,7 +33,7 @@ export default function Header() {
     <header className="sticky top-0 z-10 w-full bg-gray900">
       <div className="mx-auto flex w-full max-w-300 items-center justify-between px-6 py-4">
         <Link href="/" className="text-xl font-bold text-gray-100" onClick={handleCloseMenu}>
-          <img src="/icons/bolt.svg" alt="Logo" className="inline h-6 w-6 mr-2" />
+          <BoltIcon className="inline h-6 w-6 mr-2 text-primary" />
           {PROJECT.NAME}
         </Link>
 
@@ -50,15 +51,12 @@ export default function Header() {
           <Button label="로그아웃" onClick={async () => await logout()} variant="primary" className="w-fit" />
         </nav>
 
-        <button
-          type="button"
-          className="md:hidden"
+        <Bars3Icon
+          className="h-6 w-6 text-primary md:hidden"
           aria-label={isMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
           aria-expanded={isMenuOpen}
           onClick={handleToggleMenu}
-        >
-          <img src="/icons/bars.svg" alt="Menu" className="h-6 w-6" />
-        </button>
+        />
       </div>
 
       <div
@@ -75,9 +73,7 @@ export default function Header() {
           }`}
         >
           <div className="flex justify-end px-4 py-4">
-            <button type="button" className="h-8 w-8" onClick={handleCloseMenu} aria-label="메뉴 닫기">
-              <img src="/icons/x.mark.primary.svg" alt="Close Menu" className="h-6 w-6" />
-            </button>
+            <XMarkIcon className="h-6 w-6 text-primary" onClick={handleCloseMenu} aria-label="close-side-nav" />
           </div>
           <nav className="flex flex-col px-6 py-4 gap-6">
             {navItems.map((item) => (

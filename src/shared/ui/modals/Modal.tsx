@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 import { cn } from '../../libs/cn';
 import { useOnClickOutside } from '@/shared/hooks/useOnClickOutside';
@@ -75,7 +76,7 @@ export function Modal({ modalId, isOpen, onClose, children, className, overlayCl
             onClick={onClose}
             className="absolute right-4 top-4 flex items-center justify-center focus-visible:outline-focus-ring"
           >
-            <img src="/icons/x.mark.svg" alt="close icon" className="w-4 h-4" />
+            <XMarkIcon className="w-5 h-5 text-text-primary font-bold" />
           </button>
           {children}
         </div>

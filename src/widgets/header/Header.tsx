@@ -29,14 +29,9 @@ export default function Header() {
   const { mutateAsync: logout } = useLogoutMutation();
 
   return (
-    <header className="sticky top-0 z-10 w-full bg-background">
+    <header className="sticky top-0 z-10 w-full bg-gray900">
       <div className="mx-auto flex w-full max-w-300 items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className="text-2xl font-bold"
-          style={{ color: 'var(--text-primary)' }}
-          onClick={handleCloseMenu}
-        >
+        <Link href="/" className="text-xl font-bold text-gray-100" onClick={handleCloseMenu}>
           <img src="/icons/bolt.svg" alt="Logo" className="inline h-6 w-6 mr-2" />
           {PROJECT.NAME}
         </Link>
@@ -57,12 +52,12 @@ export default function Header() {
 
         <button
           type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-lg md:hidden border border-(--primary) bg-(--white)"
+          className="md:hidden"
           aria-label={isMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
           aria-expanded={isMenuOpen}
           onClick={handleToggleMenu}
         >
-          <img src="/icons/bars.svg" alt="Menu" className="h-5 w-5" />
+          <img src="/icons/bars.svg" alt="Menu" className="h-6 w-6" />
         </button>
       </div>
 
@@ -75,29 +70,28 @@ export default function Header() {
         <div className="absolute inset-0 h-full w-full" style={{ background: 'rgba(0, 0, 0, 0.35)' }} />
         <aside
           ref={menuRef}
-          className={`absolute right-0 top-0 h-full w-[80%] max-w-[320px] transform border-l transition-transform ${
+          className={`absolute right-0 top-0 h-full w-[80%] max-w-80 transform transition-transform bg-gray900 ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
-          style={{ borderColor: 'var(--border)', background: 'var(--background)' }}
         >
-          <div className="flex justify-end px-6 py-4">
-            <button type="button" className="h-6 w-6" onClick={handleCloseMenu} aria-label="메뉴 닫기">
-              <img src="/icons/x.mark.svg" alt="Close Menu" className="h-5 w-5" />
+          <div className="flex justify-end px-4 py-4">
+            <button type="button" className="h-8 w-8" onClick={handleCloseMenu} aria-label="메뉴 닫기">
+              <img src="/icons/x.mark.primary.svg" alt="Close Menu" className="h-6 w-6" />
             </button>
           </div>
-          <nav className="flex flex-col px-6 py-2">
+          <nav className="flex flex-col px-6 py-4 gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="py-3 text-sm font-semibold"
+                className="font-semibold text-lg text-text-secondary py-2"
                 style={{ color: 'var(--text-secondary)' }}
                 onClick={handleCloseMenu}
               >
                 {item.label}
               </Link>
             ))}
-            <Button label="로그아웃" onClick={async () => await logout()} variant="primary" className="w-fit" />
+            <Button label="로그아웃" onClick={async () => await logout()} variant="primary" className="w-fit text-lg" />
           </nav>
         </aside>
       </div>

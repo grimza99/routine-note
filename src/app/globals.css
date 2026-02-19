@@ -14,13 +14,14 @@
   --radius-base: 8px;
   --focus-ring: rgba(230, 0, 35, 0.3);
   --error: #a5041c;
+  --gray900: #1a1a1a;
 }
 
 @theme {
   --color-black: var(--black);
   --color-white: var(--white);
   --color-background: var(--background);
-  --color-gray900: #1a1a1a;
+  --color-gray900: var(--gray900);
   --color-surface: var(--surface);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
@@ -54,7 +55,19 @@ input:-webkit-autofill {
   -webkit-text-fill-color: var(--text-primary) !important;
   caret-color: var(--color-gray100) !important;
 }
+@layer utilities {
+  /* 페이드 업 애니메이션 */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
 
+  .fade-up.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 @font-face {
   font-family: 'Pretendard';
   src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff2') format('woff2');

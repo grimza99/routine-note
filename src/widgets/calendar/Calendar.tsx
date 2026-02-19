@@ -1,5 +1,6 @@
 'use client';
 import { useMemo } from 'react';
+
 import { useMonth } from '@/shared/hooks';
 import { cn, createDate, formatDate } from '@/shared/libs';
 import { Button, Dot } from '@/shared/ui';
@@ -18,7 +19,6 @@ const isSameDay = (a: Date, b: Date) =>
 
 export function Calendar({ value, onSelectDate, recordDates, className }: CalendarProps) {
   const { currentMonth, handleChangeSetMonth, monthLabel, handlePrevMonth, handleNextMonth } = useMonth(value);
-  const today = new Date();
   const days = useMemo(() => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();

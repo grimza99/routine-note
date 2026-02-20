@@ -29,7 +29,7 @@ test.describe.serial('회원가입, 로그인 테스트', () => {
 
     const submitButton = form.getByRole('button', { name: '회원가입' });
     await submitButton.click();
-    await expect(page).toHaveURL(/\/routine\/routine-cal/);
+    await expect(page).toHaveURL(/\/workout\/workout-cal/);
     await page.context().storageState({ path: authStatePath });
   });
 
@@ -41,6 +41,6 @@ test.describe.serial('회원가입, 로그인 테스트', () => {
     await page.getByLabel('비밀번호').fill(password);
     await form.getByRole('button', { name: '로그인' }).click();
 
-    await expect(page).toHaveURL(/\/routine\/routine-cal/);
+    await expect(page).toHaveURL(/\/workout\/workout-cal/);
   });
 });

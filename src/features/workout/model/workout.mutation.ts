@@ -127,6 +127,7 @@ export const useDeleteWorkoutMutation = (workoutId: string | undefined) => {
     onSuccess: () => {
       showToast({ message: TOAST_MESSAGE.SUCCESS_DELETE_WORKOUT });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_REPORT] });
     },
     onError: (error) => {
       showToast({ message: error.message, variant: 'error' });

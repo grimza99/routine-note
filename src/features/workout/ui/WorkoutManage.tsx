@@ -18,7 +18,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
 
   return (
     <section className="border-2 rounded-xl border-primary w-full min-h-50 p-4">
-      <header className="flex items-center justify-between">
+      <header className="flex items-center justify-between mb-2">
         <span className="text-primary font-bold text-lg md:text-xl">{formatMonthDay(selectedDate)}</span>
         <div className="flex gap-2">
           {workoutByDateData && workoutByDateData.routines.length > 0 && (

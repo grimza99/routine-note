@@ -1,14 +1,10 @@
 'use client';
-import { useMyChallengeRank, useRoutineList, useWorkoutQuery } from '@/entities';
-import useAuthStore from '@/entities/auth/model/useAuthStore';
-import { useMyInfoMutation } from '@/features/auth';
-import AccountInfoSection from '@/features/auth/ui/AccountInfoSection';
-import MyPageProfile from '@/features/auth/ui/MyPageProfile';
-import { SummaryCard } from '@/shared';
+import { useAuthStore, useMyChallengeRank, useRoutineList, useWorkoutQuery } from '@/entities';
+import { AccountInfoSection, MyPageProfile, ResetPasswordRequestButton, useMyInfoMutation } from '@/features/auth';
+import { SummaryCard } from '@/shared/ui';
 
 export default function MyPage() {
   const { nickname, profile_image, email } = useAuthStore();
-
   const { data: routineListData } = useRoutineList();
   const { data: challengeData } = useMyChallengeRank(new Date().toISOString().slice(0, 7));
   const { data: goalArchivement } = useWorkoutQuery(new Date().toISOString().slice(0, 7));
@@ -29,7 +25,7 @@ export default function MyPage() {
     {
       title: '챌린지',
       iconSrc: '/icons/goal.svg',
-      value: challengeData?.rank + '등',
+      value: challengeData?.rank ? challengeData?.rank + '등' : '참가전',
     },
   ];
 
@@ -44,7 +40,7 @@ export default function MyPage() {
             iconSrc={data.iconSrc}
             value={data.value}
             variant="secondary"
-            className="flex-1"
+            className="flex-1 border-primary"
           />
         ))}
       </section>
@@ -54,6 +50,7 @@ export default function MyPage() {
         goalWorkoutDays={goalArchivement?.goalWorkoutDays}
         onSaveInfo={updateMyInfo}
       />
+      <ResetPasswordRequestButton />
     </div>
   );
 }

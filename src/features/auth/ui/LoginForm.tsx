@@ -1,9 +1,10 @@
 'use client';
-import { Button, InputField } from '@/shared';
 import { FormEvent, useState } from 'react';
-import { useLoginMutation } from '../model/auth.mutation';
 
-export default function LoginForm() {
+import { useLoginMutation } from '../model/auth.mutation';
+import { Button, InputField } from '@/shared/ui';
+
+export function LoginForm() {
   const redirectTo =
     typeof window === 'undefined' ? undefined : (new URLSearchParams(window.location.search).get('next') ?? undefined);
 
@@ -48,6 +49,9 @@ export default function LoginForm() {
         onChange={handleChange}
         helperText="6자 이상의 비밀번호를 입력하세요."
       />
+      {/* <Link href={PATHS.AUTH.PASSWORD_RESET_REQUEST} className="text-sm text-text-secondary text-right">
+        비밀번호를 잊으셨나요?
+      </Link> */}
       <Button type="submit" disabled={isButtonDisabeld} label="로그인" />
     </form>
   );

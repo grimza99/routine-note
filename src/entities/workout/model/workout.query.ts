@@ -1,5 +1,6 @@
-import { API, IExercise, IRoutine, QUERY_KEYS } from '@/shared';
+import { API, QUERY_KEYS } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
+import { IExercise, IRoutine } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
 
 type TWorkoutReportParams = string; // 'YYYY-MM-DD' 형식
@@ -17,24 +18,22 @@ interface IWorkoutReportResponse {
   workoutDates: string[]; // 'YYYY-MM-DD' 형식의 날짜 배열
 }
 
-//운동 리포트 쿼리
+//------------------------------------운동 리포트 쿼리------------------------------------
 export function useWorkoutQuery(params: TWorkoutReportParams) {
   return useQuery({
-    queryKey: [QUERY_KEYS.WORKOUT_REPORT],
+    queryKey: [QUERY_KEYS.WORKOUT_REPORT, params],
     queryFn: async () => {
       try {
         const res = await api.get<IWorkoutReportResponse>(API.WORKOUT.REPORT(params));
 
         return res.data;
       } catch (error) {
-        //todo 에러 처리
-        console.log('운동 리포트 조회 실패:', error);
         throw error;
       }
     },
   });
 }
-
+//------------------------------------날짜별 운동 조회 쿼리------------------------------------
 interface IWorkoutByDateResponse {
   id: string; // workoutId
   date: string; // 'YYYY-MM-DD' 형식
@@ -50,8 +49,6 @@ export function useWorkoutByDate(params: TWorkoutReportParams) {
         const res = await api.get<IWorkoutByDateResponse>(API.WORKOUT.BY_DATE(params));
         return res.data;
       } catch (error) {
-        //todo 에러 처리
-        console.log('날짜별 운동 조회 실패:', error);
         throw error;
       }
     },

@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 import { cn } from '../../libs/cn';
 import { useOnClickOutside } from '@/shared/hooks/useOnClickOutside';
@@ -17,38 +18,8 @@ type ModalProps = {
 };
 
 export function Modal({ modalId, isOpen, onClose, children, className, overlayClassName }: ModalProps) {
-  const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-  useOnClickOutside(modalRef, onClose);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted || !modalId) {
-      return undefined;
-    }
-
-    let didCreate = false;
-    let element = document.getElementById(modalId);
-
-    if (!element) {
-      element = document.createElement('div');
-      element.id = modalId;
-      document.body.appendChild(element);
-      didCreate = true;
-    }
-
-    setPortalElement(element);
-
-    return () => {
-      if (didCreate && element?.parentNode) {
-        element.parentNode.removeChild(element);
-      }
-    };
-  }, [isMounted, modalId]);
+  useOnClickOutside(modalRef, onClose, { enabled: isOpen });
 
   useEffect(() => {
     if (!isOpen) {
@@ -84,18 +55,18 @@ export function Modal({ modalId, isOpen, onClose, children, className, overlayCl
     [],
   );
 
-  if (!isOpen || !portalElement) {
+  if (!isOpen || typeof document === 'undefined') {
     return null;
   }
 
   return createPortal(
-    <div className={cn('fixed inset-0 z-50', overlayClassName)}>
+    <div id={modalId} className={cn('fixed inset-0 z-50', overlayClassName)}>
       <div className="absolute inset-0" style={overlayStyle} aria-hidden />
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-8">
         <div
           role="dialog"
           aria-modal="true"
-          className={cn('relative w-full max-w-lg border', className)}
+          className={cn('relative w-full max-w-2xl max-h-180 overflow-y-auto border', className)}
           style={panelStyle}
           ref={modalRef}
         >
@@ -105,12 +76,12 @@ export function Modal({ modalId, isOpen, onClose, children, className, overlayCl
             onClick={onClose}
             className="absolute right-4 top-4 flex items-center justify-center focus-visible:outline-focus-ring"
           >
-            <img src="/icons/x.mark.svg" alt="close icon" className="w-4 h-4" />
+            <XMarkIcon className="w-5 h-5 text-text-primary font-bold" />
           </button>
           {children}
         </div>
       </div>
     </div>,
-    portalElement,
+    document.body,
   );
 }

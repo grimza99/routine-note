@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TOKEN } from './shared/constants';
 
-const APP_HOME_PATH = '/routine/routine-cal';
+const APP_HOME_PATH = '/workout/workout-cal';
 const AUTH_PATH = '/auth';
-const PROTECTED_PATH_PREFIXES = ['/routine', '/report', '/challenge', '/mypage'];
+const PROTECTED_PATH_PREFIXES = ['/routine', '/report', '/challenge', '/mypage', '/workout'];
 
 const hasAuthToken = (request: NextRequest) => {
   const accessToken = request.cookies.get(TOKEN.ACCESS)?.value;
@@ -32,5 +32,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/auth', '/routine/:path*', '/report/:path*', '/challenge/:path*', '/mypage/:path*'],
+  matcher: ['/auth', '/routine/:path*', '/report/:path*', '/challenge/:path*', '/mypage/:path*', '/workout/:path*'],
 };

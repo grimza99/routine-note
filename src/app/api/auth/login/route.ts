@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
       age: data.user.user_metadata.age,
       privacy_policy: data.user.user_metadata.privacy_policy,
       access_token: data.session?.access_token ?? null,
+      refresh_token: data.session?.refresh_token ?? null,
       profile_image: data.user.user_metadata.profile_image ?? null,
     },
     { status: 200 },

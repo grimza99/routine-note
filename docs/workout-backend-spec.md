@@ -7,6 +7,11 @@
 - Base URL: `/api`
 - Auth: `Authorization: Bearer <token>`
 - 시간 포맷: `YYYY-MM-DD`, 월 포맷: `YYYY-MM`
+- 클라이언트 메타 헤더(필수)
+  - `x-client-platform`: `ios | android | web`
+  - `x-app-version`: 앱/웹 버전 문자열 (`1.0.0`, `web`)
+  - `x-app-build`: 빌드 번호/식별자
+  - 누락 시: 요청은 처리하되 서버 경고 로그를 남긴다.
 - 에러 응답 예시
 
 ```json
@@ -112,6 +117,7 @@
   "age": 0,
   "privacy_policy": true,
   "token": "jwt-token",
+  "refresh_token": "refresh-token",
   "profile_image": "" || null,
 }
 ```
@@ -123,7 +129,9 @@
 요청
 
 ```json
-{}
+{
+  "refreshToken?": "refresh-token"
+}
 ```
 
 응답
@@ -131,6 +139,7 @@
 ```json
 {
   "token": "new-jwt-token",
+  "refresh_token": "new-refresh-token",
   "user": { "id": "u1", "email": "user@example.com" }
 }
 ```
@@ -153,16 +162,9 @@
 
 #### POST /auth/password-reset/request
 
-설명: 비밀번호 재설정 이메일 발송 (로그인 상태면 email 생략 가능)
+설명: 슈파베이스의 auth 에 등록된 이메일 주소로 비밀번호 재설정 이메일 발송
 
-요청
-
-```json
-{
-  "email?": "user@example.com",
-  "redirectTo?": "https://app.example.com/reset-password"
-}
-```
+요청 body x
 
 응답
 
@@ -172,13 +174,12 @@
 
 #### POST /auth/password-reset/confirm
 
-설명: 이메일 인증 링크의 accessToken으로 비밀번호 변경
+설명: request시 쿠키에 첨부된 accessToken으로 비밀번호 변경
 
 요청
 
 ```json
 {
-  "accessToken": "token-from-email-link",
   "newPassword": "newPassword123"
 }
 ```
@@ -793,6 +794,59 @@
 }
 ```
 
+### 이벤트 수집
+
+#### POST /events
+
+설명: 웹/RN 공통 이벤트 수집 엔드포인트. 서버에서 유효성 검증 후 `analytics_events` 테이블에 적재.
+
+요청
+
+```json
+{
+  "eventName": "login_success",
+  "userId": "uuid-string or omitted",
+  "source": "web-login-form",
+  "platform": "web",
+  "appVersion": "web",
+  "appBuild": "local",
+  "sessionId": "session-uuid-or-random",
+  "screenName": "LoginScreen",
+  "funnelStep": "login_success",
+  "errorCode": "NETWORK_TIMEOUT",
+  "timestamp": "2026-02-13T12:00:00.000Z",
+  "properties": {
+    "month": "2026-02"
+  }
+}
+```
+
+허용 `eventName`
+
+- `app_install`
+- `app_open`
+- `login_success`
+- `workout_saved`
+- `workout_created`
+- `workout_updated`
+- `workout_removed`
+- `routine_applied`
+- `report_viewed`
+- `workout_sets_created`
+- `workout_sets_updated`
+
+응답
+
+```json
+{ "ok": true }
+```
+
+저장 테이블
+
+- `analytics_events`
+  - `event_name`, `user_id?`, `source?`, `platform?`, `app_version?`, `app_build?`, `properties(jsonb)`, `event_at`
+  - `sessionId/screenName/funnelStep/errorCode`는 v1에서 `properties` 내부 키로 저장
+
 ## 2) DB 스키마 (Postgres 초안)
 
 > 월간 리포트/챌린지 랭킹은 계산형으로 운영 가능하며, 캐시형으로 저장하려면 아래 테이블을 사용
@@ -945,6 +999,26 @@ CREATE TABLE challenge_rankings (
 
 CREATE UNIQUE INDEX challenge_rankings_month_rank_uq
   ON challenge_rankings (report_month, rank);
+
+-- analytics events
+CREATE TABLE analytics_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NULL,
+  event_name TEXT NOT NULL,
+  source TEXT NULL,
+  platform TEXT NULL,
+  app_version TEXT NULL,
+  app_build TEXT NULL,
+  properties JSONB NOT NULL DEFAULT '{}'::jsonb,
+  ip_address TEXT NULL,
+  user_agent TEXT NULL,
+  event_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX analytics_events_event_name_idx ON analytics_events (event_name);
+CREATE INDEX analytics_events_user_id_idx ON analytics_events (user_id);
+CREATE INDEX analytics_events_event_at_idx ON analytics_events (event_at DESC);
 ```
 
 ## 3) 리포트/챌린지 집계 로직 (초안)

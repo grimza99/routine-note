@@ -31,7 +31,7 @@ export function MonthlyTrendLineChart({ data }: MonthlyTrendLineChartProps) {
   return (
     <div className="h-64 w-full">
       <ResponsiveContainer>
-        <LineChart data={chartData} margin={{ top: 10, right: 16, left: 4, bottom: 0 }}>
+        <LineChart data={chartData} margin={{ left: -30, right: 30 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="x" stroke="var(--text-secondary)" tickLine={false} />
           <YAxis stroke="var(--text-secondary)" />
@@ -42,7 +42,6 @@ export function MonthlyTrendLineChart({ data }: MonthlyTrendLineChartProps) {
               dataKey={line.id}
               stroke={COLORS[index % COLORS.length]}
               strokeWidth={2}
-              activeDot={{ r: 8 }}
             />
           ))}
         </LineChart>

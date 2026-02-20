@@ -28,7 +28,7 @@ export function RecordedRoutineCard({ title, exercises, className }: RecordedRou
       <ul className="mt-2 flex flex-col gap-2 text-xs font-semibold">
         {exercises.map((exercise) => (
           <li key={exercise.id} className={cn('flex items-center justify-between rounded px-3 py-2 bg-gray-50')}>
-            <span>{exercise.name}</span>
+            <span className="text-primary">{exercise.exerciseName}</span>
             {exercise.sets && <span className="text-xs">{exercise.sets.length}세트</span>}
           </li>
         ))}

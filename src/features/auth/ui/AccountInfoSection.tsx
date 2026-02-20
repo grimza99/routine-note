@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button, InputField } from '@/shared';
+import { PencilIcon } from '@heroicons/react/24/solid';
+import { Button, InputField } from '@/shared/ui';
 
 interface IInfo {
   nickname: string;
@@ -35,10 +36,14 @@ export default function AccountInfoSection({ email, nickname, goalWorkoutDays, o
   }, [nickname, goalWorkoutDays]);
 
   return (
-    <section className="flex flex-col gap-4 rounded-lg border-2 border-secondary p-4">
+    <section className="flex flex-col gap-4 rounded-lg border-2 border-primary p-4">
       <div className="w-full flex justify-between items-center">
         <h2 className="text-lg font-semibold text-text-primary">계정 정보</h2>
-        <Button label="변경" onClick={() => onSaveInfo?.(info)} className="w-fit h-fit" />
+        <Button
+          label={<PencilIcon className="text-white size-4" />}
+          onClick={() => onSaveInfo?.(info)}
+          className="w-fit h-fit"
+        />
       </div>
       <InputField label="이메일" value={email} onChange={() => {}} disabled />
       <InputField
@@ -50,9 +55,10 @@ export default function AccountInfoSection({ email, nickname, goalWorkoutDays, o
       <InputField
         label="이번달 목표 운동 일수"
         type="number"
-        value={!info.goalWorkoutDays ? '' : info.goalWorkoutDays}
+        value={!info.goalWorkoutDays ? 0 : info.goalWorkoutDays}
         placeholder='운동 목표일을 설정해보세요 (예: "15")'
         onChange={(e) => handleChangeInfo(e.target.value, 'goalWorkoutDays')}
+        helperText="목표운동 일수는 리포트 페이지의 월간목표달성률 차트에 사용되어, 매달 초기화 됩니다."
         className="flex-1"
       />
     </section>

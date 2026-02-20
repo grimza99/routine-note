@@ -1,6 +1,9 @@
-import { DefaultProfile, Button, BouncingDots } from '@/shared';
-import { useProfileImageMutation } from '@/features/auth';
+'use client';
 import { ChangeEvent, useRef } from 'react';
+
+import { useProfileImageMutation } from '@/features/auth';
+import { BouncingDots, Button, ProfileImage } from '@/shared/ui';
+import { PencilIcon } from '@heroicons/react/24/solid';
 
 interface MyPageProfileProps {
   imageUrl: string | null;
@@ -27,25 +30,19 @@ export default function MyPageProfile({ imageUrl, nickname, workoutDays }: MyPag
   };
 
   return (
-    <section className="flex flex-col lg:flex-row items-center border-2 border-secondary rounded-lg p-6 gap-3">
-      {imageUrl ? (
-        <img
-          src={imageUrl || '/icons/user.default.svg'}
-          className="w-20 h-20 rounded-full border-2 border-primary object-cover object-center"
-        />
-      ) : (
-        <DefaultProfile size={20} />
-      )}
-
-      <div className="flex flex-col items-center lg:items-start space-y-2">
-        <span className="text-2xl font-bold">{nickname}</span>
-        <span className="text-text-secondary">이번달 {workoutDays || 0}일째 운동 중🔥</span>
+    <section className="flex flex-col md:flex-row items-center border-2 border-primary rounded-lg p-2 md:p-6 gap-3 md:gap-8">
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+      <div className="relative">
+        <ProfileImage profileImageUrl={imageUrl} />
         <Button
-          label={isPending ? <BouncingDots /> : '프로필 이미지 변경'}
+          label={isPending ? <BouncingDots /> : <PencilIcon className="size-4 text-white" />}
           onClick={handleSelectFile}
-          className="w-fit"
+          className="w-fit rounded-full h-fit p-2 absolute top-0 -right-2"
         />
-        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+      </div>
+      <div className="flex flex-col items-center md:items-start space-y-2">
+        <span className="text-2xl font-bold">{nickname}</span>
+        <span className="text-lgtext-text-secondary">이번달 {workoutDays || 0}일째 운동 중 🔥</span>
       </div>
     </section>
   );

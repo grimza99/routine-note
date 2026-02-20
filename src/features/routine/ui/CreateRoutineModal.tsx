@@ -2,10 +2,9 @@
 
 import { useRef, useState } from 'react';
 
-import { Button } from '../../../shared/ui/buttons/Button';
-import { InputField } from '../../../shared/ui/fields/InputField';
 import { useCreateRoutineMutation } from '../model/routine.muation';
-import { BouncingDots, useToast } from '@/shared';
+import { useToast } from '@/shared/hooks';
+import { InputField, Button, BouncingDots } from '@/shared/ui';
 
 export default function CreateRoutineModal({ onClose }: { onClose: () => void }) {
   const nextIdRef = useRef(1);

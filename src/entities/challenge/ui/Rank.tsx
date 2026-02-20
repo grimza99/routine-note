@@ -1,4 +1,5 @@
-import { cn, ConsecutiveWorkoutDaysBadge, DefaultProfile } from '@/shared';
+import { cn } from '@/shared/libs';
+import { ConsecutiveWorkoutDaysBadge, ProfileImage } from '@/shared/ui';
 
 interface RankClassNames {
   container?: string;
@@ -24,7 +25,7 @@ export function Rank({ imageUrl, nickname, experience, rank, workoutDays, classN
   return (
     <div
       className={cn(
-        'flex w-full items-center justify-between gap-4 rounded-xl border-2 border-border bg-white p-4',
+        'flex w-full items-center justify-between gap-4 rounded-xl border-2 border-border bg-white p-2 md:p-4',
         className,
         classNames?.container,
       )}
@@ -32,24 +33,20 @@ export function Rank({ imageUrl, nickname, experience, rank, workoutDays, classN
       <div className="flex items-center gap-4">
         <div
           className={cn(
-            'flex h-10 w-10 items-center justify-center rounded-full bg-surface text-sm font-bold text-text-secondary',
+            'flex w-8 h-8 md:w-10 md:h-10 items-center justify-center rounded-full bg-surface text-sm font-bold text-text-secondary',
             classNames?.rank,
           )}
         >
           {rank}
         </div>
         <div className="flex items-center gap-4">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={`${nickname} 프로필`}
-              className={cn('h-12 w-12 rounded-full border border-border object-cover', classNames?.avatar)}
-            />
-          ) : (
-            <DefaultProfile />
-          )}
+          <ProfileImage profileImageUrl={imageUrl} className={cn('w-8 h-8 md:w-10 md:h-10', classNames?.avatar)} />
           <div className="flex flex-col">
-            <span className={cn('font-bold text-text-primary', classNames?.name)}>{nickname}</span>
+            <span
+              className={cn('text-sm md:text-base font-bold text-text-primary truncate max-w-30', classNames?.name)}
+            >
+              {nickname}
+            </span>
             {experience && (
               <span className={cn('text-sm text-text-secondary', classNames?.experience)}>{experience}xp</span>
             )}

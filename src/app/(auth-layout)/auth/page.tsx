@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+
 import { LoginForm, SignupForm } from '@/features/auth';
-import { AUTH } from '@/entities/auth/model/constants';
-import { Tabs } from '@/shared';
+import { Tabs } from '@/shared/ui';
+import { AUTH } from '@/entities';
 
 type AuthTab = 'login' | 'signup';
 const tabItems = [

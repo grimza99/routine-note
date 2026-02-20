@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Routine Note",
+    "slug": "routine-note-mobile",
+    "scheme": "routine-note",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.routinenote.app"
+    },
+    "android": {
+      "package": "com.routinenote.app"
+    }
+  }
+}

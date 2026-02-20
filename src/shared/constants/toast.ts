@@ -3,6 +3,8 @@ export const TOAST_MESSAGE = {
   SUCCESS_SIGNUP: '회원가입이 완료되었습니다.',
   SUCCESS_LOGIN: '로그인에 성공했습니다.',
   SUCCESS_LOGOUT: '로그아웃되었습니다.',
+  SUCCESS_PASSWORD_RESET_REQUEST: '비밀번호 재설정 이메일이 전송되었습니다.',
+  SUCCESS_PASSWORD_RESET_CONFIRM: '비밀번호가 성공적으로 재설정되었습니다. 새로 로그인해주세요',
 
   //프로필
   SUSSESS_PROFILE_UPDATE: '프로필이 업데이트되었습니다.',

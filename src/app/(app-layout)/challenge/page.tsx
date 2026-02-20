@@ -1,6 +1,6 @@
 'use client';
 import { LeaderBoard, useMyChallengeRank } from '@/entities';
-import { PreparingCard, SummaryCard, Tabs } from '@/shared';
+import { PreparingCard, SummaryCard, Tabs } from '@/shared/ui';
 import { useState } from 'react';
 
 type TabItem = 'leaderBoard' | 'challengeList';
@@ -49,8 +49,16 @@ export default function ChallengePage() {
       <section>
         <Tabs items={tabItems} activeId={activeTab} onChange={(id) => setActiveTab(id as TabItem)} />
       </section>
-      <span className="text-text-secondary">한달간 가장 활발하게 운동한 유저들 이에요</span>
-      <section>{activeTab === 'leaderBoard' ? <LeaderBoard /> : <PreparingCard />}</section>
+      <section>
+        {activeTab === 'leaderBoard' ? (
+          <>
+            <span className="text-text-secondary">한달간 가장 활발하게 운동한 유저들 이에요</span>
+            <LeaderBoard />
+          </>
+        ) : (
+          <PreparingCard />
+        )}
+      </section>
     </div>
   );
 }

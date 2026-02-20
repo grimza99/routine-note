@@ -19,6 +19,66 @@
 
 ## 노트
 
+- [2026-02-18] [android-release] Android 클로즈드 테스트 플랜 구현 반영
+  - 영향/증상/개요 (필수): 사용자가 안드로이드 2주 출시 플랜의 코드/문서 구현을 요청해 설치 이벤트 계측(`app_install`, `installId`)과 Android KPI 문서를 즉시 반영할 필요.
+  - 결정/조치 (필수): 모바일 트래킹 메타에 `installId`를 추가하고, SecureStore 기반 `installStorage`를 신설해 최초 실행 시 `app_install` 1회 전송/성공 플래그 저장 규칙을 `useAuthSession`에 적용. 서버 `/api/events` 스키마에 `installId` optional 필드를 추가하고 `docs/android-kpi-dashboard-sql.md` 문서를 신설.
+  - 관련 파일/링크 (선택): `mobile/src/shared/libs/analytics/track.ts`, `mobile/src/shared/libs/storage/installStorage.ts`, `mobile/src/features/auth/model/useAuthSession.tsx`, `src/app/api/events/route.ts`, `docs/android-kpi-dashboard-sql.md`
+
+- [2026-02-17] [release] iOS MVP 출시 플랜 실행 문서/계약 반영
+  - 영향/증상/개요 (필수): 사용자 요청으로 KR TestFlight 2주 + 6주 일정의 출시 플랜을 실제 운영 가능한 문서/계약으로 코드베이스에 고정할 필요.
+  - 결정/조치 (필수): `docs/ios-mvp-launch-plan.md`를 신설하고, `/api/events` 스키마에 `sessionId/screenName/funnelStep/errorCode`를 확장. 모바일 메타 헤더 누락 시 경고 로그를 남기도록 서버 유틸/라우트를 보강하고, 라우팅 계약 동결 버전을 타입/문서에 명시.
+  - 관련 파일/링크 (선택): `docs/ios-mvp-launch-plan.md`, `src/app/api/events/route.ts`, `src/shared/libs/api-route/header/getClientMeta.ts`, `docs/mobile-routing-contract.md`
+
+- [2026-02-13] [mobile] DraggableSheet 공통 컴포넌트 신규 추가
+  - 영향/증상/개요 (필수): 날짜 중심 워크아웃 UX 개편을 위해 하단에서 드래그로 접고 펼치는 공통 시트 UI 필요.
+  - 결정/조치 (필수): `mobile/src/shared/ui/draggable-sheet/DraggableSheet.tsx`를 추가해 `visible/onClose` 기반 열림/닫힘, backdrop 탭 닫기, 아래로 드래그 닫기, `children` 또는 `renderContent(close)` 전달 방식을 지원. `shared/ui/index.ts` export 반영 및 타입체크 통과.
+  - 관련 파일/링크 (선택): `mobile/src/shared/ui/draggable-sheet/DraggableSheet.tsx`, `mobile/src/shared/ui/index.ts`
+
+- [2026-02-13] [mobile] 공통 Button 이후 Input 공통 컴포넌트 추가 적용
+  - 영향/증상/개요 (필수): `RoutineScreen`, `WorkoutScreen`에서 `TextInput` 스타일/속성 패턴이 반복되어 유지보수 비용 증가.
+  - 결정/조치 (필수): `mobile/src/shared/ui/input/Input.tsx`를 추가하고 두 화면의 입력 필드를 `Input`으로 교체. `shared/ui/index.ts` export 반영 및 모바일 타입체크(`pnpm --filter routine-note-mobile exec tsc --noEmit`) 통과.
+  - 관련 파일/링크 (선택): `mobile/src/shared/ui/input/Input.tsx`, `mobile/src/features/routine/ui/RoutineScreen.tsx`, `mobile/src/features/workout/ui/WorkoutScreen.tsx`
+
+- [2026-02-13] [env] Expo 부팅 시 `@babel/runtime` 해석 오류 대응
+  - 영향/증상/개요 (필수): `mobile/index.ts`에서 `@babel/runtime/helpers/interopRequireDefault` 모듈 미해석으로 Metro 번들 실패.
+  - 결정/조치 (필수): `mobile` 워크스페이스에 `@babel/runtime` 의존성 추가(`pnpm --filter routine-note-mobile add @babel/runtime`).
+  - 관련 파일/링크 (선택): `mobile/package.json`, `pnpm-lock.yaml`
+
+- [2026-02-13] [mobile] WorkoutScreen 세트 입력 방식을 운동별 개별값으로 확장
+  - 영향/증상/개요 (필수): 공통 세트값 1개만 입력 가능해 운동별 강도 차이를 반영하기 어려움.
+  - 결정/조치 (필수): 운동 입력 목록 기준으로 각 운동마다 `세트수/무게/횟수`를 개별 입력하도록 UI/상태를 변경하고, 저장 시 운동별 설정값으로 세트 생성 호출.
+  - 관련 파일/링크 (선택): `mobile/src/features/workout/ui/WorkoutScreen.tsx`
+
+- [2026-02-13] [mobile] WorkoutScreen 세트 입력(세트수/무게/횟수) 및 세트 생성 API 연동
+  - 영향/증상/개요 (필수): 모바일 운동 기록에서 세트 단위 입력이 없어 웹 대비 핵심 기록 정보가 누락됨.
+  - 결정/조치 (필수): `WorkoutScreen`에 세트 기본값 입력 UI를 추가하고, 저장 시 `POST /api/workout-exercises/{id}/sets`를 호출해 각 운동에 세트 생성하도록 구현. 세트 생성 라우트의 standalone 식별 조건을 `exercise_id`가 아닌 `id` 기준으로 수정.
+  - 관련 파일/링크 (선택): `mobile/src/features/workout/ui/WorkoutScreen.tsx`, `mobile/src/features/workout/api/workoutApi.ts`, `src/app/api/workout-exercises/[workoutExerciseId]/sets/route.ts`
+
+- [2026-02-13] [mobile] 모바일 Native 화면에 운동기록/루틴 CRUD API 연동 추가
+  - 영향/증상/개요 (필수): 하이브리드 앱 골격 이후 실제 사용 가능한 CRUD(루틴 생성/수정/삭제, 날짜별 운동 생성/수정/삭제) 연결이 필요.
+  - 결정/조치 (필수): `mobile`에 `routineApi/workoutApi`를 추가하고 `RoutineScreen`, `WorkoutScreen`을 폼+목록 기반 CRUD 화면으로 교체. 저장 후 이벤트(`workout_created`, `routine_applied`) 전송 연결.
+  - 관련 파일/링크 (선택): `mobile/src/features/routine/ui/RoutineScreen.tsx`, `mobile/src/features/workout/ui/WorkoutScreen.tsx`, `mobile/src/features/routine/api/routineApi.ts`, `mobile/src/features/workout/api/workoutApi.ts`
+
+- [2026-02-13] [env] 워크스페이스 의존성 설치 실패 (npm registry DNS)
+  - 영향/증상/개요 (필수): `pnpm install` 시 `ERR_PNPM_META_FETCH_FAIL` (`getaddrinfo ENOTFOUND registry.npmjs.org`)로 `mobile` 워크스페이스 의존성 설치 불가.
+  - 결정/조치 (필수): 코드/문서 반영은 완료했고, 의존성 설치/lockfile 갱신은 네트워크 복구 후 재실행 필요.
+  - 관련 파일/링크 (선택): `package.json`, `pnpm-workspace.yaml`, `mobile/package.json`
+
+- [2026-02-13] [mobile] 하이브리드 RN 실행 골격/딥링크 계약/이벤트 DB 적재 2차 반영
+  - 영향/증상/개요 (필수): 추천 순서(모바일 워크스페이스 → 라우트 계약 → 이벤트 적재)에 맞춰 실제 실행 가능한 기반 코드 필요.
+  - 결정/조치 (필수): `mobile/` Expo 워크스페이스를 추가하고(로그인/운동/루틴 Native + 리포트/챌린지/마이페이지 WebView fallback), 딥링크 계약 문서/타입(`docs/mobile-routing-contract.md`, `src/shared/types/mobile-routing.type.ts`)을 신설. `/api/events`를 `analytics_events` 테이블 insert로 전환하고 마이그레이션 SQL(`supabase/migrations/20260213_create_analytics_events.sql`) 추가.
+  - 관련 파일/링크 (선택): `mobile/App.tsx`, `mobile/src/app/navigation/routeContract.ts`, `src/app/api/events/route.ts`, `src/app/api/auth/refresh/route.ts`
+
+- [2026-02-13] [mobile] 하이브리드 RN 전환 계획에 맞춘 공통 인터페이스 1차 반영
+  - 영향/증상/개요 (필수): 웹 MVP 기반 모바일 확장을 위해 모바일 메타 헤더, 이벤트 스키마, 실행 문서가 필요.
+  - 결정/조치 (필수): `x-client-platform/x-app-version/x-app-build` 헤더를 공통 API 클라이언트에 추가하고 `POST /api/events` 라우트 및 이벤트 상수/트래킹 유틸을 신설. 실행/홍보 문서(`docs/mobile-hybrid-plan.md`, `docs/growth-launch-playbook.md`) 추가.
+  - 관련 파일/링크 (선택): `src/shared/libs/api/client.ts`, `src/app/api/events/route.ts`, `src/shared/constants/mobile.ts`, `src/shared/constants/analytics.ts`
+
+- [2026-02-12] [ui] 모달 V2 스켈레톤(provider/registry/useModal) 신규 추가
+  - 영향/증상/개요 (필수): 기존 모달 코드를 유지한 채 key 기반 레지스트리 패턴을 실험/점진 전환할 수 있는 신규 구조 필요.
+  - 결정/조치 (필수): `shared`에 범용 `ModalProvider/useModal`을 추가하고, `app/providers/modal`에 앱 전용 `modalRegistry`/bridge provider를 신설. 기존 모달 사용처는 수정하지 않고 루트 레이아웃에만 브리지 provider 연결.
+  - 관련 파일/링크 (선택): `src/shared/ui/modals-v2/ModalProvider.tsx`, `src/shared/ui/modals-v2/types.ts`, `src/shared/hooks/useModal.ts`, `src/app/providers/modal/modalRegistry.tsx`, `src/app/providers/modal/ModalBridgeProvider.tsx`, `src/app/layout.tsx`
+
 - [2026-02-12] [auth] `/auth` prerender 에러 대응을 위한 `useSearchParams` 제거
   - 영향/증상/개요 (필수): `/auth` 빌드 시 prerender 에러가 발생해 로그인 폼의 URL 쿼리 읽기 방식 점검 필요.
   - 결정/조치 (필수): `LoginForm`에서 `useSearchParams`를 제거하고 `window.location.search` 기반 즉시 계산으로 `next` 파라미터를 전달하도록 변경.

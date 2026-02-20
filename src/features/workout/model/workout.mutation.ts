@@ -1,4 +1,6 @@
-import { API, QUERY_KEYS, TOAST_MESSAGE, useToast } from '@/shared';
+import { ANALYTICS_EVENTS, API, QUERY_KEYS, TOAST_MESSAGE } from '@/shared/constants';
+import { useToast } from '@/shared/hooks';
+import { trackEvent } from '@/shared/libs';
 import { api } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -27,9 +29,26 @@ export const useCreateWorkoutMutation = () => {
         throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      void trackEvent({
+        eventName: ANALYTICS_EVENTS.WORKOUT_CREATED,
+        source: 'web-workout-create',
+        properties: {
+          date: variables.date,
+          routineCount: variables.routines.length,
+          exerciseCount: variables.exercises.length,
+        },
+      });
+      if (variables.routines.length > 0) {
+        void trackEvent({
+          eventName: ANALYTICS_EVENTS.ROUTINE_APPLIED,
+          source: 'web-workout-create',
+          properties: { date: variables.date, routineCount: variables.routines.length },
+        });
+      }
       showToast({ message: TOAST_MESSAGE.SUCCESS_CREATE_WORKOUT });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_REPORT] });
     },
     onError: (error) => {
       showToast({ message: error.message, variant: 'error' });
@@ -59,7 +78,23 @@ export const useUpdateWorkoutMutation = (workoutId: string | undefined) => {
         throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      void trackEvent({
+        eventName: ANALYTICS_EVENTS.WORKOUT_UPDATED,
+        source: 'web-workout-update',
+        properties: {
+          date: variables.date,
+          routineCount: variables.routines.length,
+          exerciseCount: variables.exercises.length,
+        },
+      });
+      if (variables.routines.length > 0) {
+        void trackEvent({
+          eventName: ANALYTICS_EVENTS.ROUTINE_APPLIED,
+          source: 'web-workout-update',
+          properties: { date: variables.date, routineCount: variables.routines.length },
+        });
+      }
       showToast({ message: TOAST_MESSAGE.SUCCESS_UPDATE_WORKOUT });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
     },
@@ -93,6 +128,7 @@ export const useDeleteWorkoutMutation = (workoutId: string | undefined) => {
     onSuccess: () => {
       showToast({ message: TOAST_MESSAGE.SUCCESS_DELETE_WORKOUT });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_REPORT] });
     },
     onError: (error) => {
       showToast({ message: error.message, variant: 'error' });

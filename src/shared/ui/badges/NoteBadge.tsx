@@ -1,4 +1,4 @@
-import { cn } from '../../libs/cn';
+import { cn } from '@/shared/libs';
 
 type NoteBadgeProps = {
   note?: string;

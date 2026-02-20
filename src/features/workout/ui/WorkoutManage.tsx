@@ -1,4 +1,6 @@
 'use client';
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
+
 import { useWorkoutByDate } from '@/entities';
 import { useDeleteWorkoutMutation } from '../model/workout.mutation';
 import { useModal } from '@/shared/hooks';
@@ -21,7 +23,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
         <div className="flex gap-2">
           {workoutByDateData && workoutByDateData.routines.length > 0 && (
             <Button
-              label="삭제"
+              label={<TrashIcon className="w-4 h-4 md:h-5 md:w-5" />}
               aria-label="운동 기록 삭제"
               onClick={() =>
                 openModal('deleteWorkout', {
@@ -31,11 +33,11 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
                   },
                 })
               }
-              className="w-fit"
+              className="w-fit p-2"
             />
           )}
           <Button
-            label={<img src="/icons/plus.white.svg" alt="운동 기록 추가" className="w-5 h-5" />}
+            label={<PlusIcon className="w-4 h-4 md:h-5 md:w-5" />}
             aria-label="운동 기록 추가"
             onClick={() =>
               openModal('recordWorkout', {
@@ -45,7 +47,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
                 workoutId: workoutByDateData?.id,
               })
             }
-            className="w-fit"
+            className="w-fit p-2"
           />
         </div>
       </header>

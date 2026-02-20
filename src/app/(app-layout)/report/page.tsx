@@ -37,7 +37,7 @@ export default function ReportPage() {
         </>
       ) : (
         <div className="flex flex-col gap-8 lg:gap-15 items-center">
-          <h2 className="text-3xl font-bold">지난 리포트</h2>
+          <h2 className="text-2xl italic md:text-3xl font-bold">지난 리포트</h2>
           <PrevMonthsReports />
         </div>
       )}

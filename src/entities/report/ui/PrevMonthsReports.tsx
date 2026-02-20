@@ -13,7 +13,7 @@ export function PrevMonthsReports() {
           <LastMonthReportCard
             key={report.month}
             monthLabel={report.month}
-            achievementRate={report.goalAchievementRate || 0}
+            achievementRate={report.goalAchievementRate}
             items={[
               { label: '운동한 날', value: `${report.workoutDays}일` },
               { label: '총 운동 세트', value: `${report.totalSets}세트` },

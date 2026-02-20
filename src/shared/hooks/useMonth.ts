@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createDate } from '../libs';
 
 /**
@@ -17,6 +17,11 @@ export function useMonth(initialMonthValue?: Date | null) {
   const [currentMonth, setCurrentMonth] = useState(() =>
     createDate(initialMonth.getFullYear(), initialMonth.getMonth(), 1),
   );
+  useEffect(() => {
+    if (initialMonthValue) {
+      setCurrentMonth(createDate(initialMonthValue.getFullYear(), initialMonthValue.getMonth(), 1));
+    }
+  }, [initialMonthValue]);
   const monthLabel = `${currentMonth.getFullYear()}년 ${currentMonth.getMonth() + 1}월`;
 
   const handlePrevMonth = () => {

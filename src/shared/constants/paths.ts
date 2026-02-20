@@ -6,7 +6,7 @@ const PATHS = {
   WORKOUT: {
     CAL: '/workout/workout-cal',
   },
-  REPORT: '/report',
+  REPORT: '/report?tab=current',
   CHALLENGE: '/challenge',
   MYPAGE: '/mypage',
   ACCOUNT: {

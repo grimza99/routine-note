@@ -92,6 +92,8 @@ export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
         <div className="rounded-lg border-2 border-border p-8 text-sm md:text-base text-text-secondary bg-white">
           {isMonthlyTrendLoading ? (
             <Spinner size={20} />
+          ) : monthlyReportData?.goalWorkoutDays === null ? (
+            <p className="text-center">이번달에 설정한 목표운동 일수가 없어요.</p>
           ) : monthlyTrends.length ? (
             <MonthlyTrendLineChart data={monthlyTrends} />
           ) : (

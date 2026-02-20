@@ -1,4 +1,4 @@
-import { PROJECT } from '@/shared';
+import { PROJECT } from '@/shared/constants';
 import Link from 'next/link';
 
 export default function AuthLayout({

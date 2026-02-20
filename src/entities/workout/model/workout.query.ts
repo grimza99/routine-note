@@ -1,5 +1,6 @@
-import { API, IExercise, IRoutine, QUERY_KEYS } from '@/shared';
+import { API, QUERY_KEYS } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
+import { IExercise, IRoutine } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
 
 type TWorkoutReportParams = string; // 'YYYY-MM-DD' 형식

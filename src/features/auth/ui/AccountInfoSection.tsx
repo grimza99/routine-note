@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { PencilIcon } from '@heroicons/react/24/solid';
-
-import { Button, InputField } from '@/shared';
+import { Button, InputField } from '@/shared/ui';
 
 interface IInfo {
   nickname: string;

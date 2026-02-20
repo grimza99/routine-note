@@ -1,10 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, IExercise, NumberStepper, TOAST_MESSAGE, TextareaField, cn, useToast } from '@/shared';
-import SetManageBox from './SetManageBox';
+
 import { useSetsCreateMutation, useSetsDeleteMutation, useSetsEditMutation } from '../model/sets.mutation';
 import { useNoteMutation } from '../model/note.mutation';
+import { Button, NumberStepper, TextareaField } from '@/shared/ui';
+import SetManageBox from './SetManageBox';
+import { IExercise } from '@/shared/types';
+import { useToast } from '@/shared/hooks';
+import { TOAST_MESSAGE } from '@/shared/constants';
+import { cn } from '@/shared/libs';
 
 type RoutineRecordModalContentProps = {
   title: string;
@@ -141,7 +146,7 @@ export function WorkoutManageModal({
             <div key={exercise.id} className={cn('rounded-lg border p-2 bg-surface border-border flex flex-col gap-2')}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-text-primary">{exercise.name}</p>
+                  <p className="text-sm font-semibold text-text-primary">{exercise.exerciseName}</p>
                 </div>
                 <NumberStepper
                   value={exercise.sets.length || 0}
@@ -166,12 +171,14 @@ export function WorkoutManageModal({
           ))}
       </section>
 
-      <TextareaField
-        label="루틴 메모"
-        placeholder={`오늘 수행한 ${title} 루틴에 대한 메모를 남겨주세요.`}
-        value={note}
-        onChange={(event) => setNote(event.target.value)}
-      />
+      {routineId && (
+        <TextareaField
+          label="루틴 메모"
+          placeholder={`오늘 수행한 ${title} 루틴에 대한 메모를 남겨주세요.`}
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+        />
+      )}
 
       <div className="flex justify-end gap-2">
         <Button label="취소" variant="secondary" onClick={onClose} />

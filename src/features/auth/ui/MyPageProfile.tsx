@@ -1,7 +1,8 @@
-import { Button, BouncingDots } from '@/shared';
-import { useProfileImageMutation } from '@/features/auth';
+'use client';
 import { ChangeEvent, useRef } from 'react';
-import { ProfileImage } from '@/shared/ui';
+
+import { useProfileImageMutation } from '@/features/auth';
+import { BouncingDots, Button, ProfileImage } from '@/shared/ui';
 import { PencilIcon } from '@heroicons/react/24/solid';
 
 interface MyPageProfileProps {

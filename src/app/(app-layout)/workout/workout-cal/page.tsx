@@ -1,9 +1,10 @@
 'use client';
-import { useWorkoutQuery } from '@/entities';
-import WorkoutManage from '@/features/workout/ui/WorkoutManage';
-import { SummaryCard } from '@/shared';
-import { Calendar } from '@/widgets';
 import { useState } from 'react';
+
+import { useWorkoutQuery } from '@/entities';
+import { SummaryCard } from '@/shared/ui';
+import { Calendar } from '@/widgets';
+import { WorkoutManage } from '@/features/workout';
 
 //todo monthlyData.goalWorkoutDays 가 null일때 모달로 월 목표 설정 유도
 export default function WorkoutCalPage() {

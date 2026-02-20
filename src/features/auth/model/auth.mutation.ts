@@ -1,7 +1,9 @@
 'use client';
 import { useAuthStoreActions } from '@/entities/auth/model/useAuthStore';
-import { API, PATHS, TOAST_MESSAGE, useToast } from '@/shared';
+import { API, PATHS, TOAST_MESSAGE } from '@/shared/constants';
+
 import { ANALYTICS_EVENTS, TOKEN } from '@/shared/constants';
+import { useToast } from '@/shared/hooks';
 import { trackEvent } from '@/shared/libs';
 import { api, deleteCookieValue } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

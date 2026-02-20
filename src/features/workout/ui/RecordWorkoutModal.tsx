@@ -1,31 +1,35 @@
-import { useRoutineList } from '@/entities';
-import { Button, cn, formatDate, IExercise, InputField, PATHS, RoutineCard, useToast } from '@/shared';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
-import { useCreateWorkoutMutation, useUpdateWorkoutMutation } from '../model/workout.mutation';
 
-interface RecordWorkoutModalProps {
+import { useRoutineList } from '@/entities';
+import { useCreateWorkoutMutation, useUpdateWorkoutMutation } from '../model/workout.mutation';
+import { Button, InputField, RoutineCard } from '@/shared/ui';
+import { cn, formatDate } from '@/shared/libs';
+import { IExercise } from '@/shared/types';
+import { useToast } from '@/shared/hooks';
+import { PATHS } from '@/shared/constants';
+export interface RecordWorkoutModalProps {
   date: Date;
   currentRoutineIds: string[];
-  currentExercises: IExercise[];
+  currentStandaloneExercises: IExercise[];
   onClose: () => void;
   workoutId?: string;
 }
 
 interface Exercise {
   id: string;
-  name: string;
+  exerciseName: string;
 }
 
 export default function RecordWorkoutModal({
   date,
   currentRoutineIds,
-  currentExercises,
+  currentStandaloneExercises,
   onClose,
   workoutId,
 }: RecordWorkoutModalProps) {
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(currentRoutineIds);
-  const [addedExercises, setAddedExercises] = useState<Exercise[]>(currentExercises);
+  const [addedExercises, setAddedExercises] = useState<Exercise[]>(currentStandaloneExercises);
 
   const { showToast } = useToast();
 
@@ -48,7 +52,7 @@ export default function RecordWorkoutModal({
   };
 
   const handleExerciseAdd = () => {
-    const newExercise: Exercise = { id: nextIdRef.current.toString(), name: '' };
+    const newExercise: Exercise = { id: nextIdRef.current.toString(), exerciseName: '' };
     nextIdRef.current += 1;
     setAddedExercises((prev) => [...prev, newExercise]);
   };
@@ -59,7 +63,7 @@ export default function RecordWorkoutModal({
 
   const handleExerciseChange = (targetId: string, value: string) => {
     setAddedExercises((prev) =>
-      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, name: value } : exercise)),
+      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, exerciseName: value } : exercise)),
     );
   };
 
@@ -73,13 +77,13 @@ export default function RecordWorkoutModal({
       await updateWorkout({
         date: formatDate(date), // YYYY-MM-DD
         routines: selectedRoutineIds.map((id) => ({ routineId: id })),
-        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.name })),
+        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.exerciseName })),
       });
     } else {
       await createWorkout({
         date: formatDate(date), // YYYY-MM-DD
         routines: selectedRoutineIds.map((id) => ({ routineId: id })),
-        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.name })),
+        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.exerciseName })),
       });
     }
     onClose();
@@ -99,7 +103,7 @@ export default function RecordWorkoutModal({
                 <RoutineCard
                   routineName={routine.routineName}
                   exercises={routine.exercises}
-                  className={cn(isSelected(routine.routineId) && 'scale-[1.02] border-3 shadow-lg')}
+                  className={cn(isSelected(routine.routineId) && 'scale-[1.02] border-3 border-primary shadow-lg')}
                 />
               </div>
             ))}
@@ -129,7 +133,7 @@ export default function RecordWorkoutModal({
               <InputField
                 label={`운동${idx + 1} 이름`}
                 placeholder="예: 스쿼트"
-                value={exercise.name}
+                value={exercise.exerciseName}
                 onChange={(event) => handleExerciseChange(exercise.id, event.target.value)}
                 required
                 className="flex-2"

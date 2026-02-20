@@ -1,4 +1,5 @@
-import { API, QUERY_KEYS, TOAST_MESSAGE, useToast } from '@/shared';
+import { API, QUERY_KEYS, TOAST_MESSAGE } from '@/shared/constants';
+import { useToast } from '@/shared/hooks';
 import { api } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/shared';
+import { Button } from '@/shared/ui';
 import { usePasswordResetMutation } from '../model/auth.mutation';
 
 export function ResetPasswordRequestButton() {

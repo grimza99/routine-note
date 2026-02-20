@@ -1,11 +1,12 @@
 'use client';
-import { useWorkoutQuery } from '@/entities/workout/model/workout.query';
-import { MonthlyTrendLineChart, RoutineDistributionPieChart, WeeklyVolumeBarChart } from '@/features/report';
-import { Spinner, SummaryCard } from '@/shared';
 import { useEffect, useMemo } from 'react';
+
+import { MonthlyTrendLineChart, RoutineDistributionPieChart, WeeklyVolumeBarChart } from '@/features/report';
 import { useMonthlyTrendQuery, useRoutineDistributionQuery, useWeeklyVolumeQuery } from '../model/report.query';
 import { formatDateYearMonth, trackEvent } from '@/shared/libs';
 import { ANALYTICS_EVENTS } from '@/shared/constants';
+import { Spinner, SummaryCard } from '@/shared/ui';
+import { useWorkoutQuery } from '@/entities/workout/model/workout.query';
 
 export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
   const currentMonth = formatDateYearMonth(intialMonth) || formatDateYearMonth(new Date());
@@ -91,6 +92,8 @@ export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
         <div className="rounded-lg border-2 border-border p-8 text-sm md:text-base text-text-secondary bg-white">
           {isMonthlyTrendLoading ? (
             <Spinner size={20} />
+          ) : monthlyReportData?.goalWorkoutDays === null ? (
+            <p className="text-center">이번달에 설정한 목표운동 일수가 없어요.</p>
           ) : monthlyTrends.length ? (
             <MonthlyTrendLineChart data={monthlyTrends} />
           ) : (

@@ -1,6 +1,6 @@
 'use client';
 import { LeaderBoard, useMyChallengeRank } from '@/entities';
-import { PreparingCard, SummaryCard, Tabs } from '@/shared';
+import { PreparingCard, SummaryCard, Tabs } from '@/shared/ui';
 import { useState } from 'react';
 
 type TabItem = 'leaderBoard' | 'challengeList';

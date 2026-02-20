@@ -14,3 +14,7 @@ export { PrevMonthsReports } from './report/ui/PrevMonthsReports';
 export { useAllMonthReportsQuery } from './report/model/report.query';
 export { useMonthlyTrendQuery, useRoutineDistributionQuery, useWeeklyVolumeQuery } from './report/model/report.query';
 export type { MonthlyTrendSeries, RoutineDistributionItem, WeeklyVolumeItem } from './report/model/report.query';
+
+//auth
+export { useAuthStore, useAuthStoreActions } from './auth/model/useAuthStore';
+export { AUTH } from './auth/model/constants';

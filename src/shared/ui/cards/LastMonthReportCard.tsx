@@ -7,10 +7,11 @@ type LastMonthReportItem = {
 
 type LastMonthReportCardProps = {
   monthLabel: string;
-  achievementRate: number;
+  achievementRate: number | null;
   items: LastMonthReportItem[];
   className?: string;
   achievementLabel?: string;
+  onClick?: () => void;
 };
 
 export function LastMonthReportCard({
@@ -19,7 +20,9 @@ export function LastMonthReportCard({
   items,
   className,
   achievementLabel = '달성률',
+  onClick,
 }: LastMonthReportCardProps) {
+  const archievementRateValue = achievementRate ? achievementRate + '%' : '설정 목표 없음';
   return (
     <div
       className={cn(
@@ -27,11 +30,12 @@ export function LastMonthReportCard({
         'shadow-[0_1px_2px_rgba(0,0,0,0.08)]',
         className,
       )}
+      onClick={onClick}
     >
       <header className="flex items-start justify-between">
-        <h3 className="text-2xl font-bold text-text-primary">{monthLabel}</h3>
+        <h3 className="text-xl md:text-2xl font-bold text-text-primary">{monthLabel}</h3>
         <div className="flex flex-col items-end">
-          <span className="text-3xl font-bold text-primary">{achievementRate}%</span>
+          <span className="text-xl md:text-2xl font-bold text-primary">{archievementRateValue}</span>
           <span className="text-sm font-bold text-text-secondary">{achievementLabel}</span>
         </div>
       </header>

@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
-import { getCurrentMonthInfo } from '@/shared';
 import { getMaxConsecutiveDays, getMonthRange, json } from '@/shared/libs/api-route';
+import { getCurrentMonthInfo } from '@/shared/libs';
 
 type MonthReport = {
   month: string;

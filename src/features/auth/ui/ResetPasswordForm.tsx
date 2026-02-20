@@ -1,7 +1,8 @@
 'use client';
-import { Button, InputField } from '@/shared';
 import { FormEvent, useState } from 'react';
+
 import { usePasswordResetConfirmMutation } from '../model/auth.mutation';
+import { Button, InputField } from '@/shared/ui';
 
 export function ResetPasswordForm() {
   const [payload, setPayload] = useState({

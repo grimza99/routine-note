@@ -1,4 +1,4 @@
-import { cn } from '@/shared/libs/cn';
+import { cn } from '@/shared/libs';
 
 export function ConsecutiveWorkoutDaysBadge({ days, className }: { days: number; className?: string }) {
   return (

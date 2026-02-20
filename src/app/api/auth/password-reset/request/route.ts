@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin, getSupabaseAnon } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
-import { PATHS } from '@/shared';
+import { PATHS } from '@/shared/constants';
 
 export async function POST(request: NextRequest) {
   const supabaseAnon = getSupabaseAnon();
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   let email = authUser.user.email;
 
   const { error } = await supabaseAnon.auth.resetPasswordForEmail(email, {
-    redirectTo: 'http://localhost:3000/' + PATHS.ACCOUNT.PASSWORD_RESET,
+    redirectTo: new URL(PATHS.ACCOUNT.PASSWORD_RESET, 'https://routine-note.vercel.app').toString(),
   });
 
   if (error) {

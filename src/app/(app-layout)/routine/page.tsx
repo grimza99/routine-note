@@ -1,10 +1,10 @@
 'use client';
-import useAuthStore from '@/entities/auth/model/useAuthStore';
-import { useRoutineList } from '@/entities/routine/model/routine.query';
-import { useDeleteRoutineMutation } from '@/features/routine';
-import { Button, RoutineCard, Spinner } from '@/shared';
-import { useModal } from '@/shared/hooks';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+
+import { useAuthStore, useRoutineList } from '@/entities';
+import { useDeleteRoutineMutation } from '@/features/routine';
+import { useModal } from '@/shared/hooks';
+import { Button, RoutineCard, Spinner } from '@/shared/ui';
 
 export default function RoutineManagePage() {
   const { openModal } = useModal();

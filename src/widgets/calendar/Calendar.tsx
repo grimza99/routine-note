@@ -1,8 +1,9 @@
 'use client';
 import { useMemo } from 'react';
-import { Button, cn, Dot, formatDate } from '@/shared';
+
 import { useMonth } from '@/shared/hooks';
-import { createDate } from '@/shared/libs';
+import { cn, createDate, formatDate } from '@/shared/libs';
+import { Button, Dot } from '@/shared/ui';
 
 type CalendarProps = {
   value?: Date | null;
@@ -18,7 +19,6 @@ const isSameDay = (a: Date, b: Date) =>
 
 export function Calendar({ value, onSelectDate, recordDates, className }: CalendarProps) {
   const { currentMonth, handleChangeSetMonth, monthLabel, handlePrevMonth, handleNextMonth } = useMonth(value);
-
   const days = useMemo(() => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
@@ -102,7 +102,7 @@ export function Calendar({ value, onSelectDate, recordDates, className }: Calend
               label={
                 <div className="flex flex-col items-center w-full h-full">
                   {date.getDate().toString()}
-                  {recordDates?.includes(formatDate(date)) && <Dot />}
+                  {recordDates?.includes(formatDate(date)) && <Dot color={isSelected ? 'bg-white' : ''} />}
                 </div>
               }
               variant={isSelected ? 'primary' : 'secondary'}

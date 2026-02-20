@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { MonthReport, PrevMonthsReports } from '@/entities';
@@ -13,6 +13,14 @@ const tabItems = [
 ];
 
 export default function ReportPage() {
+  return (
+    <Suspense fallback={null}>
+      <ReportPageContent />
+    </Suspense>
+  );
+}
+
+function ReportPageContent() {
   const [activeTab, setActiveTab] = useState<'prev' | 'current'>('current');
   const [month, setMonth] = useState<Date | null>(null);
   const { currentMonth, monthLabel, handlePrevMonth, handleNextMonth } = useMonth(month);

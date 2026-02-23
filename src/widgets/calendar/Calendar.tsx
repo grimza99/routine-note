@@ -102,7 +102,7 @@ export function Calendar({ value, onSelectDate, recordDates, className }: Calend
               label={
                 <div className="flex flex-col items-center w-full h-full">
                   {date.getDate().toString()}
-                  {recordDates?.includes(formatDate(date)) && <Dot color={isSelected ? 'bg-white' : ''} />}
+                  {recordDates?.includes(formatDate(date)) && <Dot color={isSelected ? 'bg-white' : undefined} />}
                 </div>
               }
               variant={isSelected ? 'primary' : 'secondary'}

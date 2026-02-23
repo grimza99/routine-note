@@ -46,3 +46,6 @@ next-env.d.ts
 
 #backup files
 backup
+
+# e2e auth state
+e2e/.auth/

@@ -8,7 +8,7 @@ import { Button, NumberStepper, TextareaField } from '@/shared/ui';
 import SetManageBox from './SetManageBox';
 import { IExercise } from '@/shared/types';
 import { useToast } from '@/shared/hooks';
-import { TOAST_MESSAGE } from '@/shared/constants';
+import { TOAST_MESSAGE, A11Y_LABELS } from '@/shared/constants';
 import { cn } from '@/shared/libs';
 
 type RoutineRecordModalContentProps = {

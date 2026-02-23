@@ -6,7 +6,7 @@ import Link from 'next/link';
 const FEATURES = [
   {
     title: '나의 운동 루틴 커스텀',
-    description: ['자주 하는 루틴을 한 번에 불러오고', ' 세트만 채우면 끝.'],
+    description: ['자주 하는 루틴을 한 번에 불러오고 세트만 채우면 끝.'],
     iconUrl: '/icons/calendar.white.svg',
   },
   {
@@ -56,7 +56,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-bold">{feature.title}</h3>
                 {feature.description.map((line) => (
-                  <p key={line} className="mt-1 text-sm text-text-secondary">
+                  <p key={line} className="mt-1 text-sm text-text-secondary w-full text-center">
                     {line}
                   </p>
                 ))}
@@ -94,14 +94,14 @@ export default function Home() {
                 <li>성과 요약이 부족해 동기부여가 떨어집니다.</li>
               </ul>
             </div>
-            <div className="rounded-2xl border-2 bg-white p-6 border-primary">
+            <div className="rounded-2xl border-3 bg-white p-6 border-primary">
               <h3 className="text-lg text-primary font-bold">{PROJECT.NAME}</h3>
               <ul className="mt-4 space-y-3 text-sm list-disc pl-4">
                 <li>
-                  캘린더 형태로 전체 운동 기록을 한눈에 확인,
+                  캘린더 형태로 전체 운동 기록을 한눈에 확인.
                   <br /> 운동기록은 리포트로 자동 요약.
                 </li>
-                <li>나만의 루틴 템플릿을 만들어, 쉬운 운동 기록</li>
+                <li>나만의 루틴 템플릿을 만들고, 쉬운 운동 기록</li>
                 <li>주간·월간 목표 달성률을 시각화</li>
                 <li>다른 유저와의 챌린지로, 동기부여 상승</li>
               </ul>

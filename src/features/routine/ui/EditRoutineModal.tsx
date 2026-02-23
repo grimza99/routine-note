@@ -148,6 +148,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
 
       <div className="flex justify-end gap-3">
         <Button
+          aria-label={A11Y_LABELS.ROUTINE.confirmEdit}
           label={isPending ? <BouncingDots color="primary" /> : `수정`}
           className="w-auto"
           type="submit"

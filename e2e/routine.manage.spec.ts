@@ -5,8 +5,8 @@ test.use({ storageState: 'e2e/.auth/user.json' });
 
 test.describe.serial('루틴 관리 플로우', () => {
   const uniqueSuffix = Date.now();
-  const routineName = `E2E ${uniqueSuffix}`;
-  const updatedRoutineName = `E2E ${uniqueSuffix}`;
+  const routineName = `E2E-routine-test(${uniqueSuffix})`;
+  const updatedRoutineName = `E2-routine-test-edit(${uniqueSuffix})`;
   test('루틴 생성-수정', async ({ page }) => {
     await page.goto('/routine');
     await page.getByRole('button', { name: A11Y_LABELS.ROUTINE.create }).click();
@@ -26,15 +26,24 @@ test.describe.serial('루틴 관리 플로우', () => {
       .locator('div', { has: createdRoutineHeading })
       .filter({ has: page.getByRole('button', { name: A11Y_LABELS.ROUTINE.edit }) })
       .first();
-    await createdRoutineCard.getByRole('button', { name: A11Y_LABELS.ROUTINE.edit }).click();
+    await createdRoutineCard.getByRole('button', { name: A11Y_LABELS.ROUTINE.edit }).click(); //루틴 수정 버튼
 
     const form = page.locator('form');
+    const routineNameInput = form.getByLabel(/루틴 이름/);
+    await expect(routineNameInput).toHaveValue(routineName);
 
-    await page.getByLabel(/루틴 이름/).fill(updatedRoutineName);
-    await page.getByLabel(/운동1 이름/).fill('데드리프트');
+    await routineNameInput.fill(updatedRoutineName);
+    await form.getByLabel(/운동1 이름/).fill('데드리프트');
 
-    const editButton = form.getByRole('button', { name: '수정' });
+    const editButton = form.getByRole('button', { name: A11Y_LABELS.ROUTINE.confirmEdit }); //루틴 수정 확인 버튼
+    const editResponsePromise = page.waitForResponse(
+      (response) => response.request().method() === 'PATCH' && /\/api\/routines\//.test(response.url()),
+    );
     await editButton.click();
+    const editResponse = await editResponsePromise;
+    expect(editResponse.ok()).toBeTruthy();
+
+    await expect(page.getByRole('heading', { name: updatedRoutineName })).toBeVisible();
   });
 
   test('루틴 삭제', async ({ page }) => {

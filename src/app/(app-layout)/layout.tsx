@@ -1,4 +1,4 @@
-import PageHeaderBanner from '@/shared/ui/banners/PageHeaderBanner';
+import { PageHeaderBanner } from '@/shared/ui';
 import { Footer, Header } from '@/widgets';
 
 export default function RootLayout({

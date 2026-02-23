@@ -7,8 +7,16 @@ interface CommonConfirmModalProps {
   onConfirm: () => void;
   onClose: () => void;
   isPending?: boolean;
+  ariaLabel?: { leftButton: string; rightButton: string };
 }
-export function CommonConfirmModal({ title, message, onConfirm, onClose, isPending }: CommonConfirmModalProps) {
+export function CommonConfirmModal({
+  title,
+  message,
+  onConfirm,
+  onClose,
+  isPending,
+  ariaLabel,
+}: CommonConfirmModalProps) {
   const handleConfirm = () => {
     onConfirm();
     onClose();
@@ -21,8 +29,12 @@ export function CommonConfirmModal({ title, message, onConfirm, onClose, isPendi
         <p className="text-sm text-text-secondary">{message}</p>
       </header>
       <div className="flex gap-2 w-full">
-        <Button label="취소" onClick={onClose} variant="secondary" />
-        <Button label={isPending ? <BouncingDots /> : `확인`} onClick={handleConfirm} />
+        <Button label="취소" onClick={onClose} variant="secondary" aria-label={ariaLabel?.leftButton} />
+        <Button
+          label={isPending ? <BouncingDots /> : `확인`}
+          onClick={handleConfirm}
+          aria-label={ariaLabel?.rightButton}
+        />
       </div>
     </div>
   );

@@ -1,11 +1,25 @@
-import { LastMonthReportCard, Spinner } from '@/shared';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+
+import { LastMonthReportCard, Spinner } from '@/shared/ui';
 import { useAllMonthReportsQuery } from '../model/report.query';
 
 export function PrevMonthsReports() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
   const { data: prevReportsData } = useAllMonthReportsQuery();
   if (!prevReportsData) {
     return <Spinner />;
   }
+  const handleClickPrevReport = (reportMonth: string) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+
+    nextParams.set('report-month', reportMonth);
+    nextParams.set('tab', 'current');
+    router.replace(`${pathname}?${nextParams.toString()}`);
+  };
+
   return (
     <section className="w-full flex flex-col gap-4 md:gap-6">
       {prevReportsData.length > 0 ? (
@@ -13,12 +27,15 @@ export function PrevMonthsReports() {
           <LastMonthReportCard
             key={report.month}
             monthLabel={report.month}
-            achievementRate={report.goalAchievementRate || 0}
+            achievementRate={report.goalAchievementRate}
             items={[
               { label: '운동한 날', value: `${report.workoutDays}일` },
               { label: '총 운동 세트', value: `${report.totalSets}세트` },
               { label: '최대 연속 운동', value: `${report.maxConsecutiveWorkoutDays}일` },
             ]}
+            onClick={() => {
+              handleClickPrevReport(report.month);
+            }}
           />
         ))
       ) : (

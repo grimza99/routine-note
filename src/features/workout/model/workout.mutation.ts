@@ -1,5 +1,5 @@
-import { API, QUERY_KEYS, TOAST_MESSAGE, useToast } from '@/shared';
-import { ANALYTICS_EVENTS } from '@/shared/constants';
+import { ANALYTICS_EVENTS, API, QUERY_KEYS, TOAST_MESSAGE } from '@/shared/constants';
+import { useToast } from '@/shared/hooks';
 import { trackEvent } from '@/shared/libs';
 import { api } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -48,6 +48,7 @@ export const useCreateWorkoutMutation = () => {
       }
       showToast({ message: TOAST_MESSAGE.SUCCESS_CREATE_WORKOUT });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_REPORT] });
     },
     onError: (error) => {
       showToast({ message: error.message, variant: 'error' });
@@ -127,6 +128,7 @@ export const useDeleteWorkoutMutation = (workoutId: string | undefined) => {
     onSuccess: () => {
       showToast({ message: TOAST_MESSAGE.SUCCESS_DELETE_WORKOUT });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_REPORT] });
     },
     onError: (error) => {
       showToast({ message: error.message, variant: 'error' });

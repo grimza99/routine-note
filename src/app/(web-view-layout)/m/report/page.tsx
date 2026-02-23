@@ -1,9 +1,9 @@
 'use client';
+import { useState } from 'react';
 
 import { MonthReport, PrevMonthsReports } from '@/entities';
-import { Tabs } from '@/shared';
 import { useMonth } from '@/shared/hooks';
-import { useState } from 'react';
+import { Tabs } from '@/shared/ui';
 
 const tabItems = [
   { id: 'current', label: '이번 달 리포트' },

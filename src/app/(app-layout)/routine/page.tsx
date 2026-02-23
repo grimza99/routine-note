@@ -1,10 +1,11 @@
 'use client';
-import useAuthStore from '@/entities/auth/model/useAuthStore';
-import { useRoutineList } from '@/entities/routine/model/routine.query';
-import { useDeleteRoutineMutation } from '@/features/routine';
-import { Button, RoutineCard, Spinner } from '@/shared';
-import { useModal } from '@/shared/hooks';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+
+import { useAuthStore, useRoutineList } from '@/entities';
+import { useDeleteRoutineMutation } from '@/features/routine';
+import { useModal } from '@/shared/hooks';
+import { Button, RoutineCard, Spinner } from '@/shared/ui';
+import { A11Y_LABELS } from '@/shared/constants';
 
 export default function RoutineManagePage() {
   const { openModal } = useModal();
@@ -17,7 +18,12 @@ export default function RoutineManagePage() {
     <div className="flex flex-col gap-10 w-full">
       <h3 className="text-2xl font-bold italic text-center">{nickname} 님의 루틴</h3>
       <div>
-        <Button label={'새 루틴 추가하기'} className="w-fit mb-5" onClick={() => openModal('createRoutine')} />
+        <Button
+          aria-label={A11Y_LABELS.ROUTINE.create}
+          label="새 루틴 추가하기"
+          className="w-fit mb-5"
+          onClick={() => openModal('createRoutine')}
+        />
         {!routineListData ? (
           <Spinner size={48} />
         ) : (
@@ -29,6 +35,7 @@ export default function RoutineManagePage() {
                     <RoutineCard routineName={routine.routineName} exercises={routine.exercises} />
                     <div className="absolute top-3 right-4 flex gap-2">
                       <Button
+                        aria-label={A11Y_LABELS.ROUTINE.edit}
                         label={<PencilIcon className="size-4 text-white" />}
                         className="w-fit p-2"
                         onClick={() => {
@@ -36,12 +43,14 @@ export default function RoutineManagePage() {
                         }}
                       />
                       <Button
+                        aria-label={A11Y_LABELS.ROUTINE.delete}
                         label={<TrashIcon className="size-4 text-white" />}
                         className="w-fit p-2"
                         onClick={() => {
                           openModal('deleteRoutine', {
                             isPending: isDeleting,
                             onConfirm: () => deleteRoutine(routine.routineId),
+                            ariaLabel: { rightButton: A11Y_LABELS.ROUTINE.confirmDelete },
                           });
                         }}
                       />

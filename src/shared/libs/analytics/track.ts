@@ -1,5 +1,4 @@
-import { API } from '@/shared';
-import { ANALYTICS_EVENT_NAMES, AnalyticsEventName, CLIENT_PLATFORM } from '@/shared/constants';
+import { ANALYTICS_EVENT_NAMES, AnalyticsEventName, API, CLIENT_PLATFORM } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
 
 type TrackEventPayload = {
@@ -23,14 +22,11 @@ export const trackEvent = async (payload: TrackEventPayload) => {
   }
 
   try {
-    await api.post(
-      API.EVENT.TRACK,
-      {
-        ...payload,
-        platform: CLIENT_PLATFORM.WEB,
-        timestamp: payload.timestamp ?? new Date().toISOString(),
-      },
-    );
+    await api.post(API.EVENT.TRACK, {
+      ...payload,
+      platform: CLIENT_PLATFORM.WEB,
+      timestamp: payload.timestamp ?? new Date().toISOString(),
+    });
   } catch (error) {
     console.warn('trackEvent failed', error);
   }

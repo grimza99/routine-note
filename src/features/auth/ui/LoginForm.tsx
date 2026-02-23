@@ -1,7 +1,8 @@
 'use client';
-import { Button, InputField } from '@/shared';
 import { FormEvent, useState } from 'react';
+
 import { useLoginMutation } from '../model/auth.mutation';
+import { Button, InputField } from '@/shared/ui';
 
 export function LoginForm() {
   const redirectTo =

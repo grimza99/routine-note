@@ -1,5 +1,5 @@
 import { useAuthStoreActions } from '@/entities/auth/model/useAuthStore';
-import { API, QUERY_KEYS } from '@/shared';
+import { API, QUERY_KEYS } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

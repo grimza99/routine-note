@@ -1,5 +1,5 @@
-import { cn, ConsecutiveWorkoutDaysBadge } from '@/shared';
-import { ProfileImage } from '@/shared/ui';
+import { cn } from '@/shared/libs';
+import { ConsecutiveWorkoutDaysBadge, ProfileImage } from '@/shared/ui';
 
 interface RankClassNames {
   container?: string;

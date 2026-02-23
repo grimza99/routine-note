@@ -27,6 +27,14 @@ export default defineConfig({
         storageState: 'e2e/.auth/user.json',
       },
     },
+    {
+      name: 'workout',
+      dependencies: ['auth', 'routine-manage'],
+      testMatch: /workout\.spec\.ts/,
+      use: {
+        storageState: 'e2e/.auth/user.json',
+      },
+    },
   ],
   webServer: process.env.PLAYWRIGHT_WEB_SERVER
     ? {

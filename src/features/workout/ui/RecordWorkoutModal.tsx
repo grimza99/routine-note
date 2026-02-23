@@ -7,7 +7,7 @@ import { Button, InputField, RoutineCard } from '@/shared/ui';
 import { cn, formatDate } from '@/shared/libs';
 import { IExercise } from '@/shared/types';
 import { useToast } from '@/shared/hooks';
-import { PATHS } from '@/shared/constants';
+import { A11Y_LABELS, PATHS } from '@/shared/constants';
 export interface RecordWorkoutModalProps {
   date: Date;
   currentRoutineIds: string[];
@@ -156,9 +156,10 @@ export default function RecordWorkoutModal({
           onClick={() => {
             handleExerciseAdd();
           }}
+          aria-label={A11Y_LABELS.WORKOUT.addStandAloneExercise}
           label="루틴외의 운동 추가하기"
         />
-        <Button label="확인" onClick={handleConfirm} />
+        <Button label="확인" onClick={handleConfirm} aria-label={A11Y_LABELS.WORKOUT.confirmCreate} />
       </div>
     </div>
   );

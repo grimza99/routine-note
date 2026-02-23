@@ -6,6 +6,7 @@ import { useDeleteWorkoutMutation } from '../model/workout.mutation';
 import { useModal } from '@/shared/hooks';
 import { formatDate, formatMonthDay } from '@/shared/libs';
 import { Button, NoteBadge, Spinner, RecordedRoutineCard } from '@/shared/ui';
+import { A11Y_LABELS } from '@/shared/constants';
 
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
   const { data: workoutByDateData } = useWorkoutByDate(formatDate(selectedDate));
@@ -24,12 +25,15 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
           {workoutByDateData && workoutByDateData.routines.length > 0 && (
             <Button
               label={<TrashIcon className="w-4 h-4 md:h-5 md:w-5" />}
-              aria-label="운동 기록 삭제"
+              aria-label={A11Y_LABELS.WORKOUT.delete}
               onClick={() =>
                 openModal('deleteWorkout', {
                   description: `${formatMonthDay(selectedDate)} 일자의 운동 기록을 삭제하시겠습니까? 삭제 시 복구할 수 없습니다.`,
                   onConfirm: async () => {
                     await deleteWorkout();
+                  },
+                  ariaLabel: {
+                    rightButton: A11Y_LABELS.WORKOUT.confirmDelete,
                   },
                 })
               }
@@ -38,7 +42,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
           )}
           <Button
             label={<PlusIcon className="w-4 h-4 md:h-5 md:w-5" />}
-            aria-label="운동 기록 추가"
+            aria-label={A11Y_LABELS.WORKOUT.create}
             onClick={() =>
               openModal('recordWorkout', {
                 date: selectedDate,

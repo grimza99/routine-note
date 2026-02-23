@@ -39,6 +39,7 @@ export const modalRegistry: ModalRegistry = {
             data.onConfirm();
             closeModal();
           }}
+          ariaLabel={data.ariaLabel}
         />
       );
     },

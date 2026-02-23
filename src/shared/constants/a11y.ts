@@ -6,7 +6,7 @@ export const A11Y_LABELS = {
 
     addExercise: '루틴에 운동 추가',
     confirmCreate: '루틴 저장',
-
+    confirmEdit: '루틴 수정 저장',
     confirmDelete: '루틴 삭제 확인',
   },
   WORKOUT: {

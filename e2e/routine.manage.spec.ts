@@ -26,7 +26,7 @@ test.describe.serial('루틴 관리 플로우', () => {
       .locator('div', { has: createdRoutineHeading })
       .filter({ has: page.getByRole('button', { name: A11Y_LABELS.ROUTINE.edit }) })
       .first();
-    await createdRoutineCard.getByRole('button', { name: A11Y_LABELS.ROUTINE.edit }).click();
+    await createdRoutineCard.getByRole('button', { name: A11Y_LABELS.ROUTINE.edit }).click(); //루틴 수정 버튼
 
     const form = page.locator('form');
     const routineNameInput = form.getByLabel(/루틴 이름/);
@@ -35,7 +35,7 @@ test.describe.serial('루틴 관리 플로우', () => {
     await routineNameInput.fill(updatedRoutineName);
     await form.getByLabel(/운동1 이름/).fill('데드리프트');
 
-    const editButton = form.getByRole('button', { name: '수정' });
+    const editButton = form.getByRole('button', { name: A11Y_LABELS.ROUTINE.confirmEdit }); //루틴 수정 확인 버튼
     const editResponsePromise = page.waitForResponse(
       (response) => response.request().method() === 'PATCH' && /\/api\/routines\//.test(response.url()),
     );

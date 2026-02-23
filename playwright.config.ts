@@ -20,9 +20,9 @@ export default defineConfig({
       testMatch: /auth\.spec\.ts/,
     },
     {
-      name: 'e2e',
+      name: 'routine-manage',
       dependencies: ['auth'],
-      testIgnore: /auth\.spec\.ts/,
+      testMatch: /routine\.manage\.spec\.ts/,
       use: {
         storageState: 'e2e/.auth/user.json',
       },

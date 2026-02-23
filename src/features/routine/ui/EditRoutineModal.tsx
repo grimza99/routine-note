@@ -6,6 +6,7 @@ import { useEditRoutineMutation } from '../model/routine.muation';
 import { useRoutineDetailQuery } from '@/entities';
 import { Button, InputField, BouncingDots } from '@/shared/ui';
 import { useToast } from '@/shared/hooks';
+import { A11Y_LABELS } from '@/shared/constants';
 
 interface EditRoutinePayload {
   routineName: string;
@@ -106,7 +107,13 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-text-primary">운동 구성</h3>
-          <Button label="운동 추가" className="w-auto" onClick={handleAddExercise} disabled={isPending} />
+          <Button
+            aria-label={A11Y_LABELS.ROUTINE.addExercise}
+            label="운동 추가"
+            className="w-auto"
+            onClick={handleAddExercise}
+            disabled={isPending}
+          />
         </div>
 
         <div className="flex flex-col gap-4">

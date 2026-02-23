@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import { useCreateRoutineMutation } from '../model/routine.muation';
 import { useToast } from '@/shared/hooks';
 import { InputField, Button, BouncingDots } from '@/shared/ui';
+import { A11Y_LABELS } from '@/shared/constants';
 
 export default function CreateRoutineModal({ onClose }: { onClose: () => void }) {
   const nextIdRef = useRef(1);
@@ -67,7 +68,13 @@ export default function CreateRoutineModal({ onClose }: { onClose: () => void })
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-text-primary">운동 구성</h3>
-          <Button label={`운동 추가`} className="w-auto" onClick={handleAddExercise} disabled={isPending} />
+          <Button
+            aria-label={A11Y_LABELS.ROUTINE.addExercise}
+            label={`운동 추가`}
+            className="w-auto"
+            onClick={handleAddExercise}
+            disabled={isPending}
+          />
         </div>
 
         <div className="flex flex-col gap-4">
@@ -102,6 +109,7 @@ export default function CreateRoutineModal({ onClose }: { onClose: () => void })
 
       <div className="flex justify-end gap-3">
         <Button
+          aria-label={A11Y_LABELS.ROUTINE.confirmCreate}
           label={isPending ? <BouncingDots /> : '루틴 저장'}
           className="w-auto"
           type="submit"

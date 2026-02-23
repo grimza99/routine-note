@@ -9,10 +9,14 @@ import { IExercise } from '@/shared/types';
 // modalKey 기준으로 여기에 등록합니다.
 
 //-------------------------------workout modals types-------------------------------//
-type DeleteWorkoutPayload = { description: string; onConfirm: () => void };
-interface IRecordWorkoutPayload extends Omit<RecordWorkoutModalProps, 'onClose'> {}
+type DeleteWorkoutProps = {
+  description: string;
+  onConfirm: () => void;
+  ariaLabel?: { leftButton: string; rightButton: string };
+};
+interface IRecordWorkoutProps extends Omit<RecordWorkoutModalProps, 'onClose'> {}
 
-type ManageRoutinePayload = {
+type ManageRoutineProps = {
   title: string;
   initialExercises: IExercise[] | null;
   initialNote?: string;
@@ -25,7 +29,7 @@ export const modalRegistry: ModalRegistry = {
   deleteWorkout: {
     modalId: 'deleteWorkout',
     render: (payload, { closeModal }) => {
-      const data = payload as DeleteWorkoutPayload;
+      const data = payload as DeleteWorkoutProps;
       return (
         <CommonConfirmModal
           title="루틴 삭제"
@@ -42,14 +46,14 @@ export const modalRegistry: ModalRegistry = {
   recordWorkout: {
     modalId: 'recordWorkout',
     render: (payload, { closeModal }) => {
-      const data = payload as IRecordWorkoutPayload;
+      const data = payload as IRecordWorkoutProps;
       return <RecordWorkoutModal onClose={closeModal} {...data} />;
     },
   },
   manageWorkout: {
     modalId: 'manageWorkout',
     render: (payload, { closeModal }) => {
-      const data = payload as ManageRoutinePayload;
+      const data = payload as ManageRoutineProps;
       return <WorkoutManageModal {...data} onClose={closeModal} />;
     },
   },
@@ -71,7 +75,11 @@ export const modalRegistry: ModalRegistry = {
   deleteRoutine: {
     modalId: 'deleteRoutine',
     render: (payload, { closeModal }) => {
-      const data = payload as { onConfirm: () => void; isPending: boolean };
+      const data = payload as {
+        onConfirm: () => void;
+        isPending: boolean;
+        ariaLabel?: { leftButton: string; rightButton: string };
+      };
       return (
         <CommonConfirmModal
           title="정말 이 루틴을 삭제하시겠습니까?"

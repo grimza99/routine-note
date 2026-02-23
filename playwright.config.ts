@@ -20,16 +20,8 @@ export default defineConfig({
       testMatch: /auth\.spec\.ts/,
     },
     {
-      name: 'workout-today',
-      dependencies: ['auth'],
-      testMatch: /workout\.today\.spec\.ts/,
-      use: {
-        storageState: 'e2e/.auth/user.json',
-      },
-    },
-    {
       name: 'routine-manage',
-      dependencies: ['auth', 'workout-today'],
+      dependencies: ['auth'],
       testMatch: /routine\.manage\.spec\.ts/,
       use: {
         storageState: 'e2e/.auth/user.json',

@@ -17,5 +17,9 @@ type ModalRegistryKey =
   | 'manageWorkout'
   | 'createRoutine'
   | 'editRoutine'
-  | 'deleteRoutine';
+  | 'deleteRoutine'
+  | 'privacy'
+  | 'terms'
+  | 'cookie'
+  | 'contact';
 export type ModalRegistry = Record<ModalRegistryKey, ModalRegistryEntry>;

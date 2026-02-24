@@ -3,7 +3,7 @@ import { TOKEN } from './shared/constants';
 
 const APP_HOME_PATH = '/workout/workout-cal';
 const AUTH_PATH = '/auth';
-const PROTECTED_PATH_PREFIXES = ['/routine', '/report', '/challenge', '/mypage', '/workout'];
+const PROTECTED_PATH_PREFIXES = ['/routine', '/report', '/challenge', '/mypage', '/workout/workout-cal'];
 
 const hasAuthToken = (request: NextRequest) => {
   const accessToken = request.cookies.get(TOKEN.ACCESS)?.value;

@@ -5,7 +5,7 @@ import { useWorkoutByDate } from '@/entities';
 import { useDeleteWorkoutMutation } from '../model/workout.mutation';
 import { useModal } from '@/shared/hooks';
 import { formatDate, formatMonthDay } from '@/shared/libs';
-import { Button, NoteBadge, Spinner, RecordedRoutineCard } from '@/shared/ui';
+import { Button, Spinner, RecordedRoutineCard } from '@/shared/ui';
 import { A11Y_LABELS } from '@/shared/constants';
 
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
@@ -72,8 +72,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
                     })
                   }
                 >
-                  <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} />
-                  <NoteBadge note={routine.note} />
+                  <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} note={routine.note} />
                 </div>
               ))}
               {currentStandaloneExercises.length > 0 && (

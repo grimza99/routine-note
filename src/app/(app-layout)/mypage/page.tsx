@@ -1,6 +1,7 @@
 'use client';
 import { useAuthStore, useMyChallengeRank, useRoutineList, useWorkoutQuery } from '@/entities';
 import { AccountInfoSection, MyPageProfile, ResetPasswordRequestButton, useMyInfoMutation } from '@/features/auth';
+import { WithdrawRepuestButton } from '@/features/auth/ui/WithdrawRepuestButton';
 import { SummaryCard } from '@/shared/ui';
 
 export default function MyPage() {
@@ -50,7 +51,10 @@ export default function MyPage() {
         goalWorkoutDays={goalArchivement?.goalWorkoutDays}
         onSaveInfo={updateMyInfo}
       />
-      <ResetPasswordRequestButton />
+      <div className="flex gap-4">
+        <ResetPasswordRequestButton />
+        <WithdrawRepuestButton />
+      </div>
     </div>
   );
 }

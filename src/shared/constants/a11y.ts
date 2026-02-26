@@ -1,4 +1,7 @@
 export const A11Y_LABELS = {
+  AUTH: {
+    withdraw: '회원 탈퇴하기',
+  },
   ROUTINE: {
     create: '새 루틴 추가하기',
     edit: '루틴 수정 하기',

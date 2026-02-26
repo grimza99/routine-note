@@ -160,6 +160,21 @@
 { "ok": true }
 ```
 
+#### POST /auth/withdraw
+
+설명: 현재 로그인한 사용자 탈퇴 처리
+- `public.users.deleted_at`에 탈퇴 시각 기록 (soft delete)
+- `auth.users`는 즉시 삭제하여 로그인 불가 상태로 전환
+- 인증 쿠키 정리
+
+요청 body x
+
+응답
+
+```json
+{ "ok": true }
+```
+
 #### POST /auth/password-reset/request
 
 설명: 슈파베이스의 auth 에 등록된 이메일 주소로 비밀번호 재설정 이메일 발송

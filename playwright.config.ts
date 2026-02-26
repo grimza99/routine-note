@@ -36,6 +36,14 @@ export default defineConfig({
         storageState: 'e2e/.auth/user.json',
       },
     },
+    {
+      name: 'sets-memo',
+      dependencies: ['auth', 'workout'],
+      testMatch: /sets-memo\.spec\.ts/,
+      use: {
+        storageState: 'e2e/.auth/user.json',
+      },
+    },
   ],
   webServer: process.env.PLAYWRIGHT_WEB_SERVER
     ? {

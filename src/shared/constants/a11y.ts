@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 export const A11Y_LABELS = {
   ROUTINE: {
     create: '새 루틴 추가하기',
@@ -15,5 +17,15 @@ export const A11Y_LABELS = {
     addStandAloneExercise: '루틴외의 운동 추가하기',
     confirmCreate: '운동 기록 저장',
     confirmDelete: '운동 기록 삭제 확인',
+  },
+  WORKOUT_SETS: {
+    addSet: '세트 추가하기',
+    deleteSet: '세트 삭제하기',
+
+    weightInput: '세트 무게 입력',
+    repsInput: '세트 반복 횟수 입력',
+    memoInput: '루틴 메모 입력',
+
+    confirmCreate: '세트 저장',
   },
 } as const;

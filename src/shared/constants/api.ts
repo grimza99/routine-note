@@ -3,6 +3,7 @@ const API = {
     SIGNUP: '/api/auth/signup',
     LOGIN: '/api/auth/login',
     LOGOUT: '/api/auth/logout',
+    WITHDRAW: '/api/auth/withdraw',
     PASSWORD_RESET_REQUEST: '/api/auth/password-reset/request',
     PASSWORD_RESET_CONFIRM: '/api/auth/password-reset/confirm',
   },

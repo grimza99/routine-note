@@ -1,3 +1,4 @@
+import { A11Y_LABELS } from '@/shared/constants';
 import { ChangeEvent, useState } from 'react';
 
 interface ISet {
@@ -32,6 +33,7 @@ export default function SetManageBox({ index, initialSet, onChange }: SetManageB
     <div className="rounded-md px-2 py-1 text-xs text-text-primary border border-border flex gap-2 items-center">
       <strong>{index + 1}set : </strong>
       <input
+        aria-label={A11Y_LABELS.WORKOUT_SETS.weightInput}
         type="number"
         name="weight"
         value={currentSet.weight}
@@ -41,6 +43,7 @@ export default function SetManageBox({ index, initialSet, onChange }: SetManageB
       <strong>kg</strong>
       <strong>×</strong>
       <input
+        aria-label={A11Y_LABELS.WORKOUT_SETS.repsInput}
         value={currentSet.reps}
         name="reps"
         onChange={(e: ChangeEvent<HTMLInputElement>) => handChangeSet(e.target.value, e.target.name as keyof ISet)}

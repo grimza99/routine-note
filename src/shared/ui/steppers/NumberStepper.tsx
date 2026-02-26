@@ -9,7 +9,7 @@ type NumberStepperProps = {
   step?: number;
   className?: string;
   disabled?: boolean;
-  ariaLabel?: string;
+  ariaLabel?: { increase: string; decrease: string };
 };
 
 export function NumberStepper({
@@ -21,7 +21,7 @@ export function NumberStepper({
   step = 1,
   className,
   disabled = false,
-  ariaLabel = '값',
+  ariaLabel,
 }: NumberStepperProps) {
   const nextDecrement = value - step;
   const nextIncrement = value + step;
@@ -42,7 +42,7 @@ export function NumberStepper({
     <div className={cn('inline-flex items-center gap-1 rounded-lg bg-primary p-1 text-white', className)}>
       <button
         type="button"
-        aria-label={`${ariaLabel} 감소`}
+        aria-label={ariaLabel?.decrease}
         className="grid h-6 w-6 place-items-center rounded-full text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
         onClick={handleDecrement}
         disabled={isDecrementDisabled}
@@ -52,7 +52,7 @@ export function NumberStepper({
       <span className="min-w-6 text-center text-sm font-semibold tabular-nums text-white">{value}</span>
       <button
         type="button"
-        aria-label={`${ariaLabel} 증가`}
+        aria-label={ariaLabel?.increase}
         className="grid h-6 w-6 place-items-center rounded-full text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
         onClick={handleIncrement}
         disabled={isIncrementDisabled}

@@ -44,6 +44,14 @@ export default defineConfig({
         storageState: 'e2e/.auth/user.json',
       },
     },
+    {
+      name: 'test-hard-delete-withdraw',
+      dependencies: ['auth', 'workout', 'sets-memo', 'routine-manage'],
+      testMatch: /withdraw\.spec\.ts/,
+      use: {
+        storageState: 'e2e/.auth/user.json',
+      },
+    },
   ],
   webServer: process.env.PLAYWRIGHT_WEB_SERVER
     ? {

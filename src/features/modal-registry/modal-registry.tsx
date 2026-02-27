@@ -4,6 +4,7 @@ import { ModalRegistry } from './modal-registry.type';
 import { WorkoutManageModal } from '../workout';
 import { CreateRoutineModal, EditRoutineModal } from '../routine';
 import { IExercise } from '@/shared/types';
+import { MonthlyGoalSetupPromptModal } from '../workout/ui/MonthlyGoalSetupPromptModal';
 
 // modal-registry
 // modalKey 기준으로 여기에 등록합니다.
@@ -89,6 +90,13 @@ export const modalRegistry: ModalRegistry = {
           {...data}
         />
       );
+    },
+  },
+  //-------------------------------other modals-------------------------------//
+  monthlyGoalSetup: {
+    modalId: 'monthlyGoalSetup',
+    render: (_, { closeModal }) => {
+      return <MonthlyGoalSetupPromptModal onClose={closeModal} />;
     },
   },
 };

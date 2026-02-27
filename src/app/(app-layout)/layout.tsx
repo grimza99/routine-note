@@ -1,3 +1,4 @@
+import GoalSetupGuard from '@/features/goal/model/GoalSetupGuard';
 import { PageHeaderBanner } from '@/shared/ui';
 import { Footer, Header } from '@/widgets';
 
@@ -13,6 +14,7 @@ export default function RootLayout({
         <PageHeaderBanner />
         <div className="px-4 py-10 md:px-5 md:py-10 lg:px-8 w-full max-w-250">{children}</div>
       </main>
+      <GoalSetupGuard />
       <Footer />
     </div>
   );

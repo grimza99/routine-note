@@ -1,4 +1,5 @@
 'use client';
+import { BoltIcon } from '@heroicons/react/24/solid';
 
 import { PROJECT } from '@/shared/constants';
 import { useModal } from '@/shared/hooks';
@@ -11,7 +12,7 @@ export default function Footer() {
       <div className="mx-auto flex w-full max-w-300 flex-col items-center gap-10 px-6 py-10 md:py-15 ">
         <div className="flex md:justify-between w-full flex-col md:flex-row gap-6 items-center">
           <h1 className="text-xl text-white md:text-2xl font-bold flex items-center gap-3">
-            <img src="/icons/bolt.white.svg" alt="logo-icon" className="w-5 h-5 md:h-7 md:w-7" />
+            <BoltIcon className="size-5 md:size-7 text-white" />
             {PROJECT.NAME}
           </h1>
           <div className="flex flex-wrap gap-3 text-sm font-semibold ">

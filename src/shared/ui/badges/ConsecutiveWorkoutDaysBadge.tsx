@@ -1,3 +1,5 @@
+import { FireIcon } from '@heroicons/react/24/solid';
+
 import { cn } from '@/shared/libs';
 
 export function ConsecutiveWorkoutDaysBadge({ days, className }: { days: number; className?: string }) {
@@ -8,7 +10,7 @@ export function ConsecutiveWorkoutDaysBadge({ days, className }: { days: number;
         className,
       )}
     >
-      <img src="/icons/flame.svg" alt="연속 운동 일수 아이콘" className="w-4 h-4" />
+      <FireIcon className="size-4 text-primary" />
       <p>{days}일</p>
     </div>
   );

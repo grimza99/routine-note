@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 import { cn } from '../../libs/cn';
 
@@ -107,11 +108,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 toast.variant === 'success' ? 'border-secondary' : 'border-gray900',
               )}
             >
-              <img
-                src={toast.variant === 'success' ? '/icons/toast/success.svg' : '/icons/toast/warn.svg'}
-                alt={toast.variant}
-                className="mt-0.5 h-5 w-5"
-              />
+              {toast.variant === 'success' ? (
+                <CheckCircleIcon className="mt-0.5 size-5 text-primary" aria-label={toast.variant} />
+              ) : (
+                <ExclamationTriangleIcon className="mt-0.5 size-5 text-primary" aria-label={toast.variant} />
+              )}
               <span className="flex-1 whitespace-pre-line">{toast.message}</span>
             </div>
           );

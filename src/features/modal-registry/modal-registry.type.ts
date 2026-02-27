@@ -18,5 +18,9 @@ type ModalRegistryKey =
   | 'createRoutine'
   | 'editRoutine'
   | 'deleteRoutine'
-  | 'monthlyGoalSetup';
+  | 'monthlyGoalSetup'
+  | 'privacy'
+  | 'terms'
+  | 'cookie'
+  | 'contact';
 export type ModalRegistry = Record<ModalRegistryKey, ModalRegistryEntry>;

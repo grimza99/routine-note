@@ -5,6 +5,7 @@ import { WorkoutManageModal } from '../workout';
 import { CreateRoutineModal, EditRoutineModal } from '../routine';
 import { IExercise } from '@/shared/types';
 import { MonthlyGoalSetupPromptModal } from '../workout/ui/MonthlyGoalSetupPromptModal';
+import FooterModalContent from '@/widgets/footer/FooterModalContent';
 
 // modal-registry
 // modalKey 기준으로 여기에 등록합니다.
@@ -90,6 +91,32 @@ export const modalRegistry: ModalRegistry = {
           {...data}
         />
       );
+    },
+  },
+
+  //-------------------------------footer modals-------------------------------//
+  privacy: {
+    modalId: 'privacy',
+    render: () => {
+      return <FooterModalContent activePolicy="privacy" />;
+    },
+  },
+  cookie: {
+    modalId: 'cookie',
+    render: () => {
+      return <FooterModalContent activePolicy="cookie" />;
+    },
+  },
+  terms: {
+    modalId: 'terms',
+    render: () => {
+      return <FooterModalContent activePolicy="terms" />;
+    },
+  },
+  contact: {
+    modalId: 'contact',
+    render: () => {
+      return <FooterModalContent activePolicy="contact" />;
     },
   },
   //-------------------------------other modals-------------------------------//

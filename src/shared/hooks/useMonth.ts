@@ -38,9 +38,11 @@ export function useMonth(initialMonthValue?: Date | null) {
     }
     setCurrentMonth((prev) => createDate(prev.getFullYear(), prev.getMonth() + 1, 1));
   };
+
   const handleChangeSetMonth = (date: Date) => {
     setCurrentMonth(createDate(date.getFullYear(), date.getMonth(), 1));
   };
+
   return {
     currentMonth,
     handleChangeSetMonth,

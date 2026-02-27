@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useMonth } from '@/shared/hooks';
 import { cn, createDate, formatDate } from '@/shared/libs';
 import { Button, Dot } from '@/shared/ui';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 type CalendarProps = {
   value?: Date | null;
@@ -61,17 +62,13 @@ export function Calendar({ value, onSelectDate, recordDates, className }: Calend
     >
       <header className="flex items-center justify-center w-full relative mb-10">
         <div className="flex items-center gap-1 md:gap-4">
-          <button onClick={handlePrevMonth} className={cn('flex p-1 items-center justify-center')} aria-label="이전 달">
-            <img src="/icons/craft.left.svg" alt="이전 달" className="w-4 h-4 md:w-7 md:h-7" />
-          </button>
+          <ChevronLeftIcon className="size-5 text-primary md:size-7" onClick={handlePrevMonth} aria-label="이전 달" />
           <span className="font-semibold text-lg md:text-2xl lg:text-3xl text-primary">{monthLabel}</span>
-          <button
+          <ChevronRightIcon
+            className="size-5 text-primary md:size-7"
             onClick={() => handleNextMonth()}
-            className={cn('flex p-1 items-center justify-center')}
             aria-label="다음 달"
-          >
-            <img src="/icons/craft.right.svg" alt="다음 달" className="w-4 h-4 md:w-7 md:h-7" />
-          </button>
+          />
         </div>
 
         <Button

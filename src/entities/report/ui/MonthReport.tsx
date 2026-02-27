@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useMemo } from 'react';
+import { FireIcon, CalendarIcon, ChartBarIcon, PresentationChartLineIcon } from '@heroicons/react/24/solid';
 
 import { MonthlyTrendLineChart, RoutineDistributionPieChart, WeeklyVolumeBarChart } from '@/features/report';
 import { useMonthlyTrendQuery, useRoutineDistributionQuery, useWeeklyVolumeQuery } from '../model/report.query';
@@ -26,25 +27,26 @@ export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
   const summaryData = [
     {
       title: '완료 일수',
-      iconSrc: '/icons/calendar.svg',
+      icon: <CalendarIcon className="size-7 md:size-9 text-primary" />,
       value: (monthlyReportData?.workoutDays || 0).toString(),
     },
     {
       title: '최대 연속',
-      iconSrc: '/icons/flame.svg',
+      icon: <FireIcon className="size-7 md:size-9 text-primary" />,
       value: (monthlyReportData?.maxConsecutiveWorkoutDays || 0).toString(),
     },
     {
       title: '달성률',
-      iconSrc: '/icons/goal.svg',
+      icon: <PresentationChartLineIcon className="size-7 md:size-9 text-primary" />,
       value: (monthlyReportData?.goalAchievementRate || 0) + '%',
     },
     {
       title: '체지방량 변화',
-      iconSrc: '/icons/graph.svg',
+      icon: <ChartBarIcon className="size-7 md:size-9 text-primary" />,
       value: (monthlyReportData?.bodyFatMassChange || 0).toString(),
     },
   ];
+
   useEffect(() => {
     if (!currentMonth) return;
     void trackEvent({
@@ -63,7 +65,7 @@ export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
           <SummaryCard
             key={data.title}
             title={data.title}
-            iconSrc={data.iconSrc}
+            icon={data.icon}
             value={data.value}
             variant="secondary"
             className="flex-1"

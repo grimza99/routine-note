@@ -1,21 +1,23 @@
 import { IExercise } from '@/shared/types/domain.type';
 import { cn } from '../../libs/cn';
+import { NoteBadge } from '../badges/NoteBadge';
 
 type RecordedRoutineCardProps = {
   title: string;
   exercises: IExercise[];
   className?: string;
+  note?: string;
 };
 
-export function RecordedRoutineCard({ title, exercises, className }: RecordedRoutineCardProps) {
+export function RecordedRoutineCard({ title, exercises, note, className }: RecordedRoutineCardProps) {
   if (exercises.length < 1) {
     return null;
   }
 
   return (
-    <section
+    <div
       className={cn(
-        'min-w-60 max-w-100 rounded-xl border p-3 shadow-md border-border bg-white text-primary',
+        'min-w-60 max-w-100 rounded-xl border p-3 shadow-md border-border bg-white text-primary relative',
         className,
       )}
     >
@@ -33,6 +35,7 @@ export function RecordedRoutineCard({ title, exercises, className }: RecordedRou
           </li>
         ))}
       </ul>
-    </section>
+      {note && <NoteBadge />}
+    </div>
   );
 }

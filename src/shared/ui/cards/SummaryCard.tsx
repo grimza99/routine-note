@@ -5,10 +5,9 @@ type SummaryCardVariant = 'primary' | 'secondary';
 type SummaryCardProps = {
   title: string;
   value: string;
-  iconSrc?: string;
+  icon?: React.ReactNode;
   variant?: SummaryCardVariant;
   className?: string;
-  iconClassName?: string;
 };
 
 const VARIANT_CLASSES: Record<SummaryCardVariant, string> = {
@@ -16,14 +15,7 @@ const VARIANT_CLASSES: Record<SummaryCardVariant, string> = {
   secondary: 'bg-white border-secondary text-text-primary',
 };
 
-export function SummaryCard({
-  title,
-  value,
-  iconSrc,
-  variant = 'primary',
-  iconClassName,
-  className,
-}: SummaryCardProps) {
+export function SummaryCard({ title, value, icon, variant = 'primary', className }: SummaryCardProps) {
   const variantClassName = VARIANT_CLASSES[variant];
 
   return (
@@ -34,7 +26,7 @@ export function SummaryCard({
         className,
       )}
     >
-      {iconSrc && <img src={iconSrc} alt="화살표 아이콘" className={cn('w-7 h-7 md:w-9 md:h-9', iconClassName)} />}
+      {!!icon && icon}
       <div className="text-xl md:text-3xl font-bold text-primary">{value}</div>
       <div className={cn('text-xs md:text-sm', variant === 'primary' ? 'text-white' : 'text-text-secondary')}>
         {title}

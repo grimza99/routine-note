@@ -18,6 +18,12 @@ export const useAuthStore = create<IAuthStore>()(
           setProfileImage: (profileImage: string | null) => {
             set((prev) => ({ ...prev, profile_image: profileImage }));
           },
+          setGoalWorkoutDays: (goalWorkoutDays: number | null) => {
+            set((prev) => ({ ...prev, goal_workout_days: goalWorkoutDays }));
+          },
+          setHiddenGoalSetupPrompt: (hidden: boolean) => {
+            set((prev) => ({ ...prev, hidden_goal_setup_prompt: hidden }));
+          },
           //초기화
           clearAuth: () => {
             set({
@@ -36,6 +42,8 @@ export const useAuthStore = create<IAuthStore>()(
           age: state.age,
           privacy_policy: state.privacy_policy,
           profile_image: state.profile_image,
+          goal_workout_days: state.goal_workout_days,
+          hidden_goal_setup_prompt: state.hidden_goal_setup_prompt,
         }),
       },
     ),
@@ -48,6 +56,8 @@ export function useAuthStoreActions() {
       setAuth: state.actions.setAuth,
       setNickname: state.actions.setNickname,
       setProfileImage: state.actions.setProfileImage,
+      setGoalWorkoutDays: state.actions.setGoalWorkoutDays,
+      setHiddenGoalSetupPrompt: state.actions.setHiddenGoalSetupPrompt,
       clearAuth: state.actions.clearAuth,
     })),
   );

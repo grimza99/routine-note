@@ -18,6 +18,7 @@ type ModalRegistryKey =
   | 'createRoutine'
   | 'editRoutine'
   | 'deleteRoutine'
+  | 'monthlyGoalSetup'
   | 'privacy'
   | 'terms'
   | 'cookie'

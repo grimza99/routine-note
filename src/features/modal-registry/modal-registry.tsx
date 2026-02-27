@@ -4,6 +4,7 @@ import { ModalRegistry } from './modal-registry.type';
 import { WorkoutManageModal } from '../workout';
 import { CreateRoutineModal, EditRoutineModal } from '../routine';
 import { IExercise } from '@/shared/types';
+import { MonthlyGoalSetupPromptModal } from '../workout/ui/MonthlyGoalSetupPromptModal';
 import FooterModalContent from '@/widgets/footer/FooterModalContent';
 
 // modal-registry
@@ -92,7 +93,8 @@ export const modalRegistry: ModalRegistry = {
       );
     },
   },
-  //footer modals
+
+  //-------------------------------footer modals-------------------------------//
   privacy: {
     modalId: 'privacy',
     render: () => {
@@ -115,6 +117,13 @@ export const modalRegistry: ModalRegistry = {
     modalId: 'contact',
     render: () => {
       return <FooterModalContent activePolicy="contact" />;
+    },
+  },
+  //-------------------------------other modals-------------------------------//
+  monthlyGoalSetup: {
+    modalId: 'monthlyGoalSetup',
+    render: (_, { closeModal }) => {
+      return <MonthlyGoalSetupPromptModal onClose={closeModal} />;
     },
   },
 };

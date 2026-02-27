@@ -153,6 +153,10 @@ export function WorkoutManageModal({
                   min={0}
                   onDecrease={() => handleSetLengthChagne(exercise.id, true)}
                   onIncrease={() => handleSetLengthChagne(exercise.id, false)}
+                  ariaLabel={{
+                    increase: A11Y_LABELS.WORKOUT_SETS.addSet,
+                    decrease: A11Y_LABELS.WORKOUT_SETS.deleteSet,
+                  }}
                 />
               </div>
               {exercise.sets.length > 0 && (
@@ -173,7 +177,7 @@ export function WorkoutManageModal({
 
       {routineId && (
         <TextareaField
-          label="루틴 메모"
+          label={A11Y_LABELS.WORKOUT_SETS.memoInput}
           placeholder={`오늘 수행한 ${title} 루틴에 대한 메모를 남겨주세요.`}
           value={note}
           onChange={(event) => setNote(event.target.value)}
@@ -182,7 +186,7 @@ export function WorkoutManageModal({
 
       <div className="flex justify-end gap-2">
         <Button label="취소" variant="secondary" onClick={onClose} />
-        <Button label="저장" onClick={handleSubmit} />
+        <Button label="저장" onClick={handleSubmit} aria-label={A11Y_LABELS.WORKOUT_SETS.confirmCreate} />
       </div>
     </div>
   );

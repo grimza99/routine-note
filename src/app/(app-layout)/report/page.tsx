@@ -1,6 +1,7 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 import { MonthReport, PrevMonthsReports } from '@/entities';
 import { useMonth } from '@/shared/hooks';
@@ -70,13 +71,17 @@ function ReportPageContent() {
       {activeTab === 'current' ? (
         <>
           <div className="flex items-center gap-4 border-2 border-border justify-center py-2 rounded-lg bg-white">
-            <button type="button" onClick={() => handleChageMonth('prev')} aria-label="이전 달">
-              <img src="/icons/craft.left.svg" alt="이전 달" className="w-6 h-6 md:w-9 md:h-9" />
-            </button>
+            <ChevronLeftIcon
+              className="size-6 md:size-9 text-primary"
+              onClick={() => handleChageMonth('prev')}
+              aria-label="이전 달"
+            />
             <span className="font-semibold text-xl md:text-3xl text-primary">{monthLabel}</span>
-            <button type="button" onClick={() => handleChageMonth('next', true)} aria-label="다음 달">
-              <img src="/icons/craft.right.svg" alt="다음 달" className="w-6 h-6 md:w-9 md:h-9" />
-            </button>
+            <ChevronRightIcon
+              className="size-6 md:size-9 text-primary"
+              onClick={() => handleChageMonth('next', true)}
+              aria-label="다음 달"
+            />
           </div>
           <MonthReport intialMonth={currentMonth} />
         </>

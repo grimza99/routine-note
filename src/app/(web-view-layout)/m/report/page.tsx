@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { MonthReport, PrevMonthsReports } from '@/entities';
 import { useMonth } from '@/shared/hooks';
 import { Tabs } from '@/shared/ui';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 const tabItems = [
   { id: 'current', label: '이번 달 리포트' },
@@ -21,11 +22,11 @@ export default function ReportPage() {
         {activeTab === 'current' && (
           <div className="flex items-center gap-4 border-2 border-border justify-center py-2 rounded-lg mt-5">
             <button type="button" onClick={handlePrevMonth} aria-label="이전 달">
-              <img src="/icons/craft.left.svg" alt="이전 달" className="w-6 h-6 md:w-9 md:h-9" />
+              <ChevronLeftIcon className="size-6 text-primary" />
             </button>
             <span className="font-semibold text-xl md:text-3xl text-primary">{monthLabel}</span>
             <button type="button" onClick={() => handleNextMonth(true)} aria-label="다음 달">
-              <img src="/icons/craft.right.svg" alt="다음 달" className="w-6 h-6 md:w-9 md:h-9" />
+              <ChevronRightIcon className="size-6 text-primary" />
             </button>
           </div>
         )}

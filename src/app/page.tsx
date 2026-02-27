@@ -1,28 +1,30 @@
+import { CalendarDaysIcon, ChartPieIcon, ChartBarIcon, FireIcon, BoltIcon } from '@heroicons/react/24/solid';
+import Link from 'next/link';
+
 import { PROJECT } from '@/shared/constants';
 import { AnimatedContainer, Button } from '@/shared/ui';
 import { Footer } from '@/widgets';
-import Link from 'next/link';
 
 const FEATURES = [
   {
     title: '나의 운동 루틴 커스텀',
     description: ['자주 하는 루틴을 한 번에 불러오고 세트만 채우면 끝.'],
-    iconUrl: '/icons/calendar.white.svg',
+    icon: <CalendarDaysIcon className="size-8 text-white" />,
   },
   {
     title: '월간 리포트',
     description: ['루틴 분포,완료율, 연속 기록 자동 계산'],
-    iconUrl: '/icons/goal.white.svg',
+    icon: <ChartPieIcon className="size-8 text-white" />,
   },
   {
     title: '목표 달성 추적',
     description: ['주간 목표를 한눈에 확인'],
-    iconUrl: '/icons/graph.white.svg',
+    icon: <ChartBarIcon className="size-8 text-white" />,
   },
   {
     title: '챌린지',
     description: ['다른 사용자와 함께하며 동기부여'],
-    iconUrl: '/icons/flame.white.svg',
+    icon: <FireIcon className="size-8 text-white" />,
   },
 ];
 export default function Home() {
@@ -31,7 +33,7 @@ export default function Home() {
       <div className="mb-53">
         <section className="px-6 py-15 bg-primary text-white flex flex-col items-center gap-8">
           <h1 className="text-3xl font-bold md:text-5xl flex items-center gap-3">
-            <img src="/icons/bolt.white.svg" alt="logo-icon" className="h-10 w-10" />
+            <BoltIcon className="size-10 text-white" />
             {PROJECT.NAME}
           </h1>
           <p>운동 기록 · 루틴 관리 · 월간 리포트 · 챌린지</p>
@@ -52,7 +54,7 @@ export default function Home() {
                 className="rounded-2xl border-2 bg-white p-6 shadow-lg transition hover:scale-105 border-border flex flex-col items-center"
               >
                 <div className="mb-4 flex h-15 w-15 items-center justify-center rounded-lg bg-primary">
-                  <img src={feature.iconUrl} alt={feature.title} className="h-8 w-8" />
+                  {feature.icon}
                 </div>
                 <h3 className="text-lg font-bold">{feature.title}</h3>
                 {feature.description.map((line) => (

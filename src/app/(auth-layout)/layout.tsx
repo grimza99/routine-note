@@ -1,4 +1,5 @@
 import { PROJECT } from '@/shared/constants';
+import { BoltIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 
 export default function AuthLayout({
@@ -13,7 +14,7 @@ export default function AuthLayout({
         className="rounded-xl bg-primary text-white p-3 md:px-6 md:py-4 flex items-center justify-center shadow-sm w-fit"
       >
         <h1 className="text-2xl font-bold flex items-center gap-3">
-          <img src="/icons/bolt.white.svg" alt="logo-icon" className="h-6 w-6 md:h-8 md:w-8" />
+          <BoltIcon className="size-6 md:size-8 text-white" />
           {PROJECT.NAME}
         </h1>
       </Link>

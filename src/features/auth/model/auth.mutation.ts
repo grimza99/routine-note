@@ -151,6 +151,31 @@ export const useLogoutMutation = () => {
     },
   });
 };
+//-----------------------------------------------회원탈퇴---------------------------------------------//
+export const useWithdrawMutation = () => {
+  const router = useRouter();
+  const { clearAuth } = useAuthStoreActions();
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  return useMutation({
+    mutationFn: async () => {
+      const res = await api.post(API.AUTH.WITHDRAW);
+
+      if (res.error) {
+        throw res.error;
+      }
+
+      return res.data;
+    },
+    onSuccess: () => {
+      router.push(PATHS.HOME);
+      showToast({ message: TOAST_MESSAGE.SUCCESS_WITHDRAW });
+      deleteCookieValue(TOKEN.ACCESS);
+      queryClient.clear();
+      clearAuth();
+    },
+  });
+};
 
 //-----------------------------------------------비밀번호 리셋 메일 발송---------------------------------------------//
 

@@ -5,7 +5,7 @@ import { useWorkoutByDate } from '@/entities';
 import { useDeleteWorkoutMutation } from '../model/workout.mutation';
 import { useModal } from '@/shared/hooks';
 import { formatDate, formatMonthDay } from '@/shared/libs';
-import { Button, NoteBadge, Spinner, RecordedRoutineCard } from '@/shared/ui';
+import { Button, Spinner, RecordedRoutineCard } from '@/shared/ui';
 import { A11Y_LABELS } from '@/shared/constants';
 
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
@@ -18,7 +18,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
   const currentStandaloneExercises = workoutByDateData?.exercises || [];
 
   return (
-    <section className="border-2 rounded-xl border-primary w-full min-h-50 p-4">
+    <section className="border-2 rounded-xl border-primary w-full min-h-50 p-4 bg-white">
       <header className="flex items-center justify-between mb-2">
         <span className="text-primary font-bold text-lg md:text-xl">{formatMonthDay(selectedDate)}</span>
         <div className="flex gap-2">
@@ -72,8 +72,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
                     })
                   }
                 >
-                  <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} />
-                  <NoteBadge note={routine.note} />
+                  <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} note={routine.note} />
                 </div>
               ))}
               {currentStandaloneExercises.length > 0 && (

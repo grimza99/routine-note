@@ -1,4 +1,6 @@
 'use client';
+import { BookmarkIcon, FireIcon, StarIcon } from '@heroicons/react/24/solid';
+
 import { useAuthStore, useMyChallengeRank, useRoutineList, useWorkoutQuery } from '@/entities';
 import { AccountInfoSection, MyPageProfile, ResetPasswordRequestButton, useMyInfoMutation } from '@/features/auth';
 import { SummaryCard } from '@/shared/ui';
@@ -15,18 +17,18 @@ export default function MyPage() {
   const summaryData = [
     {
       title: '총 루틴',
-      iconSrc: '/icons/goal.svg',
+      icon: <BookmarkIcon className="size-7 md:size-9 text-primary" />,
       value: routineListData?.length + '개',
     },
     {
       title: '이번달 운동 일수',
-      iconSrc: '/icons/flame.svg',
+      icon: <FireIcon className="size-7 md:size-9 text-primary" />,
       value: challengeData?.workoutDays + '일',
     },
     {
       title: '챌린지',
-      iconSrc: '/icons/goal.svg',
-      value: challengeData?.rank + '등',
+      icon: <StarIcon className="size-7 md:size-9 text-primary" />,
+      value: challengeData?.rank ? challengeData?.rank + '등' : '참가전',
     },
   ];
 
@@ -38,7 +40,7 @@ export default function MyPage() {
           <SummaryCard
             key={data.title}
             title={data.title}
-            iconSrc={data.iconSrc}
+            icon={data.icon}
             value={data.value}
             variant="secondary"
             className="flex-1"

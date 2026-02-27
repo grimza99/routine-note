@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { CalendarIcon, FireIcon, ChartBarIcon } from '@heroicons/react/24/solid';
 
 import { useWorkoutQuery } from '@/entities';
 import { SummaryCard } from '@/shared/ui';
@@ -15,17 +16,17 @@ export default function WorkoutCalPage() {
   const summaryData = [
     {
       title: '최대 연속 일수',
-      iconSrc: '/icons/flame.svg',
+      icon: <FireIcon className="size-7 md:size-9 text-primary" />,
       value: (monthlyData?.maxConsecutiveWorkoutDays || 0) + '일',
     },
     {
       title: '운동 횟수',
-      iconSrc: '/icons/goal.svg',
+      icon: <CalendarIcon className="size-7 md:size-9 text-primary" />,
       value: (monthlyData?.workoutDays || 0) + '회',
     },
     {
       title: '월 목표 달성률',
-      iconSrc: '/icons/graph.svg',
+      icon: <ChartBarIcon className="size-7 md:size-9 text-primary" />,
       value: (monthlyData?.goalAchievementRate || 0) + '%',
     },
   ];
@@ -39,7 +40,7 @@ export default function WorkoutCalPage() {
             <SummaryCard
               key={data.title}
               title={data.title}
-              iconSrc={data.iconSrc}
+              icon={data.icon}
               value={data.value}
               variant="secondary"
               className="flex-1"

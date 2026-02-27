@@ -1,24 +1,8 @@
-import { cn } from '@/shared/libs';
-
-type NoteBadgeProps = {
-  note?: string;
-  className?: string;
-};
-
-export function NoteBadge({ note, className }: NoteBadgeProps) {
-  if (!note?.trim()) {
-    return null;
-  }
-
+export function NoteBadge() {
   return (
-    <div
-      className={cn(
-        'inline-flex min-w-20  max-w-40 rounded-md border border-border bg-surface px-2 py-1 text-xs text-text-secondary h-30',
-        className,
-      )}
-      title={note}
-    >
-      <p className="whitespace-pre-wrap overflow-y-auto">{note}</p>
-    </div>
+    <>
+      <div className="absolute -top-0.5 -right-0.5 size-4.5 bg-white" />
+      <div className="absolute top-1.5 right-0 border-b-primary border-12 w-0 h-0 border-t-0 border-x-transparent rotate-225 z-10" />
+    </>
   );
 }

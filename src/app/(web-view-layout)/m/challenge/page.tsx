@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { CalendarIcon, ChartBarIcon, FireIcon } from '@heroicons/react/24/solid';
 
 import { LeaderBoard, useMyChallengeRank } from '@/entities';
 import { PreparingCard, SummaryCard, Tabs } from '@/shared/ui';
@@ -14,21 +15,20 @@ export default function ChallengePage() {
   const [activeTab, setActiveTab] = useState<TabItem>('leaderBoard');
 
   const { data: challengeData } = useMyChallengeRank(new Date().toISOString().slice(0, 7));
-
   const summaryData = [
     {
       title: '참가자',
-      iconSrc: '/icons/calendar.svg',
-      value: (challengeData?.totalParticipants || 0).toString() + '명',
+      icon: <CalendarIcon className="size-7 md:size-9 text-primary" />,
+      value: (challengeData?.totalParticipants || 0).toString(),
     },
     {
       title: '진행 중인 챌린지',
-      iconSrc: '/icons/flame.svg',
+      icon: <FireIcon className="size-7 md:size-9 text-primary" />,
       value: '준비중',
     },
     {
       title: '내 순위',
-      iconSrc: '/icons/graph.svg',
+      icon: <ChartBarIcon className="size-7 md:size-9 text-primary" />,
       value: (challengeData?.rank || 0).toString(),
     },
   ];
@@ -40,7 +40,7 @@ export default function ChallengePage() {
           <SummaryCard
             key={data.title}
             title={data.title}
-            iconSrc={data.iconSrc}
+            icon={data.icon}
             value={data.value}
             variant="secondary"
             className="flex-1"

@@ -4,21 +4,23 @@ import { useState } from 'react';
 
 import { Button, InputField } from '@/shared/ui';
 import { useCreateGoalMutation } from '../model/goal.mutation';
+import { useAuthStoreActions } from '@/entities';
 
 type MonthlyGoalSetupPromptModalProps = {
   onClose: () => void;
 };
 
 export function MonthlyGoalSetupPromptModal({ onClose }: MonthlyGoalSetupPromptModalProps) {
-  const [goal, setGoal] = useState('0');
+  const [goalWorkoutDays, setGoalWorkoutDays] = useState(0);
   const { mutateAsync: createGoal } = useCreateGoalMutation();
-
+  const { setHiddenGoalSetupPrompt } = useAuthStoreActions();
   const handleSubmit = async () => {
-    await createGoal({ goal });
+    await createGoal({ goalWorkoutDays });
     onClose();
   };
 
   const handleClose = () => {
+    setHiddenGoalSetupPrompt(true);
     onClose();
   };
 
@@ -36,9 +38,9 @@ export function MonthlyGoalSetupPromptModal({ onClose }: MonthlyGoalSetupPromptM
       <InputField
         label="이번달 목표 운동 일수"
         placeholder={`이번달 목표 운동 일수를 입력해 주세요. (예: 12)`}
-        value={goal}
+        value={goalWorkoutDays}
         type="number"
-        onChange={(e) => setGoal(e.target.value)}
+        onChange={(e) => setGoalWorkoutDays(Number(e.target.value))}
       />
 
       <div className="flex justify-end gap-2">

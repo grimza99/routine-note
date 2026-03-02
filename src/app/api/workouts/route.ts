@@ -40,7 +40,7 @@ type RequestBody = {
     note?: string;
   }[];
   standalone_exercises?: {
-    exerciseId?: string;
+    id?: string;
     name?: string;
     order?: number;
   }[];
@@ -107,7 +107,6 @@ const workoutSelect = `
   ),
   workout_standalone_exercises (
     id,
-    exercise_id,
     name,
     item_order,
     sets (
@@ -237,7 +236,7 @@ export async function POST(request: NextRequest) {
 
     const { data: routineItems, error: routineItemsError } = await supabase
       .from('routine_items')
-      .select('exercise_id, name, item_order')
+      .select('id, name, item_order')
       .eq('routine_id', routine.routineId)
       .order('item_order', { ascending: true });
 
@@ -247,10 +246,9 @@ export async function POST(request: NextRequest) {
 
     if (routineItems?.length) {
       const workoutRoutineItemsPayload = routineItems.map((item) => ({
-        id: randomUUID(),
+        id: item.id,
         workout_id: createdRoutine.workout_id,
         workout_routine_id: createdRoutine.id,
-        exercise_id: item.exercise_id,
         name: item.name ?? null,
       }));
 
@@ -282,7 +280,6 @@ export async function POST(request: NextRequest) {
     const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({
       id: randomUUID(),
       workout_id: workoutId,
-      exercise_id: exercise.exerciseId ?? randomUUID(),
       name: exercise.name?.trim() ?? null,
       item_order: order,
     });

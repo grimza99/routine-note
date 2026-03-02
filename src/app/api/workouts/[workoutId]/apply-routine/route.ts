@@ -82,7 +82,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
 
   const { data: items, error: itemsError } = await supabase
     .from('routine_items')
-    .select('exercise_id, item_order')
+    .select('id, item_order')
     .eq('routine_id', body.routineId);
 
   if (itemsError) {
@@ -100,15 +100,13 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const insertPayload = items.map((item) => ({
     id: randomUUID(),
     workout_id: workoutId,
-    workout_routine_id: workoutRoutine.id,
-    exercise_id: item.exercise_id,
     item_order: item.item_order,
   }));
 
   const { data, error } = await supabase
     .from('workout_standalone_exercises')
     .insert(insertPayload)
-    .select('id, exercise_id, item_order, workout_routine_id');
+    .select('id, id, item_order, workout_routine_id');
 
   if (error) {
     return json(500, { error: { code: 'workout_standalone_exercises table DB_ERROR', message: error.message } });

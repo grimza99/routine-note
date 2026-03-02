@@ -5,7 +5,6 @@ import { json } from '@/shared/libs/api-route';
 
 type IExercise = {
   id: string;
-  exercise_id: string;
   item_order: number;
   name: string;
 };
@@ -21,7 +20,6 @@ const mapRoutine = (routine: RoutineResponse) => ({
   name: routine.name,
   exercises: (routine.routine_items ?? []).map((item) => ({
     id: item.id,
-    exerciseId: item.exercise_id,
     order: item.item_order,
     name: item?.name ?? '',
   })),
@@ -64,7 +62,6 @@ export async function GET(request: NextRequest) {
       routine_items (
         id,
         routine_id,
-        exercise_id,
         item_order,
         name
       )
@@ -146,7 +143,6 @@ export async function POST(request: NextRequest) {
     const items = body.exercises.map((exercise, index) => ({
       id: randomUUID(),
       routine_id: routine.id,
-      exercise_id: randomUUID(),
       item_order: Number(exercise.order) > 0 ? Number(exercise.order) : index + 1,
       name: exercise.name?.trim(),
     }));

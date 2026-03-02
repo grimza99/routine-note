@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       const { count, error: setsError } = await supabase
         .from('sets')
         .select('id', { count: 'exact', head: true })
-        .in('workout_exercise_id', workoutExerciseIds);
+        .in('id', workoutExerciseIds);
 
       if (setsError) {
         return json(500, { error: { code: 'DB_ERROR', message: setsError.message } });

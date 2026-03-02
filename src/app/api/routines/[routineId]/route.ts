@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto';
 import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
@@ -7,7 +6,6 @@ type Params = Promise<{ routineId?: string }>;
 
 type RoutineItem = {
   id: string;
-  exercise_id: string;
   item_order: number;
   name?: string;
 };
@@ -19,7 +17,7 @@ type RoutineResponse = {
 };
 
 type RoutineExerciseRequest = {
-  exerciseId?: string;
+  id?: string;
   name?: string;
   order?: number;
 };
@@ -29,7 +27,6 @@ const mapRoutine = (routine: RoutineResponse) => ({
   name: routine.name,
   exercises: (routine.routine_items ?? []).map((ex) => ({
     id: ex.id,
-    exerciseId: ex.exercise_id,
     order: ex.item_order,
     name: ex.name ?? '',
   })),
@@ -37,10 +34,12 @@ const mapRoutine = (routine: RoutineResponse) => ({
 
 const parseExercises = (exercises?: RoutineExerciseRequest[]) =>
   (exercises ?? []).map((ex, index) => ({
-    exerciseId: ex.exerciseId,
+    id: ex.id,
     name: ex.name?.trim(),
     order: Number(ex.order) > 0 ? Number(ex.order) : index + 1,
   }));
+
+//------------------ GET /api/routines?routineId='' -detail routine --------------------------------------------
 
 export async function GET(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
@@ -62,7 +61,6 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       name,
       routine_items (
         id,
-        exercise_id,
         item_order,
         name
       )
@@ -85,6 +83,8 @@ export async function GET(request: NextRequest, context: { params: Params }) {
 
   return json(200, mapRoutine(data as unknown as RoutineResponse));
 }
+
+//------------------ PATCH /api/routines?routineId='' - routine 수정 --------------------------------------------
 
 interface RoutinePayload {
   name?: string;
@@ -139,9 +139,8 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
 
   const parsedExercises = parseExercises(exercises);
   const items = parsedExercises.map((exercise) => ({
-    id: randomUUID(),
+    id: exercise.id,
     routine_id: routineId,
-    exercise_id: exercise.exerciseId ?? randomUUID(),
     item_order: exercise.order,
     name: exercise.name,
   }));

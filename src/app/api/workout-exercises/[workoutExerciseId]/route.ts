@@ -17,7 +17,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   const supabase = getSupabaseAdmin();
   const { data: owner, error: ownerError } = await supabase
     .from('workout_standalone_exercises')
-    .select('id, workout_id, workouts!inner(user_id)')
+    .select('id, workouts!inner(user_id)')
     .eq('id', workoutExerciseId)
     .eq('workouts.user_id', userId)
     .maybeSingle();
@@ -46,7 +46,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     .from('workout_standalone_exercises')
     .update(update)
     .eq('id', workoutExerciseId)
-    .select('id, exercise_id, item_order, note')
+    .select('id, item_order, note')
     .maybeSingle();
 
   if (error) {

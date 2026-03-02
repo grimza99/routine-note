@@ -132,7 +132,7 @@ async function getMonthlyReports(userId: string, date: string): Promise<MonthRep
   if (workoutIds.length) {
     const { data: workoutExercises, error: workoutExerciseError } = await supabase
       .from('workout_standalone_exercises')
-      .select('id, workout_id')
+      .select('id')
       .in('workout_id', workoutIds);
 
     if (workoutExerciseError) {
@@ -141,7 +141,7 @@ async function getMonthlyReports(userId: string, date: string): Promise<MonthRep
 
     const workoutExerciseMonthById = new Map<string, string>();
     (workoutExercises ?? []).forEach((we) => {
-      const month = workoutMonthById.get(we.workout_id);
+      const month = workoutMonthById.get(we.id);
       if (!month) return;
       workoutExerciseMonthById.set(we.id, month);
     });
@@ -150,7 +150,7 @@ async function getMonthlyReports(userId: string, date: string): Promise<MonthRep
     if (workoutExerciseIds.length) {
       const { data: sets, error: setsError } = await supabase
         .from('sets')
-        .select('id, workout_exercise_id')
+        .select('id')
         .in('workout_exercise_id', workoutExerciseIds);
 
       if (setsError) {
@@ -158,7 +158,7 @@ async function getMonthlyReports(userId: string, date: string): Promise<MonthRep
       }
 
       (sets ?? []).forEach((set) => {
-        const month = workoutExerciseMonthById.get(set.workout_exercise_id);
+        const month = workoutExerciseMonthById.get(set.id);
         if (!month) return;
         totalSetsByMonth.set(month, (totalSetsByMonth.get(month) ?? 0) + 1);
       });

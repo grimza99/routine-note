@@ -43,8 +43,8 @@ type RoutineRequest = {
 };
 
 type ExerciseRequest = {
-  exerciseId?: string;
-  name?: string;
+  id: string;
+  name: string;
   order?: number;
   note?: string;
   routineIndex?: number;
@@ -111,14 +111,12 @@ export async function GET(request: NextRequest, context: { params: Params }) {
         note,
         routines ( id, name ),
         workout_routine_items (
-          exercise_id,
           name,
           item_order
         )
       ),
       workout_standalone_exercises (
         id,
-        exercise_id,
         name,
         item_order,
         sets (
@@ -210,7 +208,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
       .eq('user_id', userId);
 
     if (routineError) {
-      return json(500, { error: { code: 'DB_ERROR', message: routineError.message } });
+      return json(500, { error: { code: 'routines table select DB_ERROR', message: routineError.message } });
     }
 
     if ((routineRows?.length ?? 0) !== routineIds.length) {
@@ -300,7 +298,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
 
     const { data: routineItems, error: routineItemsError } = await supabase
       .from('routine_items')
-      .select('exercise_id, name, item_order')
+      .select('id, name, item_order')
       .eq('routine_id', routine.routineId)
       .order('item_order', { ascending: true });
 
@@ -310,9 +308,8 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
 
     if (routineItems?.length) {
       const workoutRoutineItemsPayload = routineItems.map((item) => ({
-        id: randomUUID(),
+        id: item.id,
         workout_routine_id: createdRoutine.id,
-        exercise_id: item.exercise_id,
         name: item.name ?? null,
       }));
 
@@ -339,9 +336,8 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     const order = exercise.order ?? index + 1;
 
     const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({
-      id: randomUUID(),
+      id: exercise.id,
       workout_id: workoutId,
-      exercise_id: exercise.exerciseId ?? randomUUID(),
       name: exercise.name?.trim() ?? null,
       item_order: order,
     });
@@ -366,13 +362,12 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
         note,
         routines ( id, name ),
         workout_routine_items (
-          exercise_id,
+          id,
           name
         )
       ),
       workout_standalone_exercises (
         id,
-        exercise_id,
         name,
         item_order,
         sets (

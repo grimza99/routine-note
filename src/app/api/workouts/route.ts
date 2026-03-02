@@ -9,14 +9,11 @@ type ExerciseSet = {
   reps: number | null;
 };
 
-type WorkoutStandaloneExercise = {
+type IExercise = {
   id: string;
-  exercise_id: string;
-  exercise_name?: string | null;
-  note: string | null;
-  item_order: number;
-  workout_routine_id: string | null;
+  exercise_name: string | null;
   sets: ExerciseSet[] | null;
+  order?: number;
 };
 
 type WorkoutRoutine = {
@@ -25,20 +22,14 @@ type WorkoutRoutine = {
   item_order: number;
   note: string | null;
   routines: { id: string; name: string } | null;
-  workout_routine_items: RoutineExercise[] | null;
-};
-
-type RoutineExercise = {
-  id: string;
-  exercise_name: string | null;
-  sets: ExerciseSet[] | null;
+  workout_routine_items: IExercise[] | null;
 };
 
 type WorkoutResponse = {
   id: string;
   workout_date: string;
   workout_routines: WorkoutRoutine[] | null;
-  workout_standalone_exercises: WorkoutStandaloneExercise[] | null;
+  workout_standalone_exercises: IExercise[] | null;
 };
 
 type RequestBody = {
@@ -52,12 +43,10 @@ type RequestBody = {
     exerciseId?: string;
     exerciseName?: string;
     order?: number;
-    note?: string;
-    routineIndex?: number;
   }[];
 };
 
-const mapRoutineExercises = (exercise: RoutineExercise) => ({
+const mapRoutineExercises = (exercise: IExercise) => ({
   id: exercise.id,
   exerciseName: exercise.exercise_name ?? '',
   sets:
@@ -68,11 +57,10 @@ const mapRoutineExercises = (exercise: RoutineExercise) => ({
     })) ?? [],
 });
 
-const mapStandaloneExercise = (exercise: WorkoutStandaloneExercise) => ({
+const mapStandaloneExercise = (exercise: IExercise) => ({
   id: exercise.id,
   exerciseName: exercise.exercise_name ?? '',
-  note: exercise.note,
-  order: exercise.item_order,
+  order: exercise.order,
   sets: (exercise.sets ?? []).map((set) => ({
     id: set.id,
     weight: set.weight,
@@ -121,9 +109,7 @@ const workoutSelect = `
     id,
     exercise_id,
     exercise_name,
-    note,
     item_order,
-    workout_routine_id,
     sets (
       id,
       weight,
@@ -296,11 +282,9 @@ export async function POST(request: NextRequest) {
     const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({
       id: randomUUID(),
       workout_id: workoutId,
-      workout_routine_id: null,
       exercise_id: exercise.exerciseId ?? randomUUID(),
       exercise_name: exercise.exerciseName?.trim() ?? null,
       item_order: order,
-      note: exercise.note ?? '',
     });
 
     if (exerciseError) {

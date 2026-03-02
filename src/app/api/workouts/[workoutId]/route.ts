@@ -7,22 +7,17 @@ const json = (status: number, body: unknown) => NextResponse.json(body, { status
 
 type Params = Promise<{ workoutId: string }>;
 
-type WorkoutSet = {
+type ExerciseSet = {
   id: string;
   weight: number | null;
   reps: number | null;
-  note: string | null;
-  set_order: number;
 };
 
-type WorkoutExercise = {
+type IExercise = {
   id: string;
-  exercise_id: string;
-  exercise_name?: string | null;
-  note: string | null;
-  item_order: number;
-  workout_routine_id: string | null;
-  sets: WorkoutSet[] | null;
+  exercise_name: string | null;
+  sets: ExerciseSet[] | null;
+  order?: number;
 };
 
 type WorkoutRoutine = {
@@ -31,20 +26,14 @@ type WorkoutRoutine = {
   item_order: number;
   note: string | null;
   routines: { id: string; name: string } | null;
-  workout_routine_items: RoutineItem[] | null;
-};
-
-type RoutineItem = {
-  exercise_id: string;
-  exercise_name: string | null;
-  item_order: number;
+  workout_routine_items: IExercise[] | null;
 };
 
 type WorkoutResponse = {
   id: string;
   workout_date: string;
   workout_routines: WorkoutRoutine[] | null;
-  workout_standalone_exercises: WorkoutExercise[] | null;
+  workout_standalone_exercises: IExercise[] | null;
 };
 
 type RoutineRequest = {
@@ -67,25 +56,22 @@ type RequestBody = {
   standalone_exercises?: ExerciseRequest[];
 };
 
-const mapRoutineItem = (item: RoutineItem) => ({
-  id: item.exercise_id,
+const mapRoutineItem = (item: IExercise) => ({
+  id: item.id,
   name: item.exercise_name ?? '',
   note: null,
-  order: item.item_order,
+  order: item.order,
   sets: [],
 });
 
-const mapStandaloneExercise = (exercise: WorkoutExercise) => ({
+const mapStandaloneExercise = (exercise: IExercise) => ({
   id: exercise.id,
   name: exercise.exercise_name ?? '',
-  note: exercise.note,
-  order: exercise.item_order,
+  order: exercise.order,
   sets: (exercise.sets ?? []).map((set) => ({
     id: set.id,
     weight: set.weight,
     reps: set.reps,
-    note: set.note,
-    order: set.set_order,
   })),
 });
 
@@ -134,9 +120,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
         id,
         exercise_id,
         exercise_name,
-        note,
         item_order,
-        workout_routine_id,
         sets (
           id,
           weight,
@@ -357,11 +341,9 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({
       id: randomUUID(),
       workout_id: workoutId,
-      workout_routine_id: null,
       exercise_id: exercise.exerciseId ?? randomUUID(),
       exercise_name: exercise.exerciseName?.trim() ?? null,
       item_order: order,
-      note: exercise.note ?? '',
     });
 
     if (exerciseError) {
@@ -392,9 +374,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
         id,
         exercise_id,
         exercise_name,
-        note,
         item_order,
-        workout_routine_id,
         sets (
           id,
           weight,

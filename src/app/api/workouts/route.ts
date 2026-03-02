@@ -48,7 +48,7 @@ type RequestBody = {
     order?: number;
     note?: string;
   }[];
-  exercises?: {
+  standalone_exercises?: {
     exerciseId?: string;
     exerciseName?: string;
     order?: number;
@@ -95,8 +95,9 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
       exercises: routineExercises.map(mapRoutineExercises),
     };
   }),
-  exercises: (workout.workout_standalone_exercises ?? []).map(mapStandaloneExercise),
+  standalone_exercises: (workout.workout_standalone_exercises ?? []).map(mapStandaloneExercise),
 });
+
 const workoutSelect = `
   id,
   workout_date,
@@ -162,7 +163,7 @@ export async function GET(request: NextRequest) {
       ? mapWorkoutResponse(data as unknown as WorkoutResponse)
       : {
           routines: [],
-          exercises: [],
+          standalone_exercises: [],
         },
   );
 }
@@ -178,14 +179,14 @@ export async function POST(request: NextRequest) {
   if (!body?.date) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'date is required' } });
   }
-  if (!body?.routines || !body?.exercises) {
+  if (!body?.routines || !body?.standalone_exercises) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routines or exercises is required' } });
   }
 
   const routines = body.routines ?? [];
-  const exercises = body.exercises ?? [];
+  const standalone_exercises = body.standalone_exercises ?? [];
 
-  if (!Array.isArray(routines) || !Array.isArray(exercises)) {
+  if (!Array.isArray(routines) || !Array.isArray(standalone_exercises)) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routines/exercises must be arrays' } });
   }
 
@@ -287,7 +288,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  for (const [index, exercise] of exercises.entries()) {
+  for (const [index, exercise] of standalone_exercises.entries()) {
     const order = exercise.order ?? index + 1;
     if (!exercise.exerciseName?.trim()) {
       continue; // Skip exercises with empty or whitespace-only names

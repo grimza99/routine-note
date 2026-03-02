@@ -64,7 +64,7 @@ type ExerciseRequest = {
 type RequestBody = {
   date?: string;
   routines?: RoutineRequest[];
-  exercises?: ExerciseRequest[];
+  standalone_exercises?: ExerciseRequest[];
 };
 
 const mapRoutineItem = (item: RoutineItem) => ({
@@ -100,7 +100,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
     note: routine.note,
     exercises: (routine.workout_routine_items ?? []).map(mapRoutineItem),
   })),
-  exercises: (workout.workout_standalone_exercises ?? []).map(mapStandaloneExercise),
+  standalone_exercises: (workout.workout_standalone_exercises ?? []).map(mapStandaloneExercise),
 });
 
 export async function GET(request: NextRequest, context: { params: Params }) {
@@ -171,16 +171,16 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
 
   const body = (await request.json()) as RequestBody;
 
-  if (!body?.date || !body?.routines || !body?.exercises) {
+  if (!body?.date || !body?.routines || !body?.standalone_exercises) {
     return json(400, {
       error: { code: 'VALIDATION_ERROR', message: 'date or routines or exercises is required is required' },
     });
   }
 
   const routines = body.routines ?? [];
-  const exercises = body.exercises ?? [];
+  const standalone_exercises = body.standalone_exercises ?? [];
 
-  if (!Array.isArray(routines) || !Array.isArray(exercises)) {
+  if (!Array.isArray(routines) || !Array.isArray(standalone_exercises)) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routines/exercises must be arrays' } });
   }
 
@@ -190,7 +190,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     }
   }
 
-  for (const exercise of exercises) {
+  for (const exercise of standalone_exercises) {
     if (!exercise.exerciseName?.trim()) {
       return json(400, {
         error: { code: 'VALIDATION_ERROR', message: 'exerciseName is required for exercises' },
@@ -351,7 +351,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     });
   }
 
-  for (const [index, exercise] of exercises.entries()) {
+  for (const [index, exercise] of standalone_exercises.entries()) {
     const order = exercise.order ?? index + 1;
 
     const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({

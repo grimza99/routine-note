@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
   let totalSets = 0;
   if (workoutIds.length) {
     const { data: workoutExercises, error: weError } = await supabase
-      .from('workout_exercises')
+      .from('workout_standalone_exercises')
       .select('id')
       .in('workout_id', workoutIds);
 

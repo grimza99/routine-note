@@ -44,7 +44,7 @@ type WorkoutResponse = {
   id: string;
   workout_date: string;
   workout_routines: WorkoutRoutine[] | null;
-  workout_exercises: WorkoutExercise[] | null;
+  workout_standalone_exercises: WorkoutExercise[] | null;
 };
 
 type RoutineRequest = {
@@ -100,7 +100,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
     note: routine.note,
     exercises: (routine.workout_routine_items ?? []).map(mapRoutineItem),
   })),
-  exercises: (workout.workout_exercises ?? []).map(mapStandaloneExercise),
+  exercises: (workout.workout_standalone_exercises ?? []).map(mapStandaloneExercise),
 });
 
 export async function GET(request: NextRequest, context: { params: Params }) {
@@ -130,7 +130,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
           item_order
         )
       ),
-      workout_exercises (
+      workout_standalone_exercises (
         id,
         exercise_id,
         exercise_name,
@@ -248,13 +248,13 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
   }
 
   const { error: deleteWorkoutExercisesError } = await supabase
-    .from('workout_exercises')
+    .from('workout_standalone_exercises')
     .delete()
     .eq('workout_id', workoutId);
 
   if (deleteWorkoutExercisesError) {
     return json(500, {
-      error: { code: 'workout_exercises delete DB_ERROR', message: deleteWorkoutExercisesError.message },
+      error: { code: 'workout_standalone_exercises delete DB_ERROR', message: deleteWorkoutExercisesError.message },
     });
   }
 
@@ -354,7 +354,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
   for (const [index, exercise] of exercises.entries()) {
     const order = exercise.order ?? index + 1;
 
-    const { error: exerciseError } = await supabase.from('workout_exercises').insert({
+    const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({
       id: randomUUID(),
       workout_id: workoutId,
       workout_routine_id: null,
@@ -365,7 +365,9 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     });
 
     if (exerciseError) {
-      return json(500, { error: { code: 'insert workout_exercises Table DB_ERROR', message: exerciseError.message } });
+      return json(500, {
+        error: { code: 'insert workout_standalone_exercises Table DB_ERROR', message: exerciseError.message },
+      });
     }
   }
 
@@ -386,7 +388,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
           exercise_name
         )
       ),
-      workout_exercises (
+      workout_standalone_exercises (
         id,
         exercise_id,
         exercise_name,

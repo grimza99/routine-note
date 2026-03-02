@@ -38,7 +38,7 @@ type WorkoutResponse = {
   id: string;
   workout_date: string;
   workout_routines: WorkoutRoutine[] | null;
-  workout_exercises: WorkoutStandaloneExercise[] | null;
+  workout_standalone_exercises: WorkoutStandaloneExercise[] | null;
 };
 
 type RequestBody = {
@@ -95,7 +95,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
       exercises: routineExercises.map(mapRoutineExercises),
     };
   }),
-  exercises: (workout.workout_exercises ?? []).map(mapStandaloneExercise),
+  exercises: (workout.workout_standalone_exercises ?? []).map(mapStandaloneExercise),
 });
 const workoutSelect = `
   id,
@@ -116,7 +116,7 @@ const workoutSelect = `
     )
     )
   ),
-  workout_exercises (
+  workout_standalone_exercises (
     id,
     exercise_id,
     exercise_name,
@@ -292,7 +292,7 @@ export async function POST(request: NextRequest) {
     if (!exercise.exerciseName?.trim()) {
       continue; // Skip exercises with empty or whitespace-only names
     }
-    const { error: exerciseError } = await supabase.from('workout_exercises').insert({
+    const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({
       id: randomUUID(),
       workout_id: workoutId,
       workout_routine_id: null,
@@ -303,7 +303,9 @@ export async function POST(request: NextRequest) {
     });
 
     if (exerciseError) {
-      return json(500, { error: { code: 'insert workout_exercises Table DB_ERROR', message: exerciseError.message } });
+      return json(500, {
+        error: { code: 'insert workout_standalone_exercises Table DB_ERROR', message: exerciseError.message },
+      });
     }
   }
 

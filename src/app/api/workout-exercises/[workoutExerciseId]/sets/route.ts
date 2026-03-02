@@ -18,7 +18,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
 
   const supabase = getSupabaseAdmin();
   const { data: standalone, error: standaloneError } = await supabase
-    .from('workout_exercises')
+    .from('workout_standalone_exercises')
     .select('id, workouts!inner(user_id)')
     .eq('id', workoutExerciseId)
     .eq('workouts.user_id', userId)
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
 
   if (standaloneError) {
     return json(500, {
-      error: { code: 'DB_ERROR', message: 'workout_exercises DB select:' + standaloneError.message },
+      error: { code: 'DB_ERROR', message: 'workout_standalone_exercises DB select:' + standaloneError.message },
     });
   }
 

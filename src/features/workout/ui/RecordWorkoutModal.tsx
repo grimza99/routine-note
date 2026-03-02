@@ -101,7 +101,7 @@ export default function RecordWorkoutModal({
             {routineTemplate?.map((routine) => (
               <div className="relative" key={routine.routineId} onClick={() => handleRoutineSelect(routine.routineId)}>
                 <RoutineCard
-                  routineName={routine.routineName}
+                  routineName={routine.name}
                   exercises={routine.exercises}
                   className={cn(isSelected(routine.routineId) && 'scale-[1.02] border-3 border-primary shadow-lg')}
                 />

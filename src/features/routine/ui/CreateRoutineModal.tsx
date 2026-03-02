@@ -37,9 +37,9 @@ export default function CreateRoutineModal({ onClose }: { onClose: () => void })
       return;
     }
     await createRoutine({
-      routineName,
+      name: routineName,
       exercises: exercises.map((exercise) => {
-        return { id: exercise.id, exerciseName: exercise.name };
+        return { id: exercise.id, name: exercise.name };
       }),
     });
     setRoutineName('');

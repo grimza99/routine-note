@@ -300,7 +300,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
 
     const { data: routineItems, error: routineItemsError } = await supabase
       .from('routine_items')
-      .select('exercise_id, exercise_name, item_order')
+      .select('exercise_id, name, item_order')
       .eq('routine_id', routine.routineId)
       .order('item_order', { ascending: true });
 
@@ -313,7 +313,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
         id: randomUUID(),
         workout_routine_id: createdRoutine.id,
         exercise_id: item.exercise_id,
-        name: item.exercise_name ?? null,
+        name: item.name ?? null,
       }));
 
       const { error: workoutRoutineItemsError } = await supabase

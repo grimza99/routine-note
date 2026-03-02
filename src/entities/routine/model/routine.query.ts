@@ -1,14 +1,12 @@
 import { API, QUERY_KEYS } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
+import { IExercise } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
 
 interface IRoutineResponse {
   routineId: string;
-  routineName: string;
-  exercises: [
-    { id: string; exerciseId: string; exerciseName: string; order: number },
-    { id: string; exerciseId: string; exerciseName: string; order: number },
-  ];
+  name: string;
+  exercises: IExercise[];
 }
 
 //루틴 리스트 쿼리

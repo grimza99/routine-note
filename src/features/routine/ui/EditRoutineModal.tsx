@@ -9,11 +9,11 @@ import { useToast } from '@/shared/hooks';
 import { A11Y_LABELS } from '@/shared/constants';
 
 interface EditRoutinePayload {
-  routineName: string;
-  exercises: { id: string; exerciseName: string }[];
+  name: string;
+  exercises: { id: string; name: string }[];
 }
 const initialPayload: EditRoutinePayload = {
-  routineName: '',
+  name: '',
   exercises: [],
 };
 
@@ -30,10 +30,10 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
   useEffect(() => {
     if (draftRoutineData) {
       setEditRoutinePayload({
-        routineName: draftRoutineData.routineName,
+        name: draftRoutineData.name,
         exercises: draftRoutineData.exercises.map((exercise) => ({
-          id: exercise.exerciseId,
-          exerciseName: exercise.exerciseName,
+          id: exercise.id,
+          name: exercise.name,
         })),
       });
       nextIdRef.current = draftRoutineData.exercises.length;
@@ -45,7 +45,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
     nextIdRef.current += 1;
     setEditRoutinePayload((prev) => ({
       ...prev,
-      exercises: [...prev.exercises, { id: nextIdRef.current.toString(), exerciseName: '' }],
+      exercises: [...prev.exercises, { id: nextIdRef.current.toString(), name: '' }],
     }));
   };
 
@@ -61,13 +61,13 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
     if (key === 'name') {
       setEditRoutinePayload((prev) => ({
         ...prev,
-        routineName: value.trim(),
+        name: value.trim(),
       }));
     } else {
       setEditRoutinePayload((prev) => ({
         ...prev,
         exercises: prev.exercises.map((exercise) =>
-          exercise.id === key.toString() ? { ...exercise, exerciseName: value.trim() } : exercise,
+          exercise.id === key.toString() ? { ...exercise, name: value.trim() } : exercise,
         ),
       }));
     }
@@ -86,9 +86,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
   };
 
   const isButtonDisabled =
-    editRoutinePayload.routineName.trim() === '' ||
-    editRoutinePayload.exercises.some((ex) => !ex.exerciseName.trim()) ||
-    isPending;
+    editRoutinePayload.name.trim() === '' || editRoutinePayload.exercises.some((ex) => !ex.name.trim()) || isPending;
 
   return (
     <form className="flex flex-col gap-6 p-6" onSubmit={handleSubmit}>
@@ -99,7 +97,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
       <InputField
         label="루틴 이름"
         placeholder="예: 하체 루틴"
-        value={editRoutinePayload.routineName}
+        value={editRoutinePayload.name}
         onChange={(event) => handlePayloadChange('name', event.target.value)}
         required
       />
@@ -126,7 +124,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
               <InputField
                 label={`운동${idx + 1} 이름`}
                 placeholder="예: 스쿼트"
-                value={exercise.exerciseName}
+                value={exercise.name}
                 onChange={(event) => handlePayloadChange(exercise.id, event.target.value)}
                 required
                 className="flex-2"

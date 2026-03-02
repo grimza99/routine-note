@@ -15,7 +15,7 @@ type ExerciseSet = {
 
 type IExercise = {
   id: string;
-  exercise_name: string | null;
+  name: string | null;
   sets: ExerciseSet[] | null;
   order?: number;
 };
@@ -44,7 +44,7 @@ type RoutineRequest = {
 
 type ExerciseRequest = {
   exerciseId?: string;
-  exerciseName?: string;
+  name?: string;
   order?: number;
   note?: string;
   routineIndex?: number;
@@ -58,7 +58,7 @@ type RequestBody = {
 
 const mapRoutineItem = (item: IExercise) => ({
   id: item.id,
-  name: item.exercise_name ?? '',
+  name: item.name ?? '',
   note: null,
   order: item.order,
   sets: [],
@@ -66,7 +66,7 @@ const mapRoutineItem = (item: IExercise) => ({
 
 const mapStandaloneExercise = (exercise: IExercise) => ({
   id: exercise.id,
-  name: exercise.exercise_name ?? '',
+  name: exercise.name ?? '',
   order: exercise.order,
   sets: (exercise.sets ?? []).map((set) => ({
     id: set.id,
@@ -81,7 +81,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
   routines: (workout.workout_routines ?? []).map((routine) => ({
     id: routine.id,
     routineId: routine.routine_id,
-    routineName: routine.routines?.name ?? null,
+    name: routine.routines?.name ?? null,
     order: routine.item_order,
     note: routine.note,
     exercises: (routine.workout_routine_items ?? []).map(mapRoutineItem),
@@ -112,14 +112,14 @@ export async function GET(request: NextRequest, context: { params: Params }) {
         routines ( id, name ),
         workout_routine_items (
           exercise_id,
-          exercise_name,
+          name,
           item_order
         )
       ),
       workout_standalone_exercises (
         id,
         exercise_id,
-        exercise_name,
+        name,
         item_order,
         sets (
           id,
@@ -175,7 +175,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
   }
 
   for (const exercise of standalone_exercises) {
-    if (!exercise.exerciseName?.trim()) {
+    if (!exercise.name?.trim()) {
       return json(400, {
         error: { code: 'VALIDATION_ERROR', message: 'exerciseName is required for exercises' },
       });
@@ -313,7 +313,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
         id: randomUUID(),
         workout_routine_id: createdRoutine.id,
         exercise_id: item.exercise_id,
-        exercise_name: item.exercise_name ?? null,
+        name: item.exercise_name ?? null,
       }));
 
       const { error: workoutRoutineItemsError } = await supabase
@@ -342,7 +342,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
       id: randomUUID(),
       workout_id: workoutId,
       exercise_id: exercise.exerciseId ?? randomUUID(),
-      exercise_name: exercise.exerciseName?.trim() ?? null,
+      name: exercise.name?.trim() ?? null,
       item_order: order,
     });
 
@@ -367,13 +367,13 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
         routines ( id, name ),
         workout_routine_items (
           exercise_id,
-          exercise_name
+          name
         )
       ),
       workout_standalone_exercises (
         id,
         exercise_id,
-        exercise_name,
+        name,
         item_order,
         sets (
           id,

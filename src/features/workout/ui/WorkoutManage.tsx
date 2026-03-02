@@ -65,14 +65,14 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
                   className="flex items-center gap-2"
                   onClick={() =>
                     openModal('manageWorkout', {
-                      title: routine.routineName,
+                      title: routine.name,
                       initialExercises: routine.exercises,
                       initialNote: routine.note,
                       routineId: routine.id,
                     })
                   }
                 >
-                  <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} note={routine.note} />
+                  <RecordedRoutineCard title={routine.name} exercises={routine.exercises} note={routine.note} />
                 </div>
               ))}
               {currentStandaloneExercises.length > 0 && (

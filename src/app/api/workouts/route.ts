@@ -11,7 +11,7 @@ type ExerciseSet = {
 
 type IExercise = {
   id: string;
-  exercise_name: string | null;
+  name: string | null;
   sets: ExerciseSet[] | null;
   order?: number;
 };
@@ -41,14 +41,14 @@ type RequestBody = {
   }[];
   standalone_exercises?: {
     exerciseId?: string;
-    exerciseName?: string;
+    name?: string;
     order?: number;
   }[];
 };
 
 const mapRoutineExercises = (exercise: IExercise) => ({
   id: exercise.id,
-  exerciseName: exercise.exercise_name ?? '',
+  name: exercise.name ?? '',
   sets:
     exercise.sets?.map((set) => ({
       id: set.id,
@@ -59,7 +59,7 @@ const mapRoutineExercises = (exercise: IExercise) => ({
 
 const mapStandaloneExercise = (exercise: IExercise) => ({
   id: exercise.id,
-  exerciseName: exercise.exercise_name ?? '',
+  name: exercise.name ?? '',
   order: exercise.order,
   sets: (exercise.sets ?? []).map((set) => ({
     id: set.id,
@@ -77,7 +77,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
     return {
       id: routine.id,
       routineId: routine.routine_id,
-      routineName: routine.routines?.name ?? null,
+      name: routine.routines?.name ?? null,
       note: routine.note,
       order: routine.item_order,
       exercises: routineExercises.map(mapRoutineExercises),
@@ -97,7 +97,7 @@ const workoutSelect = `
     routines ( id, name ),
     workout_routine_items (
       id,
-      exercise_name,
+      name,
       sets (
       id,
       weight,
@@ -108,7 +108,7 @@ const workoutSelect = `
   workout_standalone_exercises (
     id,
     exercise_id,
-    exercise_name,
+    name,
     item_order,
     sets (
       id,
@@ -237,7 +237,7 @@ export async function POST(request: NextRequest) {
 
     const { data: routineItems, error: routineItemsError } = await supabase
       .from('routine_items')
-      .select('exercise_id, exercise_name, item_order')
+      .select('exercise_id, name, item_order')
       .eq('routine_id', routine.routineId)
       .order('item_order', { ascending: true });
 
@@ -251,7 +251,7 @@ export async function POST(request: NextRequest) {
         workout_id: createdRoutine.workout_id,
         workout_routine_id: createdRoutine.id,
         exercise_id: item.exercise_id,
-        exercise_name: item.exercise_name ?? null,
+        name: item.name ?? null,
       }));
 
       const { error: workoutRoutineItemsError } = await supabase
@@ -276,14 +276,14 @@ export async function POST(request: NextRequest) {
 
   for (const [index, exercise] of standalone_exercises.entries()) {
     const order = exercise.order ?? index + 1;
-    if (!exercise.exerciseName?.trim()) {
+    if (!exercise.name?.trim()) {
       continue; // Skip exercises with empty or whitespace-only names
     }
     const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({
       id: randomUUID(),
       workout_id: workoutId,
       exercise_id: exercise.exerciseId ?? randomUUID(),
-      exercise_name: exercise.exerciseName?.trim() ?? null,
+      name: exercise.name?.trim() ?? null,
       item_order: order,
     });
 

@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 interface IWorkoutPayload {
   date: string; // YYYY-MM-DD
   routines: { routineId: string; note?: '' }[];
-  standalone_exercises: { exerciseName: string; note?: '' }[];
+  standalone_exercises: { name: string; note?: '' }[];
 }
 
 //-----------------------------------------------workout 생성---------------------------------------------//

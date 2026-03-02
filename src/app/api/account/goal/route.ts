@@ -12,19 +12,18 @@ export async function GET(request: NextRequest) {
   const month = new Date().toISOString().slice(0, 7); // YYYY-MM
   const supabase = getSupabaseAdmin();
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('monthly_goals')
     .select('report_month, goal_workout_days')
     .eq('user_id', userId)
     .eq('report_month', `${month}-01`)
     .single();
 
-  if (error) {
-    return json(500, { error: { code: 'DB_ERROR', message: 'monthly_goals DB:' + error.message } });
-  }
-
   if (!data) {
-    return json(200, null);
+    return json(200, {
+      month: null,
+      goalWorkoutDays: null,
+    });
   }
 
   return json(200, {

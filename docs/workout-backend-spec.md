@@ -163,6 +163,7 @@
 #### POST /auth/withdraw
 
 설명: 현재 로그인한 사용자 탈퇴 처리
+
 - `public.users.deleted_at`에 탈퇴 시각 기록 (soft delete)
 - `auth.users`는 즉시 삭제하여 로그인 불가 상태로 전환
 - 인증 쿠키 정리
@@ -256,11 +257,11 @@
 ```json
 [
   {
-    "routineId": "r1",
-    "routineName": "상체 루틴",
+    "id": "r1",
+    "name": "상체 루틴",
     "exercises": [
-      { "id": "ri1", "exerciseId": "ex1", "exerciseName": "벤치프레스", "order": 1 },
-      { "id": "ri2", "exerciseId": "ex2", "exerciseName": "풀다운", "order": 2 }
+      { "id": "ri1", "name": "벤치프레스", "order": 1 },
+      { "id": "ri2", "name": "풀다운", "order": 2 }
     ]
   }
 ]
@@ -272,15 +273,19 @@
 
 ```json
 {
-  "routineName": "하체 루틴",
-  "exercises": ["스쿼트", "레그프레스"]
+  "name": "하체 루틴",
+  "exercises":
+    {
+    "name": "스쿼트",
+    "order": 0
+  }[]
 }
 ```
 
 응답
 
 ```json
-{ "routineId": "r2", "routineName": "하체 루틴" }
+{ "id": "r2", "name": "하체 루틴" }
 ```
 
 #### GET /routines/{routineId}
@@ -289,11 +294,11 @@
 
 ```json
 {
-  "routineId": "r1",
-  "routineName": "상체 루틴",
+  "id": "r1",
+  "name": "상체 루틴",
   "exercises": [
-    { "id": "ri1", "exerciseId": "ex1", "exerciseName": "벤치프레스", "order": 1 },
-    { "id": "ri2", "exerciseId": "ex2", "exerciseName": "풀다운", "order": 2 }
+    { "id": "ri1", "name": "벤치프레스", "order": 1 },
+    { "id": "ri2", "name": "풀다운", "order": 2 }
   ]
 }
 ```
@@ -304,8 +309,8 @@
 
 ```json
 {
-  "routineName": "상체 루틴 v2",
-  "exercises": [{ "exerciseName": "벤치프레스" }, { "exerciseName": "딥스" }]
+  "name": "상체 루틴 v2",
+  "exercises": { "name": "벤치프레스","order":0 }[]
 }
 ```
 
@@ -336,26 +341,23 @@
   "routines": [
     {
       "id": "wr1",
-      "routineId": "r1",
-      "routineName": "상체 루틴",
+      "name": "상체 루틴",
       "order": 1,
       "exercises": [
         {
           "id": "ex1",
           "name": "벤치프레스",
           "order": 1,
-          "note": null,
           "sets": []
         }
       ]
     }
   ],
-  "exercises": [
+  "standalone_exercises": [
     {
       "id": "we2",
       "name": "푸쉬업",
       "order": 1,
-      "note": "",
       "sets": []
     }
   ]
@@ -369,10 +371,10 @@
 ```json
 {
   "date": "2026-01-27",
-  "routines": [{ "routineId": "r1", "order": 1, "note": "" }], //order optional
-  "exercises": [
-    { "exerciseName": "ex1", "order": 1, "note": "" }, //order optional
-    { "exerciseName": "ex2", "order": 2, "note": "" }
+  "routines": [{ "id": "r1", "order": 1, "note": "" }],
+  "standalne_exercises": [
+    { "name": "ex1", "order": 1 },
+    { "name": "ex2", "order": 2 }
   ]
 }
 ```
@@ -410,9 +412,30 @@
 {
   "id": "w1",
   "date": "2026-01-27",
-  "routines": [],
-  "exercises": []
-}
+  "routines": [
+    {
+      "id": "wr1",
+      "name": "상체 루틴",
+      "order": 1,
+      "exercises": [
+        {
+          "id": "ex1",
+          "name": "벤치프레스",
+          "order": 1,
+          "sets": []
+        }
+      ]
+    }
+  ],
+  "standalone_exercises": [
+    {
+      "id": "we2",
+      "name": "푸쉬업",
+      "order": 1,
+      "sets": []
+    }
+  ]
+} ||null
 ```
 
 #### PUT /workouts/{workoutId}
@@ -424,10 +447,10 @@
 ```json
 {
   "date": "2026-01-27",
-  "routines": [{ "routineId": "r1", "order": 1, "note": "" }],
+  "routines": [{ "id": "r1", "order": 1, "note": "" }],
   "exercises": [
-    { "exerciseName": "ex1", "order": 1, "note": "" },
-    { "exerciseName": "ex2", "order": 2, "note": "" }
+    { "name": "ex1", "order": 1 },
+    { "name": "ex2", "order": 2 }
   ]
 }
 ```
@@ -440,15 +463,14 @@
   "date": "2026-01-27",
   "routines": [
     {
-      "id": "wr1",
-      "routineId": "r1",
-      "routineName": "루틴 A",
+      "id": "r1",
+      "name": "루틴 A",
       "order": 1,
       "note": "",
-      "exercises": [{ "id": "ex1", "name": "벤치프레스", "order": 1, "note": null, "sets": [] }]
+      "exercises": [{ "id": "ex1", "name": "벤치프레스", "order": 1, "sets": [] }]
     }
   ],
-  "exercises": [{ "id": "we2", "name": "ex2", "order": 2, "note": "", "sets": [] }]
+  "exercises": [{ "id": "we2", "name": "ex2", "order": 2, "sets": [] }]
 }
 ```
 
@@ -460,23 +482,7 @@
 { "ok": true }
 ```
 
-### 하루 루틴 기록
-
-#### POST /workouts/{workoutId}/routines
-
-설명: 하루 기록에 루틴 실행 단위를 추가
-
-요청
-
-```json
-{ "routineId": "r1", "order": 1, "note": "" }
-```
-
-응답
-
-```json
-{ "id": "wr1", "routineId": "r1", "order": 1, "note": "" }
-```
+### 운동에 기록된 루틴 관리
 
 #### PATCH /workout-routines/{workoutRoutineId}
 
@@ -545,13 +551,13 @@
 요청
 
 ```json
-{ "weight": 80, "reps": 8, "note": "", "order": 1 }
+{ "weight": 80, "reps": 8, "order": 1 }
 ```
 
 응답
 
 ```json
-{ "id": "s1", "weight": 80, "reps": 8, "note": "", "order": 1 }
+{ "id": "s1", "weight": 80, "reps": 8, "order": 1 }
 ```
 
 #### PATCH /sets/{setId}
@@ -559,13 +565,13 @@
 요청
 
 ```json
-{ "weight": 85, "reps": 6, "note": "무거움" }
+{ "weight": 85, "reps": 6 }
 ```
 
 응답
 
 ```json
-{ "id": "s1", "weight": 85, "reps": 6, "note": "무거움" }
+{ "id": "s1", "weight": 85, "reps": 6 }
 ```
 
 #### DELETE /sets/{setId}

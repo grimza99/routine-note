@@ -3,27 +3,25 @@ import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
 import { json } from '@/shared/libs/api-route';
 
-type RoutineItem = {
+type IExercise = {
   id: string;
-  exercise_id: string;
   item_order: number;
-  exercise_name?: string;
+  name: string;
 };
 
 type RoutineResponse = {
   id: string;
   name: string;
-  routine_items: RoutineItem[] | null;
+  routine_items: IExercise[] | null;
 };
 
 const mapRoutine = (routine: RoutineResponse) => ({
   routineId: routine.id,
-  routineName: routine.name,
+  name: routine.name,
   exercises: (routine.routine_items ?? []).map((item) => ({
     id: item.id,
-    exerciseId: item.exercise_id,
     order: item.item_order,
-    exerciseName: item?.exercise_name ?? '',
+    name: item?.name ?? '',
   })),
 });
 
@@ -64,9 +62,8 @@ export async function GET(request: NextRequest) {
       routine_items (
         id,
         routine_id,
-        exercise_id,
         item_order,
-        exercise_name
+        name
       )
       `;
 
@@ -90,9 +87,9 @@ export async function GET(request: NextRequest) {
 // ---------------------------------POST /api/routines -create routine
 
 interface RoutinePayload {
-  routineName: string;
+  name: string;
   exercises: {
-    exerciseName?: string;
+    name?: string;
     order?: number;
   }[];
 }
@@ -106,11 +103,10 @@ export async function POST(request: NextRequest) {
 
   const body = (await request.json()) as RoutinePayload;
 
-  if (!body.routineName || !body.exercises || body.exercises.length === 0) {
+  if (!body.name || !body.exercises || body.exercises.length === 0) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: '루틴이름과 운동은 필수로 입력해야 합니다.' } });
   }
-  const isDuplicateExerciseNames =
-    body.exercises.length !== new Set(body.exercises.map((ex) => ex.exerciseName?.trim())).size;
+  const isDuplicateExerciseNames = body.exercises.length !== new Set(body.exercises.map((ex) => ex.name?.trim())).size;
 
   if (isDuplicateExerciseNames) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: '중복된 운동 이름이 있습니다.' } });
@@ -125,7 +121,9 @@ export async function POST(request: NextRequest) {
   }
 
   // check duplicate routine name
-  const duplicateRoutine = existingRoutine?.find((routine) => routine.name === body.routineName);
+  const routine_name = body.name.trim();
+
+  const duplicateRoutine = existingRoutine?.find((routine) => routine.name === routine_name);
 
   if (duplicateRoutine) {
     return json(409, { error: { code: 'CONFLICT', message: '중복된 루틴 이름 입니다.' } });
@@ -133,7 +131,7 @@ export async function POST(request: NextRequest) {
 
   const { data: routine, error: routineError } = await supabase
     .from('routines')
-    .insert({ user_id: userId, name: body.routineName, id: randomUUID() })
+    .insert({ user_id: userId, name: routine_name, id: randomUUID() })
     .select('id, name')
     .single();
 
@@ -145,12 +143,11 @@ export async function POST(request: NextRequest) {
     const items = body.exercises.map((exercise, index) => ({
       id: randomUUID(),
       routine_id: routine.id,
-      exercise_id: randomUUID(),
       item_order: Number(exercise.order) > 0 ? Number(exercise.order) : index + 1,
-      exercise_name: exercise.exerciseName?.trim(),
+      name: exercise.name?.trim(),
     }));
 
-    const invalidExercise = items.find((item) => !item.exercise_name);
+    const invalidExercise = items.find((item) => !item.name);
 
     if (invalidExercise) {
       return json(400, {
@@ -165,5 +162,5 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return json(201, { routineId: routine.id, routineName: routine.name });
+  return json(201, { routineId: routine.id, name: routine.name });
 }

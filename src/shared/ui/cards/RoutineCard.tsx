@@ -1,14 +1,9 @@
+import { IExercise } from '@/shared/types';
 import { cn } from '../../libs/cn';
 
-interface Exercise {
-  id: string;
-  exerciseId: string;
-  note?: string;
-  exerciseName: string;
-}
 type RoutineCardProps = {
   routineName: string;
-  exercises: Exercise[];
+  exercises: IExercise[];
   className?: string;
 };
 
@@ -29,8 +24,8 @@ export function RoutineCard({ routineName, exercises, className }: RoutineCardPr
 
       <ul className={cn('mt-2 flex gap-2 flex-row text-sm font-semibold flex-wrap')}>
         {exercises.map((exercise) => (
-          <li key={exercise.exerciseId} className={cn('rounded px-3 py-2 bg-gray-100 w-fit h-fit whitespace-nowrap')}>
-            <span>{exercise.exerciseName}</span>
+          <li key={exercise.id} className={cn('rounded px-3 py-2 bg-gray-100 w-fit h-fit whitespace-nowrap')}>
+            <span>{exercise.name}</span>
           </li>
         ))}
       </ul>

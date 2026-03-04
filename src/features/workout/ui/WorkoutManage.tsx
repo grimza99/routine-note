@@ -15,7 +15,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
   const { openModal } = useModal();
 
   const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.routineId) || [];
-  const currentStandaloneExercises = workoutByDateData?.exercises || [];
+  const currentStandaloneExercises = workoutByDateData?.standalone_exercises || [];
 
   return (
     <section className="border-2 rounded-xl border-primary w-full min-h-50 p-4 bg-white">
@@ -65,14 +65,14 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
                   className="flex items-center gap-2"
                   onClick={() =>
                     openModal('manageWorkout', {
-                      title: routine.routineName,
+                      title: routine.name,
                       initialExercises: routine.exercises,
                       initialNote: routine.note,
                       routineId: routine.id,
                     })
                   }
                 >
-                  <RecordedRoutineCard title={routine.routineName} exercises={routine.exercises} note={routine.note} />
+                  <RecordedRoutineCard title={routine.name} exercises={routine.exercises} note={routine.note} />
                 </div>
               ))}
               {currentStandaloneExercises.length > 0 && (

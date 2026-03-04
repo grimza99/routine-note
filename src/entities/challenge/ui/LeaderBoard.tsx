@@ -1,13 +1,17 @@
 import { Spinner } from '@/shared/ui';
 import { useChallengeRankList } from '../model/chellenge.query';
 import { Rank } from './Rank';
+import { useEffect } from 'react';
 
 export function LeaderBoard() {
   const { data: rankListData } = useChallengeRankList(new Date().toISOString().slice(0, 7));
 
+  useEffect(() => {}, [rankListData]);
+
   if (!rankListData) {
     return <Spinner />;
   }
+
   return (
     <div className="flex flex-col gap-2 md:gap-4 mt-5 md:mt-10">
       <div className="border-2 border-border rounded-lg p-4 flex flex-col gap-4 items-center">

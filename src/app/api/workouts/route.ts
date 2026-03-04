@@ -214,8 +214,6 @@ export async function POST(request: NextRequest) {
   }
 
   const workoutId = data.id;
-  const createdRoutines: { id: string; routineId: string; order: number; note: string | null; workout_id: string }[] =
-    [];
 
   for (const [index, routine] of routines.entries()) {
     const order = routine.order ?? index + 1;
@@ -246,7 +244,7 @@ export async function POST(request: NextRequest) {
 
     if (routineItems?.length) {
       const workoutRoutineItemsPayload = routineItems.map((item) => ({
-        id: item.id,
+        id: randomUUID(),
         workout_id: createdRoutine.workout_id,
         workout_routine_id: createdRoutine.id,
         name: item.name ?? null,
@@ -262,14 +260,6 @@ export async function POST(request: NextRequest) {
         });
       }
     }
-
-    createdRoutines.push({
-      id: createdRoutine.id,
-      routineId: createdRoutine.routine_id,
-      workout_id: createdRoutine.workout_id,
-      order: createdRoutine.item_order,
-      note: createdRoutine.note,
-    });
   }
 
   for (const [index, exercise] of standalone_exercises.entries()) {

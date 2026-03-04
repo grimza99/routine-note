@@ -336,9 +336,9 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     const order = exercise.order ?? index + 1;
 
     const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({
-      id: exercise.id,
+      id: randomUUID(),
       workout_id: workoutId,
-      name: exercise.name?.trim() ?? null,
+      name: exercise.name?.trim() ?? '',
       item_order: order,
     });
 

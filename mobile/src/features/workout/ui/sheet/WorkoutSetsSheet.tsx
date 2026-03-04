@@ -12,17 +12,18 @@ interface WorkoutSheetSetsProps {
 
 export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuccess }: WorkoutSheetSetsProps) {
   const routines = initialWorkoutData ? initialWorkoutData.routines : [];
-  const standaloneExercises = initialWorkoutData ? initialWorkoutData.exercises : [];
+  const standaloneExercises = initialWorkoutData ? initialWorkoutData.standalone_exercises : [];
 
+  console.log('WorkoutSetsSheet - initialWorkoutData:', initialWorkoutData);
   return (
     <View style={styles.sheetContent}>
       <Text style={styles.sheetTitle}>{formatMonthDay(selectedDate)} 운동 세트 관리</Text>
       <ScrollView contentContainerStyle={styles.list}>
         {routines.map((routine) => (
           <ExerciseSetsManageBox
-            key={routine.routineId}
+            key={routine.id}
             type="routine-exercise"
-            label={routine.routineName}
+            label={routine.name}
             selectedDate={selectedDate}
             initialExercises={routine.exercises}
             initialNote={routine.note}

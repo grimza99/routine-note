@@ -10,7 +10,7 @@ export const RoutineScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [routineName, setRoutineName] = useState('');
-  const [exercises, setExercises] = useState([{ exerciseName: '', id: Math.random().toString() }]);
+  const [exercises, setExercises] = useState([{ name: '', id: Math.random().toString() }]);
   const [editingRoutineId, setEditingRoutineId] = useState<string | null>(null);
 
   const loadRoutines = useCallback(async () => {
@@ -30,7 +30,7 @@ export const RoutineScreen = () => {
 
   const resetForm = () => {
     setRoutineName('');
-    setExercises([{ exerciseName: '', id: Math.random().toString() }]);
+    setExercises([{ name: '', id: Math.random().toString() }]);
     setEditingRoutineId(null);
   };
 
@@ -48,7 +48,7 @@ export const RoutineScreen = () => {
     try {
       setIsSaving(true);
       const payload = {
-        routineName: routineName.trim(),
+        name: routineName.trim(),
         exercises,
       };
 
@@ -90,10 +90,10 @@ export const RoutineScreen = () => {
 
   const handleEdit = (routine: RoutineItem) => {
     setEditingRoutineId(routine.routineId);
-    setRoutineName(routine.routineName);
+    setRoutineName(routine.name);
     setExercises(
       routine.exercises.map((exercise) => ({
-        exerciseName: exercise.exerciseName,
+        name: exercise.name,
         id: exercise.id,
       })),
     );
@@ -108,13 +108,11 @@ export const RoutineScreen = () => {
   }
 
   const handleExerciseChange = (id: string, text: string) => {
-    const updatedExercises = exercises.map((exercise) =>
-      exercise.id === id ? { ...exercise, exerciseName: text } : exercise,
-    );
+    const updatedExercises = exercises.map((exercise) => (exercise.id === id ? { ...exercise, name: text } : exercise));
     setExercises(updatedExercises);
   };
   const handleAddExercise = () => {
-    setExercises([...exercises, { exerciseName: '', id: Math.random().toString() }]);
+    setExercises([...exercises, { name: '', id: Math.random().toString() }]);
   };
 
   return (
@@ -139,7 +137,7 @@ export const RoutineScreen = () => {
             <Input
               key={exercise.id}
               placeholder="예: 벤치프레스"
-              value={exercise.exerciseName}
+              value={exercise.name}
               style={{ flex: 1 }}
               onChangeText={(value) => handleExerciseChange(exercise.id, value)}
             />
@@ -163,10 +161,8 @@ export const RoutineScreen = () => {
         ListEmptyComponent={<Text style={styles.emptyText}>등록된 루틴이 없습니다.</Text>}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>{item.routineName}</Text>
-            <Text style={styles.cardSubTitle}>
-              {item.exercises.map((exercise) => exercise.exerciseName).join(', ')}
-            </Text>
+            <Text style={styles.cardTitle}>{item.name}</Text>
+            <Text style={styles.cardSubTitle}>{item.exercises.map((exercise) => exercise.name).join(', ')}</Text>
             <View style={styles.cardActions}>
               <Button label="수정" onPress={() => handleEdit(item)} variant="secondary" />
               <Button label="삭제" onPress={() => handleDelete(item.routineId)} variant="tertiary" />

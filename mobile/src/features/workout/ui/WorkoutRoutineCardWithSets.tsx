@@ -18,7 +18,7 @@ export function WorkoutRoutineCardWithSets({ title, exercises }: WorkoutRoutineC
         {exercises.map((exercise) => (
           <View key={exercise.id} style={styles.exerciseItem}>
             <Text style={[styles.text, styles.ellipsizeText]} numberOfLines={1} ellipsizeMode="tail">
-              {exercise.exerciseName}
+              {exercise.name}
             </Text>
             {exercise.sets && <Text style={styles.text}>{exercise.sets.length}세트</Text>}
           </View>

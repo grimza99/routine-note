@@ -125,15 +125,15 @@ export const WorkoutScreen = () => {
               {workoutByDate?.routines.length > 0 &&
                 workoutByDate?.routines.map((routine) => (
                   <WorkoutRoutineCardWithSets
-                    key={routine.routineId}
-                    title={routine.routineName ?? '루틴'}
+                    key={routine.id}
+                    title={routine.name ?? '루틴'}
                     exercises={routine.exercises}
                   />
                 ))}
             </>
           )}
-          {workoutByDate?.exercises && (
-            <WorkoutRoutineCardWithSets title={'루틴외 운동'} exercises={workoutByDate.exercises} />
+          {workoutByDate?.standalone_exercises && (
+            <WorkoutRoutineCardWithSets title={'루틴외 운동'} exercises={workoutByDate.standalone_exercises} />
           )}
         </ScrollView>
       </View>

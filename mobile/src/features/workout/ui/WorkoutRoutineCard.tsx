@@ -22,7 +22,7 @@ export function WorkoutRoutineCard({ routineName, exercises, onPress, selected }
         {exercises.map((exercise) => (
           <View key={exercise.id} style={styles.exerciseItem}>
             <Text style={[styles.text, styles.ellipsizeText]} numberOfLines={1} ellipsizeMode="tail">
-              {exercise.exerciseName}
+              {exercise.name}
             </Text>
           </View>
         ))}

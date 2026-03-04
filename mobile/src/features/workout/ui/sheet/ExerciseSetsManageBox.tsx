@@ -147,7 +147,7 @@ export function ExerciseSetsManageBox({
           return (
             <View key={state.id}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
-                <Text style={styles.exerciseName}>{state.exerciseName}</Text>
+                <Text style={styles.exerciseName}>{state.name}</Text>
                 <NumberStepper
                   value={state.sets?.length || 0}
                   onDecrease={() => handleSetDecrease(state.id)}

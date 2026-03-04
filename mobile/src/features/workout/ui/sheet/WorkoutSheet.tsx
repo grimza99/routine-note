@@ -17,11 +17,11 @@ interface WorkoutSheetProps {
 const nomalizedResponseToPayload = (response: WorkoutBydateResponse): WorkoutPayload => ({
   date: response.date,
   routines: response.routines.map((routine) => ({
-    routineId: routine.routineId,
+    routineId: routine.id,
     order: routine.order,
   })),
-  exercises: response.exercises.map((exercise) => ({
-    exerciseName: exercise.exerciseName,
+  standalone_exercises: response.standalone_exercises.map((exercise) => ({
+    name: exercise.name,
   })),
 });
 
@@ -30,7 +30,7 @@ export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess
   const [routines, setRoutines] = useState<RoutineItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(
-    initialWorkoutData ? initialWorkoutData.routines.map((routine) => routine.routineId) : [],
+    initialWorkoutData ? initialWorkoutData.routines.map((routine) => routine.id) : [],
   );
   const [payload, setPayload] = useState<WorkoutPayload>(
     initialWorkoutData
@@ -38,7 +38,7 @@ export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess
       : {
           date: formatDate(selectedDate),
           routines: [],
-          exercises: [],
+          standalone_exercises: [],
         },
   );
 
@@ -82,9 +82,9 @@ export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess
 
   const handleStandaloneExerciseRemove = (index: number) => {
     setPayload((prev) => {
-      const updatedExercises = [...prev.exercises];
+      const updatedExercises = [...prev.standalone_exercises];
       updatedExercises.splice(index, 1);
-      return { ...prev, exercises: updatedExercises };
+      return { ...prev, standalone_exercises: updatedExercises };
     });
   };
 
@@ -129,8 +129,8 @@ export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess
               const selected = selectedRoutineIds.includes(routine.routineId);
               return (
                 <WorkoutRoutineCard
-                  key={routine.routineId}
-                  routineName={routine.routineName}
+                  key={routine.name}
+                  routineName={routine.name}
                   exercises={routine.exercises}
                   selected={selected}
                   onPress={() => toggleRoutine(routine.routineId)}
@@ -144,20 +144,19 @@ export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess
         <Button
           label="루틴외의 운동 추가"
           onPress={() => {
-            const newExercise = { exerciseName: '' };
-            setPayload((prev) => ({ ...prev, exercises: [...prev.exercises, newExercise] }));
+            setPayload((prev) => ({ ...prev, standalone_exercises: [...prev.standalone_exercises, { name: '' }] }));
           }}
           variant="secondary"
         />
-        {payload.exercises.map((exercise, index) => (
+        {payload.standalone_exercises.map((exercise, index) => (
           <View key={index} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Input
               key={index}
               placeholder="예: 벤치프레스, 스쿼트"
-              value={exercise.exerciseName}
+              value={exercise.name}
               onChange={(text) => {
-                const updatedExercises = [...payload.exercises];
-                updatedExercises[index].exerciseName = text.nativeEvent.text;
+                const updatedExercises = [...payload.standalone_exercises];
+                updatedExercises[index].name = text.nativeEvent.text;
                 setPayload((prev) => ({ ...prev, exercises: updatedExercises }));
               }}
               style={{ flex: 1 }}

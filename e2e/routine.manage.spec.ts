@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { A11Y_LABELS } from '../src/shared/constants';
+import { getAuthToken } from './auth-utils';
 
 test.use({ storageState: 'e2e/.auth/user.json' });
 
@@ -8,6 +9,11 @@ test.describe.serial('루틴 관리 플로우', () => {
   const routineName = `E2E-routine-test(${uniqueSuffix})`;
   const updatedRoutineName = `E2-routine-test-edit(${uniqueSuffix})`;
   test('루틴 생성-수정', async ({ page }) => {
+    const token = await getAuthToken(page);
+    await page.request.patch('/api/account/profile', {
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      data: { goalWorkoutDays: 10 },
+    });
     await page.goto('/routine');
     await page.getByRole('button', { name: A11Y_LABELS.ROUTINE.create }).click();
 

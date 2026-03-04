@@ -25,7 +25,7 @@ test.describe.serial('workout 테스트', () => {
     const token = await getAuthToken(page);
     await page.request.post('/api/routines', {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      data: { routineName, exercises: [{ exerciseName: '스쿼트' }] },
+      data: { name: routineName, exercises: [{ name: '스쿼트' }] },
     });
 
     await page.goto('/workout/workout-cal');

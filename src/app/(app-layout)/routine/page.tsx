@@ -32,7 +32,7 @@ export default function RoutineManagePage() {
               <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {routineListData?.map((routine) => (
                   <div className="relative max-w-100" key={routine.routineId}>
-                    <RoutineCard routineName={routine.routineName} exercises={routine.exercises} />
+                    <RoutineCard routineName={routine.name} exercises={routine.exercises} />
                     <div className="absolute top-3 right-4 flex gap-2">
                       <Button
                         aria-label={A11Y_LABELS.ROUTINE.edit}

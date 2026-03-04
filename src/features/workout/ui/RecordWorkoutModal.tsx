@@ -18,7 +18,7 @@ export interface RecordWorkoutModalProps {
 
 interface Exercise {
   id: string;
-  exerciseName: string;
+  name: string;
 }
 
 export default function RecordWorkoutModal({
@@ -52,7 +52,7 @@ export default function RecordWorkoutModal({
   };
 
   const handleExerciseAdd = () => {
-    const newExercise: Exercise = { id: nextIdRef.current.toString(), exerciseName: '' };
+    const newExercise: Exercise = { id: nextIdRef.current.toString(), name: '' };
     nextIdRef.current += 1;
     setAddedExercises((prev) => [...prev, newExercise]);
   };
@@ -63,7 +63,7 @@ export default function RecordWorkoutModal({
 
   const handleExerciseChange = (targetId: string, value: string) => {
     setAddedExercises((prev) =>
-      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, exerciseName: value } : exercise)),
+      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, name: value } : exercise)),
     );
   };
 
@@ -77,13 +77,13 @@ export default function RecordWorkoutModal({
       await updateWorkout({
         date: formatDate(date), // YYYY-MM-DD
         routines: selectedRoutineIds.map((id) => ({ routineId: id })),
-        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.exerciseName })),
+        standalone_exercises: addedExercises.map((exercise) => ({ name: exercise.name })),
       });
     } else {
       await createWorkout({
         date: formatDate(date), // YYYY-MM-DD
         routines: selectedRoutineIds.map((id) => ({ routineId: id })),
-        exercises: addedExercises.map((exercise) => ({ exerciseName: exercise.exerciseName })),
+        standalone_exercises: addedExercises.map((exercise) => ({ name: exercise.name })),
       });
     }
     onClose();
@@ -101,7 +101,7 @@ export default function RecordWorkoutModal({
             {routineTemplate?.map((routine) => (
               <div className="relative" key={routine.routineId} onClick={() => handleRoutineSelect(routine.routineId)}>
                 <RoutineCard
-                  routineName={routine.routineName}
+                  routineName={routine.name}
                   exercises={routine.exercises}
                   className={cn(isSelected(routine.routineId) && 'scale-[1.02] border-3 border-primary shadow-lg')}
                 />
@@ -133,7 +133,7 @@ export default function RecordWorkoutModal({
               <InputField
                 label={`운동${idx + 1} 이름`}
                 placeholder="예: 스쿼트"
-                value={exercise.exerciseName}
+                value={exercise.name}
                 onChange={(event) => handleExerciseChange(exercise.id, event.target.value)}
                 required
                 className="flex-2"

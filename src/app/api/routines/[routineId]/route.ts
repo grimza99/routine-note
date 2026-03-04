@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto';
 import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
@@ -7,9 +6,8 @@ type Params = Promise<{ routineId?: string }>;
 
 type RoutineItem = {
   id: string;
-  exercise_id: string;
   item_order: number;
-  exercise_name?: string;
+  name?: string;
 };
 
 type RoutineResponse = {
@@ -19,29 +17,29 @@ type RoutineResponse = {
 };
 
 type RoutineExerciseRequest = {
-  exerciseId?: string;
-  exerciseName?: string;
+  id?: string;
+  name?: string;
   order?: number;
-  setCount?: number;
 };
 
 const mapRoutine = (routine: RoutineResponse) => ({
   routineId: routine.id,
-  routineName: routine.name,
-  exercises: (routine.routine_items ?? []).map((item) => ({
-    id: item.id,
-    exerciseId: item.exercise_id,
-    order: item.item_order,
-    exerciseName: item.exercise_name ?? '',
+  name: routine.name,
+  exercises: (routine.routine_items ?? []).map((ex) => ({
+    id: ex.id,
+    order: ex.item_order,
+    name: ex.name ?? '',
   })),
 });
 
-const parseExercises = (items?: RoutineExerciseRequest[]) =>
-  (items ?? []).map((item, index) => ({
-    exerciseId: item.exerciseId,
-    exerciseName: item.exerciseName?.trim(),
-    order: Number(item.order) > 0 ? Number(item.order) : index + 1,
+const parseExercises = (exercises?: RoutineExerciseRequest[]) =>
+  (exercises ?? []).map((ex, index) => ({
+    id: ex.id,
+    name: ex.name?.trim(),
+    order: Number(ex.order) > 0 ? Number(ex.order) : index + 1,
   }));
+
+//------------------ GET /api/routines?routineId='' -detail routine --------------------------------------------
 
 export async function GET(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
@@ -63,9 +61,8 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       name,
       routine_items (
         id,
-        exercise_id,
         item_order,
-        exercise_name
+        name
       )
       `;
 
@@ -87,8 +84,10 @@ export async function GET(request: NextRequest, context: { params: Params }) {
   return json(200, mapRoutine(data as unknown as RoutineResponse));
 }
 
+//------------------ PATCH /api/routines?routineId='' - routine 수정 --------------------------------------------
+
 interface RoutinePayload {
-  routineName?: string;
+  name?: string;
   exercises?: RoutineExerciseRequest[];
 }
 
@@ -108,7 +107,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
 
   const body = (await request.json()) as RoutinePayload;
 
-  const routineName = body.routineName;
+  const routineName = body.name;
   const exercises = body.exercises;
 
   if (!routineName && !exercises) {
@@ -125,7 +124,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     .maybeSingle();
 
   if (routineError) {
-    return json(500, { error: { code: 'DB_ERROR', message: routineError.message } });
+    return json(500, { error: { code: 'routines DB_ERROR', message: routineError.message } });
   }
 
   if (!routine) {
@@ -135,19 +134,18 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   const { error: deleteError } = await supabase.from('routine_items').delete().eq('routine_id', routineId);
 
   if (deleteError) {
-    return json(500, { error: { code: 'DB_ERROR', message: deleteError.message } });
+    return json(500, { error: { code: 'routine_items deleted DB_ERROR', message: deleteError.message } });
   }
 
   const parsedExercises = parseExercises(exercises);
   const items = parsedExercises.map((exercise) => ({
-    id: randomUUID(),
+    id: exercise.id,
     routine_id: routineId,
-    exercise_id: exercise.exerciseId ?? randomUUID(),
     item_order: exercise.order,
-    exercise_name: exercise.exerciseName,
+    name: exercise.name,
   }));
 
-  const invalidExercise = items.find((item) => !item.exercise_name);
+  const invalidExercise = items.find((item) => !item.name);
 
   if (invalidExercise) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'exerciseName is required' } });
@@ -156,7 +154,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   const { error: insertError } = await supabase.from('routine_items').insert(items);
 
   if (insertError) {
-    return json(500, { error: { code: 'DB_ERROR', message: insertError.message } });
+    return json(500, { error: { code: 'routine_items table insert DB_ERROR', message: insertError.message } });
   }
 
   return json(200, { routineId: routine.id, routineName: routine.name });

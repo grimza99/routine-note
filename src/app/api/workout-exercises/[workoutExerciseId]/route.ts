@@ -16,14 +16,16 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
 
   const supabase = getSupabaseAdmin();
   const { data: owner, error: ownerError } = await supabase
-    .from('workout_exercises')
-    .select('id, workout_id, workouts!inner(user_id)')
+    .from('workout_standalone_exercises')
+    .select('id, workouts!inner(user_id)')
     .eq('id', workoutExerciseId)
     .eq('workouts.user_id', userId)
     .maybeSingle();
 
   if (ownerError) {
-    return json(500, { error: { code: 'DB_ERROR', message: 'workout_exercises DB select' + ownerError.message } });
+    return json(500, {
+      error: { code: 'DB_ERROR', message: 'workout_standalone_exercise DB select' + ownerError.message },
+    });
   }
 
   if (!owner) {
@@ -41,14 +43,16 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   }
 
   const { data, error } = await supabase
-    .from('workout_exercises')
+    .from('workout_standalone_exercises')
     .update(update)
     .eq('id', workoutExerciseId)
-    .select('id, exercise_id, item_order, note')
+    .select('id, item_order, note')
     .maybeSingle();
 
   if (error) {
-    return json(500, { error: { code: 'DB_ERROR', message: 'workout_exercises DB update :' + error.message } });
+    return json(500, {
+      error: { code: 'DB_ERROR', message: 'workout_standalone_exercises DB update :' + error.message },
+    });
   }
 
   return json(200, data);
@@ -64,24 +68,28 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
 
   const supabase = getSupabaseAdmin();
   const { data: owner, error: ownerError } = await supabase
-    .from('workout_exercises')
+    .from('workout_standalone_exercises')
     .select('id, workouts!inner(user_id)')
     .eq('id', workoutExerciseId)
     .eq('workouts.user_id', userId)
     .maybeSingle();
 
   if (ownerError) {
-    return json(500, { error: { code: 'DB_ERROR', message: 'workout_exercises DB select:' + ownerError.message } });
+    return json(500, {
+      error: { code: 'DB_ERROR', message: 'workout_standalone_exercises DB select:' + ownerError.message },
+    });
   }
 
   if (!owner) {
     return json(404, { error: { code: 'NOT_FOUND', message: 'workout exercise not found' } });
   }
 
-  const { error } = await supabase.from('workout_exercises').delete().eq('id', workoutExerciseId);
+  const { error } = await supabase.from('workout_standalone_exercise').delete().eq('id', workoutExerciseId);
 
   if (error) {
-    return json(500, { error: { code: 'DB_ERROR', message: 'workout_exercises DB delete:' + error.message } });
+    return json(500, {
+      error: { code: 'DB_ERROR', message: 'workout_standalone_exercise DB delete:' + error.message },
+    });
   }
 
   return json(200, { ok: true });

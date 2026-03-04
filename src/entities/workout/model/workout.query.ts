@@ -38,7 +38,7 @@ interface IWorkoutByDateResponse {
   id: string; // workoutId
   date: string; // 'YYYY-MM-DD' 형식
   routines: IRoutine[];
-  exercises: IExercise[]; // 루틴에 속하지 않은 운동들
+  standalone_exercises: IExercise[]; // 루틴에 속하지 않은 운동들
 }
 
 export function useWorkoutByDate(params: TWorkoutReportParams) {

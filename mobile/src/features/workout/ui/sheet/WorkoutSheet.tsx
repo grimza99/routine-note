@@ -30,7 +30,7 @@ export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess
   const [routines, setRoutines] = useState<RoutineItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(
-    initialWorkoutData ? initialWorkoutData.routines.map((routine) => routine.id) : [],
+    initialWorkoutData ? initialWorkoutData.routines.map((routine) => routine.routineId) : [],
   );
   const [payload, setPayload] = useState<WorkoutPayload>(
     initialWorkoutData

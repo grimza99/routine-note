@@ -35,9 +35,9 @@ export default function MyPageProfile({ imageUrl, nickname, workoutDays }: MyPag
       <div className="relative">
         <ProfileImage profileImageUrl={imageUrl} />
         <Button
-          label={isPending ? <BouncingDots /> : <PencilIcon className="size-4 text-white" />}
+          label={isPending ? <BouncingDots /> : <PencilIcon className="size-3 text-white" />}
           onClick={handleSelectFile}
-          className="w-fit rounded-full h-fit p-2 absolute top-0 -right-2"
+          className="w-fit rounded-full h-fit p-2 absolute top-0 -right-1"
         />
       </div>
       <div className="flex flex-col items-center md:items-start space-y-2">

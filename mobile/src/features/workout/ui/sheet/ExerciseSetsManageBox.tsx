@@ -179,10 +179,7 @@ export function ExerciseSetsManageBox({
           style={{ height: 60, textAlignVertical: 'top' }}
         />
       )}
-      <View style={styles.buttonArea}>
-        <Button label={'취소'} onPress={handleSubmit} disabled={isSaving} variant="tertiary" />
-        <Button label={isSaving ? '...' : '저장'} onPress={handleSubmit} disabled={isSaving} />
-      </View>
+      <Button label={isSaving ? '...' : '저장'} onPress={handleSubmit} disabled={isSaving} />
     </View>
   );
 }
@@ -215,11 +212,5 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 4,
     paddingVertical: 8,
-  },
-  buttonArea: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'flex-end',
   },
 });

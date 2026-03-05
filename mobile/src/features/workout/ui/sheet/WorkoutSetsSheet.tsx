@@ -14,7 +14,14 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
   const routines = initialWorkoutData ? initialWorkoutData.routines : [];
   const standaloneExercises = initialWorkoutData ? initialWorkoutData.standalone_exercises : [];
 
-  console.log('WorkoutSetsSheet - initialWorkoutData:', initialWorkoutData);
+  if (routines.length === 0 && standaloneExercises.length === 0) {
+    return (
+      <View style={styles.sheetContent}>
+        <Text style={styles.sheetTitle}>{formatMonthDay(selectedDate)} 운동 세트 관리</Text>
+        <Text style={{ color: '#858484' }}>해당 날짜에 기록된 운동이 아직 없습니다.</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.sheetContent}>
       <Text style={styles.sheetTitle}>{formatMonthDay(selectedDate)} 운동 세트 관리</Text>

@@ -1,4 +1,5 @@
 import { apiClient } from '../../../shared/libs/network';
+import { IMonthlyReportResponse } from '../../../shared/types/report';
 import type { WorkoutBydateResponse, WorkoutPayload, WorkoutSetPayload } from '../../../shared/types/workout';
 
 const toDate = (value: Date) => {
@@ -32,6 +33,21 @@ export const workoutApi = {
 
     const data = response.data;
     if (!data || !data.id) {
+      return null;
+    }
+
+    return data;
+  },
+  async getMonthlyReports(date: string) {
+    const month = date.slice(0, 7); // "YYYY-MM"
+    const response = await apiClient.request<IMonthlyReportResponse>(`/api/reports/monthly?month=${month}`);
+
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+
+    const data = response.data;
+    if (!data) {
       return null;
     }
 

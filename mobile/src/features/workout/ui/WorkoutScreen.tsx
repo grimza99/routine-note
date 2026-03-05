@@ -10,17 +10,22 @@ import { WorkoutRoutineCardWithSets } from './WorkoutRoutineCardWithSets';
 import { WorkoutBydateResponse } from '../../../shared/types';
 import { WorkoutSheet } from './sheet/WorkoutSheet';
 import { WorkoutSetsSheet } from './sheet/WorkoutSetsSheet';
+import { IMonthlyReportResponse } from '../../../shared/types/report';
 
 export const WorkoutScreen = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [sheetMode, setSheetMode] = useState<'create' | 'manage' | 'sets' | null>(null); //null이면 닫힘
   const [workoutByDate, setWorkoutByDate] = useState<WorkoutBydateResponse | null>(null);
+  const [monthlyReport, setMonthlyReport] = useState<IMonthlyReportResponse | null>(null);
 
-  const loadWorkoutByDate = useCallback(
+  const loadInitialData = useCallback(
     async (selectedDate: string) => {
       const workoutByDateData = await workoutApi.getByDate(selectedDate);
+      const monthlyReportData = await workoutApi.getMonthlyReports(selectedDate);
+
       setWorkoutByDate(workoutByDateData);
+      setMonthlyReport(monthlyReportData);
     },
     [selectedDate],
   );
@@ -29,7 +34,7 @@ export const WorkoutScreen = () => {
     const initialize = async () => {
       try {
         setIsInitialLoading(true);
-        await loadWorkoutByDate(formatDate(selectedDate));
+        await loadInitialData(formatDate(selectedDate));
       } catch (error) {
         Alert.alert('조회 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
       } finally {
@@ -39,7 +44,7 @@ export const WorkoutScreen = () => {
 
     void initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadWorkoutByDate, selectedDate]);
+  }, [loadInitialData, selectedDate]);
 
   if (isInitialLoading) {
     return (
@@ -63,7 +68,7 @@ export const WorkoutScreen = () => {
         onPress: async () => {
           try {
             await workoutApi.remove(workoutByDate.id);
-            await loadWorkoutByDate(formatDate(selectedDate));
+            await loadInitialData(formatDate(selectedDate));
             setSheetMode(null);
             Alert.alert('완료', '운동 기록을 삭제했습니다.');
             void trackEvent('workout_removed', {
@@ -87,6 +92,7 @@ export const WorkoutScreen = () => {
           onSelectDate={(selectedDate) => {
             setSelectedDate(selectedDate);
           }}
+          recordDates={monthlyReport?.workoutDates}
         />
       </View>
       {/* workout 기록 */}
@@ -157,7 +163,7 @@ export const WorkoutScreen = () => {
                 selectedDate={selectedDate}
                 initialWorkoutData={workoutByDate}
                 onSubmitSuccess={async (date) => {
-                  await loadWorkoutByDate(formatDate(date));
+                  await loadInitialData(formatDate(date));
                   setSheetMode(null);
                 }}
               />
@@ -166,7 +172,7 @@ export const WorkoutScreen = () => {
                 selectedDate={selectedDate}
                 initialWorkoutData={workoutByDate}
                 onSubmitSuccess={async (date) => {
-                  await loadWorkoutByDate(formatDate(date));
+                  await loadInitialData(formatDate(date));
                   setSheetMode(null);
                 }}
               />

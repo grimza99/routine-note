@@ -7,6 +7,37 @@ interface IProfilePayload {
   nickname: string | null;
   goalWorkoutDays: number | null;
 }
+
+export async function GET(request: NextRequest) {
+  const userId = await getAuthUserId(request);
+
+  if (!userId) {
+    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
+  }
+
+  const supabase = getSupabaseAdmin();
+  const { data: authUser, error: authUserError } = await supabase.auth.admin.getUserById(userId);
+
+  if (authUserError || !authUser?.user) {
+    return json(500, {
+      error: { code: 'DB_ERROR', message: authUserError?.message || 'failed to load user' },
+    });
+  }
+
+  const { user } = authUser;
+  const metadata = user.user_metadata ?? {};
+
+  return json(200, {
+    id: user.id,
+    email: user.email ?? '',
+    username: typeof metadata.username === 'string' ? metadata.username : '',
+    nickname: typeof metadata.nickname === 'string' ? metadata.nickname : '',
+    age: typeof metadata.age === 'number' ? metadata.age : 0,
+    privacy_policy: Boolean(metadata.privacy_policy),
+    profile_image: typeof metadata.profile_image === 'string' ? metadata.profile_image : null,
+  });
+}
+
 export async function PATCH(request: NextRequest) {
   const userId = await getAuthUserId(request);
 

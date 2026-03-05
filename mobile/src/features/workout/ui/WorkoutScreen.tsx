@@ -134,6 +134,7 @@ export const WorkoutScreen = () => {
                     key={routine.id}
                     title={routine.name ?? '루틴'}
                     exercises={routine.exercises}
+                    memo={routine.note}
                   />
                 ))}
             </>

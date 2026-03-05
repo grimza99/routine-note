@@ -18,12 +18,12 @@ export default function MyPage() {
     {
       title: '총 루틴',
       icon: <BookmarkIcon className="size-7 md:size-9 text-primary" />,
-      value: routineListData?.length + '개',
+      value: routineListData?.length ? routineListData?.length + '개' : '0개',
     },
     {
       title: '이번달 운동 일수',
       icon: <FireIcon className="size-7 md:size-9 text-primary" />,
-      value: challengeData?.workoutDays + '일',
+      value: challengeData?.workoutDays ? challengeData?.workoutDays + '일' : '0일',
     },
     {
       title: '챌린지',

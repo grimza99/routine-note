@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 interface IWorkoutPayload {
   date: string; // YYYY-MM-DD
   routines: { routineId: string; note?: '' }[];
-  exercises: { exerciseName: string; note?: '' }[];
+  standalone_exercises: { name: string; note?: '' }[];
 }
 
 //-----------------------------------------------workout 생성---------------------------------------------//
@@ -36,7 +36,7 @@ export const useCreateWorkoutMutation = () => {
         properties: {
           date: variables.date,
           routineCount: variables.routines.length,
-          exerciseCount: variables.exercises.length,
+          exerciseCount: variables.standalone_exercises.length,
         },
       });
       if (variables.routines.length > 0) {
@@ -85,7 +85,7 @@ export const useUpdateWorkoutMutation = (workoutId: string | undefined) => {
         properties: {
           date: variables.date,
           routineCount: variables.routines.length,
-          exerciseCount: variables.exercises.length,
+          exerciseCount: variables.standalone_exercises.length,
         },
       });
       if (variables.routines.length > 0) {

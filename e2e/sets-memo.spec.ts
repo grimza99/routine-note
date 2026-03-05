@@ -20,7 +20,7 @@ test.describe.serial('sets-memo 테스트', () => {
       const token = await getAuthToken(page);
       const routineResponse = await page.request.post('/api/routines', {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        data: { routineName, exercises: [{ exerciseName: '스쿼트' }] },
+        data: { name: routineName, exercises: [{ name: '스쿼트' }] },
       });
 
       if (!routineResponse.ok()) {
@@ -33,9 +33,10 @@ test.describe.serial('sets-memo 테스트', () => {
         data: {
           date: formatDate(new Date()),
           routines: [{ routineId: routineData.routineId }],
-          exercises: [],
+          standalone_exercises: [],
         },
       });
+      expect(workoutResponse.ok()).toBeTruthy();
     }
   });
 

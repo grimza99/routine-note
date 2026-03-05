@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
     .from('users')
     .select('id')
     .eq('nickname', normalizedNickname)
-    .maybeSingle();
+    .is('deleted_at', null)
+    .limit(1);
 
   const { data: existingEmail, error: existingEmailError } = await supabaseAdmin
     .from('users')
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
   if (existingEmail) {
     return json(409, { error: { code: 'EMAIL_TAKEN', message: '이미 존재하는 이메일 입니다.' } });
   }
-  if (existingNickname) {
+  if (existingNickname.length > 0) {
     return json(409, { error: { code: 'NICKNAME_TAKEN', message: '이미 존재하는 닉네임 입니다.' } });
   }
 

@@ -1,21 +1,19 @@
 export interface RoutineExercise {
   id: string;
-  exerciseId: string;
-  exerciseName: string;
+  name: string;
   order?: number;
-  note?: string;
-  sets: { id: string; weight: number; reps: number; note?: string }[];
+  sets: { id: string; weight: number; reps: number }[];
 }
 export interface RoutineItem {
   routineId: string;
-  routineName: string;
+  name: string;
   exercises: RoutineExercise[];
 }
 
 export interface RoutinePayload {
-  routineName: string;
+  name: string;
   exercises: {
-    exerciseName: string;
+    name: string;
     order?: number;
   }[];
 }

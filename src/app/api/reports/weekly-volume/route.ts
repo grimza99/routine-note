@@ -41,12 +41,14 @@ export async function GET(request: NextRequest) {
   }
 
   const { data: workoutExercises, error: workoutExercisesError } = await supabase
-    .from('workout_exercises')
+    .from('workout_standalone_exercises')
     .select('id, workout_id')
     .in('workout_id', workoutIds);
 
   if (workoutExercisesError) {
-    return json(500, { error: { code: 'DB_ERROR', message: `workout_exercises : ${workoutExercisesError.message}` } });
+    return json(500, {
+      error: { code: 'DB_ERROR', message: `workout_standalone_exercises : ${workoutExercisesError.message}` },
+    });
   }
   const { data: routineItems, error: routineItemsError } = await supabase
     .from('workout_routine_items')

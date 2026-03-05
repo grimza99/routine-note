@@ -147,7 +147,7 @@ export function ExerciseSetsManageBox({
           return (
             <View key={state.id}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
-                <Text style={styles.exerciseName}>{state.exerciseName}</Text>
+                <Text style={styles.exerciseName}>{state.name}</Text>
                 <NumberStepper
                   value={state.sets?.length || 0}
                   onDecrease={() => handleSetDecrease(state.id)}
@@ -179,10 +179,7 @@ export function ExerciseSetsManageBox({
           style={{ height: 60, textAlignVertical: 'top' }}
         />
       )}
-      <View style={styles.buttonArea}>
-        <Button label={'취소'} onPress={handleSubmit} disabled={isSaving} variant="tertiary" />
-        <Button label={isSaving ? '...' : '저장'} onPress={handleSubmit} disabled={isSaving} />
-      </View>
+      <Button label={isSaving ? '...' : '저장'} onPress={handleSubmit} disabled={isSaving} />
     </View>
   );
 }
@@ -215,11 +212,5 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 4,
     paddingVertical: 8,
-  },
-  buttonArea: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'flex-end',
   },
 });

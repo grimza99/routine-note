@@ -146,7 +146,7 @@ export function WorkoutManageModal({
             <div key={exercise.id} className={cn('rounded-lg border p-2 bg-surface border-border flex flex-col gap-2')}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-text-primary">{exercise.exerciseName}</p>
+                  <p className="text-sm font-semibold text-text-primary">{exercise.name}</p>
                 </div>
                 <NumberStepper
                   value={exercise.sets.length || 0}

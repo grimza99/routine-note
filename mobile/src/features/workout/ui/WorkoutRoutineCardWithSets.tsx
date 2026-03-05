@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { WorkoutExerciseItem } from '../../../shared/types/workout';
+import { NoteBadge } from '../../../shared/ui/badge/NoteBadge';
 
 interface WorkoutRoutineCardProps {
   title: string;
   exercises: WorkoutExerciseItem[];
+  memo?: string;
 }
 
-export function WorkoutRoutineCardWithSets({ title, exercises }: WorkoutRoutineCardProps) {
+export function WorkoutRoutineCardWithSets({ title, exercises, memo }: WorkoutRoutineCardProps) {
   if (exercises.length < 1) {
     return null;
   }
@@ -18,12 +20,13 @@ export function WorkoutRoutineCardWithSets({ title, exercises }: WorkoutRoutineC
         {exercises.map((exercise) => (
           <View key={exercise.id} style={styles.exerciseItem}>
             <Text style={[styles.text, styles.ellipsizeText]} numberOfLines={1} ellipsizeMode="tail">
-              {exercise.exerciseName}
+              {exercise.name}
             </Text>
             {exercise.sets && <Text style={styles.text}>{exercise.sets.length}세트</Text>}
           </View>
         ))}
       </View>
+      {memo && <NoteBadge />}
     </View>
   );
 }
@@ -36,6 +39,7 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
     backgroundColor: '#FFFFFF',
     color: '#1A1A1A',
+    position: 'relative',
   },
   title: {
     fontWeight: '700',

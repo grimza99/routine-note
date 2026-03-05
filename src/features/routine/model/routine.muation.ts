@@ -4,8 +4,8 @@ import { api } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface IRoutinePayload {
-  routineName: string;
-  exercises: { exerciseName: string }[];
+  name: string;
+  exercises: { name: string }[];
 }
 
 //-----------------------------------------------루틴 생성---------------------------------------------//

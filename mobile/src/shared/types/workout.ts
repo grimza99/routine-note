@@ -1,7 +1,7 @@
 export interface WorkoutRoutineItem {
-  id?: string;
+  id: string;
   routineId: string;
-  routineName: string;
+  name: string;
   note: string;
   order?: number;
   exercises: WorkoutExerciseItem[];
@@ -9,8 +9,7 @@ export interface WorkoutRoutineItem {
 
 export interface WorkoutExerciseItem {
   id: string;
-  exerciseName: string;
-  note?: string;
+  name: string;
   order?: number;
   sets: {
     id: string;
@@ -23,7 +22,7 @@ export interface WorkoutBydateResponse {
   id: string;
   date: string;
   routines: WorkoutRoutineItem[];
-  exercises: WorkoutExerciseItem[];
+  standalone_exercises: WorkoutExerciseItem[];
 }
 
 export interface WorkoutPayload {
@@ -33,10 +32,9 @@ export interface WorkoutPayload {
     order?: number;
     note?: string;
   }[];
-  exercises: {
-    exerciseName: string;
+  standalone_exercises: {
+    name: string;
     order?: number;
-    note?: string;
   }[];
 }
 

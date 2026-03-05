@@ -12,17 +12,25 @@ interface WorkoutSheetSetsProps {
 
 export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuccess }: WorkoutSheetSetsProps) {
   const routines = initialWorkoutData ? initialWorkoutData.routines : [];
-  const standaloneExercises = initialWorkoutData ? initialWorkoutData.exercises : [];
+  const standaloneExercises = initialWorkoutData ? initialWorkoutData.standalone_exercises : [];
 
+  if (routines.length === 0 && standaloneExercises.length === 0) {
+    return (
+      <View style={styles.sheetContent}>
+        <Text style={styles.sheetTitle}>{formatMonthDay(selectedDate)} 운동 세트 관리</Text>
+        <Text style={{ color: '#858484' }}>해당 날짜에 기록된 운동이 아직 없습니다.</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.sheetContent}>
       <Text style={styles.sheetTitle}>{formatMonthDay(selectedDate)} 운동 세트 관리</Text>
       <ScrollView contentContainerStyle={styles.list}>
         {routines.map((routine) => (
           <ExerciseSetsManageBox
-            key={routine.routineId}
+            key={routine.id}
             type="routine-exercise"
-            label={routine.routineName}
+            label={routine.name}
             selectedDate={selectedDate}
             initialExercises={routine.exercises}
             initialNote={routine.note}

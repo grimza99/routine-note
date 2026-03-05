@@ -19,6 +19,16 @@
 
 ## 노트
 
+- [2026-03-05] [auth-architecture] 모바일 WebView auth hydrate 위치를 `m` 레이아웃으로 공통화
+  - 영향/증상/개요 (필수): 사용자가 페이지별 hydrate 중복 우려로 `layout` 단 공통 처리로 변경 요청.
+  - 결정/조치 (필수): `src/app/(web-view-layout)/m/layout.tsx`와 `AuthHydrator`를 추가해 `GET /api/account/profile` 기반 `useAuthStore` 동기화를 공통화하고, `m/mypage` 개별 hydrate 코드는 제거.
+  - 관련 파일/링크 (선택): `src/app/(web-view-layout)/m/layout.tsx`, `src/app/(web-view-layout)/m/_components/AuthHydrator.tsx`, `src/app/(web-view-layout)/m/mypage/page.tsx`
+
+- [2026-03-05] [auth-architecture] RN/WebView 전역 스토어 공유 불가와 동기화 전략 정리
+  - 영향/증상/개요 (필수): 사용자가 RN 상태(Context/zustand)와 WebView(Next zustand)의 전역 auth 상태를 하나로 통합 관리할 수 있는지 질의.
+  - 결정/조치 (필수): 런타임 분리로 메모리 직접 공유는 불가하며, 서버를 SSOT로 두고 각 런타임 hydrate + 필요 시 RN↔WebView 브리지 메시지 동기화 전략을 기준으로 안내.
+  - 관련 파일/링크 (선택): `mobile/src/features/auth/model/useAuthSession.tsx`, `mobile/src/features/webview/ui/WebFallbackScreen.tsx`, `src/entities/auth/model/useAuthStore.ts`
+
 - [2026-02-18] [android-release] Android 클로즈드 테스트 플랜 구현 반영
   - 영향/증상/개요 (필수): 사용자가 안드로이드 2주 출시 플랜의 코드/문서 구현을 요청해 설치 이벤트 계측(`app_install`, `installId`)과 Android KPI 문서를 즉시 반영할 필요.
   - 결정/조치 (필수): 모바일 트래킹 메타에 `installId`를 추가하고, SecureStore 기반 `installStorage`를 신설해 최초 실행 시 `app_install` 1회 전송/성공 플래그 저장 규칙을 `useAuthSession`에 적용. 서버 `/api/events` 스키마에 `installId` optional 필드를 추가하고 `docs/android-kpi-dashboard-sql.md` 문서를 신설.

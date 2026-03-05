@@ -36,13 +36,13 @@ export default function AccountInfoSection({ email, nickname, goalWorkoutDays, o
   }, [nickname, goalWorkoutDays]);
 
   return (
-    <section className="flex flex-col gap-4 rounded-lg border-2 border-primary p-4">
+    <section className="flex flex-col gap-4 rounded-lg border-2 border-border p-4">
       <div className="w-full flex justify-between items-center">
         <h2 className="text-lg font-semibold text-text-primary">계정 정보</h2>
         <Button
           label={<PencilIcon className="text-white size-4" />}
           onClick={() => onSaveInfo?.(info)}
-          className="w-fit h-fit"
+          className="w-fit h-fit px-2"
         />
       </div>
       <InputField label="이메일" value={email} onChange={() => {}} disabled />

@@ -119,11 +119,3 @@ export function MonthReport({ intialMonth }: { intialMonth?: Date }) {
     </>
   );
 }
-
-const EmptyDataCard = ({ text }: { text: string }) => {
-  return (
-    <div className="rounded-lg border-2 border-border p-8 text-sm md:text-base text-text-secondary bg-white">
-      {text}
-    </div>
-  );
-};

@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/app/navigation/AppNavigator';
 import { linkingConfig } from './src/app/navigation/linking';
 import { AuthProvider } from './src/features/auth/model/useAuthSession';
+import GoalSetupGuard from './src/features/goal/ui/GoalSetupGuard';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <AppNavigator />
         </NavigationContainer>
       </AuthProvider>
+      <GoalSetupGuard />
     </SafeAreaProvider>
   );
 }

@@ -16,5 +16,6 @@ const QUERY_KEYS = {
     LIST: 'routine-list',
     DETAIL: 'routine-detail',
   },
+  GOAL: 'user-goal',
 };
 export default QUERY_KEYS;

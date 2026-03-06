@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import { MonthReport, PrevMonthsReports } from '@/entities';
 import { useMonth } from '@/shared/hooks';
@@ -10,6 +10,13 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { formatDateYearMonth } from '@/shared/libs';
 
 export default function MobileReportPage() {
+  return (
+    <Suspense fallback={null}>
+      <MobileReportContent />
+    </Suspense>
+  );
+}
+function MobileReportContent() {
   const [activeTab, setActiveTab] = useState<'prev' | 'current'>('current');
   const [month, setMonth] = useState<Date | null>(null);
   const { currentMonth, monthLabel, handlePrevMonth, handleNextMonth } = useMonth(month);

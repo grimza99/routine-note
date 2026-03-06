@@ -7,11 +7,7 @@ import { MonthReport, PrevMonthsReports } from '@/entities';
 import { useMonth } from '@/shared/hooks';
 import { Tabs } from '@/shared/ui';
 import { formatDateYearMonth } from '@/shared/libs';
-
-const tabItems = [
-  { id: 'current', label: '이번 달 리포트' },
-  { id: 'prev', label: '지난 리포트' },
-];
+import { tabItems } from '@/entities/report/model/tabItem';
 
 export default function ReportPage() {
   return (

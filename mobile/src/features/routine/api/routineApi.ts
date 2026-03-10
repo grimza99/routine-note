@@ -1,9 +1,10 @@
+import { API } from '@routine-note/package-shared';
 import { apiClient } from '../../../shared/libs/network';
 import type { RoutineItem, RoutinePayload } from '../../../shared/types/routine';
 
 export const routineApi = {
   async list() {
-    const response = await apiClient.request<RoutineItem[]>('/api/routines');
+    const response = await apiClient.request<RoutineItem[]>(API.ROUTINE.LIST);
 
     if (response.error) {
       throw new Error(response.error.message);
@@ -12,7 +13,7 @@ export const routineApi = {
   },
 
   async create(payload: RoutinePayload) {
-    const response = await apiClient.request<{ routineId: string; routineName: string }>('/api/routines', {
+    const response = await apiClient.request<{ routineId: string; routineName: string }>(API.ROUTINE.CREATE, {
       method: 'POST',
       body: JSON.stringify(payload),
     });
@@ -25,7 +26,7 @@ export const routineApi = {
   },
 
   async update(routineId: string, payload: RoutinePayload) {
-    const response = await apiClient.request<{ routineId: string; routineName: string }>(`/api/routines/${routineId}`, {
+    const response = await apiClient.request<{ routineId: string; routineName: string }>(API.ROUTINE.EDIT(routineId), {
       method: 'PATCH',
       body: JSON.stringify(payload),
     });
@@ -38,7 +39,7 @@ export const routineApi = {
   },
 
   async remove(routineId: string) {
-    const response = await apiClient.request<{ ok: boolean }>(`/api/routines/${routineId}`, {
+    const response = await apiClient.request<{ ok: boolean }>(API.ROUTINE.DELETE(routineId), {
       method: 'DELETE',
     });
 

@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
+import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
 
 import { authApi } from '../api/authApi';
-import { trackEvent } from '../../../shared/libs/analytics/track';
 import { installStorage, tokenStorage } from '../../../shared/libs/storage';
 import { setAuthExpiredHandler, validateStoredSession } from '../../../shared/libs/network/apiClient';
 
@@ -32,7 +32,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
           return;
         }
 
-        const installTracked = await trackEvent('app_install', undefined, { installId });
+        const installTracked = await trackEvent({
+          eventName: ANALYTICS_EVENTS.APP_INSTALL,
+          installId,
+        });
         if (installTracked) {
           await installStorage.markInstallTracked();
         }
@@ -43,14 +46,20 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       if (!tokens?.refreshToken) {
         setIsAuthenticated(false);
         setIsInitialized(true);
-        void trackEvent('app_open', undefined, { installId });
+        void trackEvent({
+          eventName: ANALYTICS_EVENTS.APP_OPEN,
+          installId,
+        });
         return;
       }
 
       const isSessionValid = await validateStoredSession();
       setIsAuthenticated(isSessionValid);
       setIsInitialized(true);
-      void trackEvent('app_open', undefined, { installId });
+      void trackEvent({
+        eventName: ANALYTICS_EVENTS.APP_OPEN,
+        installId,
+      });
     };
 
     void bootstrap();
@@ -68,7 +77,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         await authApi.login({ email, password });
         setIsAuthenticated(true);
         const installId = await installStorage.getOrCreateInstallId();
-        void trackEvent('login_success', undefined, { installId });
+        void trackEvent({
+          eventName: ANALYTICS_EVENTS.LOGIN_SUCCESS,
+          installId,
+        });
       },
       logout: async () => {
         await authApi.logout();

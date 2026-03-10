@@ -1,8 +1,9 @@
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState, useCallback, useEffect } from 'react';
+import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
 
 import { routineApi } from '../../../routine/api/routineApi';
-import { formatDate, formatMonthDay, trackEvent } from '../../../../shared/libs';
+import { formatDate, formatMonthDay } from '../../../../shared/libs';
 import { workoutApi } from '../../api/workoutApi';
 import { Button, Input } from '../../../../shared/ui';
 import { RoutineItem } from '../../../../shared/types/routine';
@@ -93,15 +94,21 @@ export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess
       setIsSaving(true);
       if (type === 'manage' && initialWorkoutData) {
         await workoutApi.update(initialWorkoutData.id, payload);
-        void trackEvent('workout_updated', {
-          selectedDate,
-          ...payload,
+        void trackEvent({
+          eventName: ANALYTICS_EVENTS.WORKOUT_UPDATED,
+          properties: {
+            selectedDate: formatDate(selectedDate),
+            ...payload,
+          },
         });
         Alert.alert('완료', '운동 기록을 수정했습니다.');
       } else {
         await workoutApi.create(payload);
-        void trackEvent('workout_created', {
-          ...payload,
+        void trackEvent({
+          eventName: ANALYTICS_EVENTS.WORKOUT_CREATED,
+          properties: {
+            ...payload,
+          },
         });
         Alert.alert('완료', '운동 기록을 생성했습니다.');
       }

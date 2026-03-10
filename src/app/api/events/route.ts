@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
+import { ANALYTICS_EVENT_NAMES } from '@routine-note/package-shared';
 import { z } from 'zod';
 
-import { ANALYTICS_EVENT_NAMES } from '@/shared/constants';
 import { getClientMeta, json, warnMissingClientMetaHeaders } from '@/shared/libs/api-route';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 

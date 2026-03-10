@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { createDate } from '../libs';
+'use client';
+import { useEffect, useState } from 'react';
+import { createYearMonthDay } from '../libs/date/createDate';
 
 /**
  * @param initialMonthValue //초기 달 값 없으면 현재 달로 대체
@@ -14,12 +15,17 @@ import { createDate } from '../libs';
 export function useMonth(initialMonthValue?: Date | null) {
   const initialMonth = initialMonthValue ?? new Date();
   const [currentMonth, setCurrentMonth] = useState(() =>
-    createDate(initialMonth.getFullYear(), initialMonth.getMonth(), 1),
+    createYearMonthDay(initialMonth.getFullYear(), initialMonth.getMonth(), 1),
   );
+  useEffect(() => {
+    if (initialMonthValue) {
+      setCurrentMonth(createYearMonthDay(initialMonthValue.getFullYear(), initialMonthValue.getMonth(), 1));
+    }
+  }, [initialMonthValue]);
   const monthLabel = `${currentMonth.getFullYear()}년 ${currentMonth.getMonth() + 1}월`;
 
   const handlePrevMonth = () => {
-    setCurrentMonth((prev) => createDate(prev.getFullYear(), prev.getMonth() - 1, 1));
+    setCurrentMonth((prev) => createYearMonthDay(prev.getFullYear(), prev.getMonth() - 1, 1));
   };
 
   const handleNextMonth = (isNextMonthBlock?: boolean) => {
@@ -30,7 +36,11 @@ export function useMonth(initialMonthValue?: Date | null) {
         return;
       }
     }
-    setCurrentMonth((prev) => createDate(prev.getFullYear(), prev.getMonth() + 1, 1));
+    setCurrentMonth((prev) => createYearMonthDay(prev.getFullYear(), prev.getMonth() + 1, 1));
+  };
+
+  const handleChangeSetMonth = (date: Date) => {
+    setCurrentMonth(createYearMonthDay(date.getFullYear(), date.getMonth(), 1));
   };
 
   const handleChangeToday = () => {
@@ -41,6 +51,7 @@ export function useMonth(initialMonthValue?: Date | null) {
   return {
     currentMonth,
     handleChangeToday,
+    handleChangeSetMonth,
     monthLabel,
     handlePrevMonth,
     handleNextMonth,

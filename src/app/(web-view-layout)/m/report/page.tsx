@@ -1,8 +1,8 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
+import { useMonth } from '@routine-note/package-shared';
 
 import { MonthReport, PrevMonthsReports } from '@/entities';
-import { useMonth } from '@/shared/hooks';
 import { Tabs } from '@/shared/ui';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { tabItems } from '@/entities/report/model/tabItem';

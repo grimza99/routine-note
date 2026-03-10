@@ -1,3 +1,4 @@
+import { API } from '@routine-note/package-shared';
 import { apiClient } from '../../../shared/libs/network';
 import { IMonthlyReportResponse } from '../../../shared/types/report';
 import type { WorkoutBydateResponse, WorkoutPayload, WorkoutSetPayload } from '../../../shared/types/workout';
@@ -25,7 +26,7 @@ export const workoutApi = {
   parseExercises,
 
   async getByDate(date: string) {
-    const response = await apiClient.request<WorkoutBydateResponse>(`/api/workouts?date=${date}`);
+    const response = await apiClient.request<WorkoutBydateResponse>(API.WORKOUT.BY_DATE(date));
 
     if (response.error) {
       throw new Error(response.error.message);
@@ -40,7 +41,7 @@ export const workoutApi = {
   },
   async getMonthlyReports(date: string) {
     const month = date.slice(0, 7); // "YYYY-MM"
-    const response = await apiClient.request<IMonthlyReportResponse>(`/api/reports/monthly?month=${month}`);
+    const response = await apiClient.request<IMonthlyReportResponse>(API.WORKOUT.REPORT(month));
 
     if (response.error) {
       throw new Error(response.error.message);
@@ -55,7 +56,7 @@ export const workoutApi = {
   },
 
   async create(payload: WorkoutPayload) {
-    const response = await apiClient.request<WorkoutBydateResponse>('/api/workouts', {
+    const response = await apiClient.request<WorkoutBydateResponse>(API.WORKOUT.CREATE, {
       method: 'POST',
       body: JSON.stringify(payload),
     });
@@ -68,7 +69,7 @@ export const workoutApi = {
   },
 
   async update(workoutId: string, payload: WorkoutPayload) {
-    const response = await apiClient.request<WorkoutBydateResponse>(`/api/workouts/${workoutId}`, {
+    const response = await apiClient.request<WorkoutBydateResponse>(API.WORKOUT.UPDATE(workoutId), {
       method: 'PUT',
       body: JSON.stringify(payload),
     });
@@ -81,7 +82,7 @@ export const workoutApi = {
   },
 
   async remove(workoutId: string) {
-    const response = await apiClient.request<{ ok: boolean }>(`/api/workouts/${workoutId}`, {
+    const response = await apiClient.request<{ ok: boolean }>(API.WORKOUT.DELETE(workoutId), {
       method: 'DELETE',
     });
 
@@ -97,7 +98,7 @@ export const workoutApi = {
       throw new Error('workoutExerciseId is required to create a set');
     }
     const response = await apiClient.request<{ id: string; weight: number | null; reps: number | null }>(
-      `/api/workout-exercises/${workoutExerciseId}/sets`,
+      API.WORKOUT.SETS.CREATE(workoutExerciseId),
       {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -112,7 +113,7 @@ export const workoutApi = {
   },
   async updateSet(setId: string, payload: WorkoutSetPayload) {
     const response = await apiClient.request<{ id: string; weight: number | null; reps: number | null }>(
-      `/api/sets/${setId}`,
+      API.WORKOUT.SETS.EDIT(setId),
       {
         method: 'PATCH',
         body: JSON.stringify(payload),
@@ -126,7 +127,7 @@ export const workoutApi = {
     return response.data;
   },
   async deleteSet(setId: string) {
-    const response = await apiClient.request<{ ok: boolean }>(`/api/sets/${setId}`, {
+    const response = await apiClient.request<{ ok: boolean }>(API.WORKOUT.SETS.DELETE(setId), {
       method: 'DELETE',
     });
 
@@ -137,13 +138,10 @@ export const workoutApi = {
     return response.data;
   },
   async createWorkoutRoutineNote(workoutRoutineId: string, note: string) {
-    const response = await apiClient.request<{ id: string; note: string }>(
-      `/api/workout-routines/${workoutRoutineId}`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ note }),
-      },
-    );
+    const response = await apiClient.request<{ id: string; note: string }>(API.WORKOUT.NOTE.ROUTINE(workoutRoutineId), {
+      method: 'PATCH',
+      body: JSON.stringify({ note }),
+    });
 
     if (response.error) {
       throw new Error(response.error.message);

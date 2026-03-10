@@ -1,10 +1,11 @@
+import { API } from '@routine-note/package-shared';
 import { apiClient } from '../../../shared/libs/network';
 import { tokenStorage } from '../../../shared/libs/storage/tokenStorage';
 import type { LoginPayload, LoginResponse } from '../../../shared/types/auth';
 
 export const authApi = {
   async login(payload: LoginPayload) {
-    const response = await apiClient.request<LoginResponse>('/api/auth/login', {
+    const response = await apiClient.request<LoginResponse>(API.AUTH.LOGIN, {
       method: 'POST',
       body: JSON.stringify(payload),
       auth: false,
@@ -28,7 +29,7 @@ export const authApi = {
   },
 
   async logout() {
-    await apiClient.request('/api/auth/logout', {
+    await apiClient.request(API.AUTH.LOGOUT, {
       method: 'POST',
     });
     await tokenStorage.clear();

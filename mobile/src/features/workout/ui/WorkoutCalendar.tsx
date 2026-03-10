@@ -5,7 +5,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { workoutApi } from '../api/workoutApi';
 import { Button, DefaultContainer, Dot } from '../../../shared/ui';
 import { isSameDay } from '../../../shared/libs';
-import { useMonth } from '../../../shared/hooks';
+import { createYearMonthDay, useMonth } from '@routine-note/package-shared';
 
 type CalendarCell = {
   key: string;
@@ -26,16 +26,16 @@ const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'] as cons
 const createCalendarCells = (visibleMonth: Date): CalendarCell[] => {
   const year = visibleMonth.getFullYear();
   const month = visibleMonth.getMonth();
-  const firstDay = new Date(year, month, 1);
+  const firstDay = createYearMonthDay(year, month, 1);
   const firstWeekday = firstDay.getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const prevMonthDays = new Date(year, month, 0).getDate();
+  const daysInMonth = createYearMonthDay(year, month + 1, 0).getDate();
+  const prevMonthDays = createYearMonthDay(year, month, 0).getDate();
 
   const cells: CalendarCell[] = [];
 
   for (let index = firstWeekday - 1; index >= 0; index -= 1) {
     const day = prevMonthDays - index;
-    const date = new Date(year, month - 1, day);
+    const date = createYearMonthDay(year, month - 1, day);
     const dateText = workoutApi.toDate(date);
     cells.push({
       key: `prev-${dateText}`,
@@ -47,7 +47,7 @@ const createCalendarCells = (visibleMonth: Date): CalendarCell[] => {
   }
 
   for (let day = 1; day <= daysInMonth; day += 1) {
-    const date = new Date(year, month, day);
+    const date = createYearMonthDay(year, month, day);
     const dateText = workoutApi.toDate(date);
     cells.push({
       key: `curr-${dateText}`,
@@ -60,7 +60,7 @@ const createCalendarCells = (visibleMonth: Date): CalendarCell[] => {
 
   let nextDay = 1;
   while (cells.length % 7 !== 0) {
-    const date = new Date(year, month + 1, nextDay);
+    const date = createYearMonthDay(year, month + 1, nextDay);
     const dateText = workoutApi.toDate(date);
     cells.push({
       key: `next-${dateText}`,

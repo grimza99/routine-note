@@ -1,9 +1,12 @@
+import { API } from '@routine-note/package-shared';
 import { apiClient } from '../../../shared/libs/network';
+
+const url = API.ACCOUNT.GOAL;
 
 export const goalApi = {
   async getGoal() {
     const response = await apiClient.request<{ month: string; goalWorkoutDays: number; hidden_setup_prompt: boolean }>(
-      `/api/account/goal`,
+      url,
       {
         method: 'GET',
       },
@@ -17,7 +20,7 @@ export const goalApi = {
   },
   async updateGoal(goalWorkoutDays: number) {
     const response = await apiClient.request<{ date: string; goalWorkoutDays: number; hidden_goal_setup: boolean }>(
-      `/api/account/goal`,
+      url,
       {
         method: 'PATCH',
         body: JSON.stringify({ goalWorkoutDays }),
@@ -32,7 +35,7 @@ export const goalApi = {
   },
   async hiddenGoalSetupPrompt() {
     const response = await apiClient.request<{ date: string; goalWorkoutDays: number; hidden_goal_setup: boolean }>(
-      `/api/account/goal`,
+      url,
       {
         method: 'POST',
       },

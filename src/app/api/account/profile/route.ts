@@ -138,6 +138,7 @@ export async function PATCH(request: NextRequest) {
           user_id: userId,
           report_month: date,
           goal_workout_days: normalizedGoal,
+          hidden_setup_prompt: true,
         },
         { onConflict: 'user_id,report_month' },
       )

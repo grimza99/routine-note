@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Button, InputField } from '@/shared/ui';
 import { useCreateGoalMutation } from '../model/goal.mutation';
-import { useAuthStoreActions } from '@/entities';
+import { useHiddenGoalSetupPromptMutation } from '@/features/goal/model/goal.mutation';
 
 type MonthlyGoalSetupPromptModalProps = {
   onClose: () => void;
@@ -13,14 +13,14 @@ type MonthlyGoalSetupPromptModalProps = {
 export function MonthlyGoalSetupPromptModal({ onClose }: MonthlyGoalSetupPromptModalProps) {
   const [goalWorkoutDays, setGoalWorkoutDays] = useState(0);
   const { mutateAsync: createGoal } = useCreateGoalMutation();
-  const { setHiddenGoalSetupPrompt } = useAuthStoreActions();
+  const { mutateAsync: hiddenGoalSetupPrompt } = useHiddenGoalSetupPromptMutation();
   const handleSubmit = async () => {
     await createGoal({ goalWorkoutDays });
     onClose();
   };
 
   const handleClose = () => {
-    setHiddenGoalSetupPrompt(true);
+    hiddenGoalSetupPrompt();
     onClose();
   };
 

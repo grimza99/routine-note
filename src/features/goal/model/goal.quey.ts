@@ -6,10 +6,12 @@ import { useQuery } from '@tanstack/react-query';
 
 export function useCurrentMonthGoal() {
   return useQuery({
-    queryKey: [QUERY_KEYS.CHALLENGE.MONTHLY_RANK],
+    queryKey: [QUERY_KEYS.GOAL],
     queryFn: async () => {
       try {
-        const res = await api.get<{ month: string; goalWorkoutDays: number }>(API.ACCOUNT.GOAL);
+        const res = await api.get<{ month: string; goalWorkoutDays: number; hidden_setup_prompt: boolean } | null>(
+          API.ACCOUNT.GOAL,
+        );
         return res.data;
       } catch (error) {
         console.error('이번달 목표 조회 실패:', error);

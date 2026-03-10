@@ -1,6 +1,6 @@
 //date
 export { isSameDay } from './date/identify-date';
-export { formatMonthDay, formatDate } from './date/format-date';
+export { formatMonthDay, formatDate ,formatDateYearMonth} from '@routine-note/package-shared';
 
 //analytics
 export { trackEvent } from './analytics/track';

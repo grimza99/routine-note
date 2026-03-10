@@ -8,3 +8,5 @@ export { WEB_FALLBACK_PATH } from './mobile/constants/route';
 export { useMonth } from './shared/hooks/useMonth';
 // libs
 export { createYearMonthDay } from './shared/libs/date/createDate';
+export { formatDate, formatDateYearMonth, formatMonthDay } from './shared/libs/date/formatDate';
+

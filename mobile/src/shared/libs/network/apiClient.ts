@@ -1,7 +1,6 @@
 import { Platform } from 'react-native';
-
+import { MOBILE_META_HEADERS, CLIENT_PLATFORM } from '@routine-note/package-shared';
 import { appEnv } from '../../config/env';
-import { CLIENT_PLATFORM, MOBILE_META_HEADERS } from '../../constants/headers';
 import { tokenStorage } from '../storage';
 
 type ApiError = {

@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { CLIENT_PLATFORM, MOBILE_META_HEADERS, type ClientPlatform } from '@/shared/constants';
+import { MOBILE_META_HEADERS, CLIENT_PLATFORM, ClientPlatform } from '@routine-note/package-shared';
 
 export type ClientMeta = {
   platform: ClientPlatform;

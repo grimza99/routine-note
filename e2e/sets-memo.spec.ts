@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { A11Y_LABELS } from '../src/shared/constants';
 import { getAuthToken } from './auth-utils';
-import { formatDate } from '../src/shared/libs/date/format';
+import { formatDate } from '../packages/index';
 
 test.use({ storageState: 'e2e/.auth/user.json' });
 

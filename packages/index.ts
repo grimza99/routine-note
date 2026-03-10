@@ -22,3 +22,6 @@ export {
 
 // constants
 export { API } from './shared/constants/api';
+
+// types
+export type { ICardioSet, IStrengthSet, TTraining, IExercise } from './shared/types/exercise';

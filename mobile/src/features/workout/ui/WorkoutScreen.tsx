@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
 
 import { workoutApi } from '../api/workoutApi';
 import { Button, DraggableSheet } from '../../../shared/ui';
 import { WorkoutCalendar } from './WorkoutCalendar';
-import { formatDate, formatMonthDay, trackEvent } from '../../../shared/libs';
+import { formatDate, formatMonthDay } from '../../../shared/libs';
 import { WorkoutRoutineCardWithSets } from './WorkoutRoutineCardWithSets';
 import { WorkoutBydateResponse } from '../../../shared/types';
 import { WorkoutSheet } from './sheet/WorkoutSheet';
@@ -71,8 +72,11 @@ export const WorkoutScreen = () => {
             await loadInitialData(formatDate(selectedDate));
             setSheetMode(null);
             Alert.alert('완료', '운동 기록을 삭제했습니다.');
-            void trackEvent('workout_removed', {
-              date: formatDate(selectedDate),
+            void trackEvent({
+              eventName: ANALYTICS_EVENTS.WORKOUT_REMOVED,
+              properties: {
+                date: formatDate(selectedDate),
+              },
             });
           } catch (error) {
             Alert.alert('삭제 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');

@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useMemo } from 'react';
 import { FireIcon, CalendarIcon, ChartBarIcon, PresentationChartLineIcon } from '@heroicons/react/24/solid';
+import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
 
 import { MonthlyTrendLineChart, RoutineDistributionPieChart, WeeklyVolumeBarChart } from '@/features/report';
 import { useMonthlyTrendQuery, useRoutineDistributionQuery, useWeeklyVolumeQuery } from '../model/report.query';
-import { formatDateYearMonth, trackEvent } from '@/shared/libs';
-import { ANALYTICS_EVENTS } from '@/shared/constants';
+import { formatDateYearMonth } from '@/shared/libs';
 import { Spinner, SummaryCard } from '@/shared/ui';
 import { useWorkoutQuery } from '@/entities/workout/model/workout.query';
 

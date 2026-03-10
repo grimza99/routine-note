@@ -19,3 +19,6 @@ export {
   type BaseTrackEventPayload,
   type AnalyticsProperties,
 } from './analytics';
+
+// constants
+export { API } from './shared/constants/api';

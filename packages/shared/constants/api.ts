@@ -1,4 +1,4 @@
-const API = {
+export const API = {
   AUTH: {
     SIGNUP: '/api/auth/signup',
     LOGIN: '/api/auth/login',
@@ -48,5 +48,3 @@ const API = {
     DELETE: (routineId: string) => `/api/routines/${routineId}`,
   },
 };
-
-export default API;

@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
 import { json } from '@/shared/libs/api-route';
+import { TTraining } from '@routine-note/package-shared';
 
 type ExerciseSet = {
   id: string;
@@ -14,6 +15,7 @@ type IExercise = {
   name: string | null;
   sets: ExerciseSet[] | null;
   order?: number;
+  training_type: TTraining;
 };
 
 type WorkoutRoutine = {
@@ -49,6 +51,7 @@ type RequestBody = {
 const mapRoutineExercises = (exercise: IExercise) => ({
   id: exercise.id,
   name: exercise.name ?? '',
+  training_type: exercise.training_type,
   sets:
     exercise.sets?.map((set) => ({
       id: set.id,
@@ -61,6 +64,7 @@ const mapStandaloneExercise = (exercise: IExercise) => ({
   id: exercise.id,
   name: exercise.name ?? '',
   order: exercise.order,
+  training_type: exercise.training_type,
   sets: (exercise.sets ?? []).map((set) => ({
     id: set.id,
     weight: set.weight,
@@ -98,6 +102,7 @@ const workoutSelect = `
     workout_routine_items (
       id,
       name,
+      training_type,
       sets (
       id,
       weight,
@@ -109,6 +114,7 @@ const workoutSelect = `
     id,
     name,
     item_order,
+    training_type,
     sets (
       id,
       weight,

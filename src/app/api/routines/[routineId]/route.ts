@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
+import { TTraining } from '@routine-note/package-shared';
 
 type Params = Promise<{ routineId?: string }>;
 
@@ -8,6 +9,7 @@ type RoutineItem = {
   id: string;
   item_order: number;
   name?: string;
+  training_type: TTraining;
 };
 
 type RoutineResponse = {
@@ -29,6 +31,7 @@ const mapRoutine = (routine: RoutineResponse) => ({
     id: ex.id,
     order: ex.item_order,
     name: ex.name ?? '',
+    trainingType: ex.training_type,
   })),
 });
 
@@ -62,7 +65,8 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       routine_items (
         id,
         item_order,
-        name
+        name,
+        training_type
       )
       `;
 

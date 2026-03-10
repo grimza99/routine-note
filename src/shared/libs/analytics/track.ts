@@ -1,5 +1,6 @@
-import { ANALYTICS_EVENT_NAMES, AnalyticsEventName, API, CLIENT_PLATFORM } from '@/shared/constants';
+import { ANALYTICS_EVENT_NAMES, AnalyticsEventName, API } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
+import { CLIENT_PLATFORM } from '@routine-note/package-shared';
 
 type TrackEventPayload = {
   eventName: AnalyticsEventName;

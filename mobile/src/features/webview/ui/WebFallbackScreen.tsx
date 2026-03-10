@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import { appEnv } from '../../../shared/config/env';
-import { WEB_FALLBACK_PATH } from '../../../shared/constants/routes';
+import { WEB_FALLBACK_PATH } from '@routine-note/package-shared';
 
 type WebFallbackScreenProps = {
   path: keyof typeof WEB_FALLBACK_PATH;

@@ -20,7 +20,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@routine-note/package-shared": ["../packages/index.ts"]
     }
   },
   "include": [
@@ -31,5 +32,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules","test-results","docs"]
+  "exclude": ["node_modules", "test-results", "docs"]
 }

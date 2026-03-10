@@ -9,6 +9,7 @@
     "ios": "expo run:ios"
   },
   "dependencies": {
+    "@routine-note/package-shared": "workspace:*",
     "@babel/runtime": "^7.28.6",
     "@expo/vector-icons": "^15.0.3",
     "@react-navigation/bottom-tabs": "^7.2.0",

@@ -18,5 +18,3 @@ export const formatMonthDay = (date: Date) => {
   const day = pad2(date.getDate());
   return `${month}월 ${day}일`;
 };
-
-export const createDate = (year: number, month: number, day: number) => new Date(year, month, day);

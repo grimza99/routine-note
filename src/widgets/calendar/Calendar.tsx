@@ -1,8 +1,8 @@
 'use client';
 import { useMemo } from 'react';
+import { createYearMonthDay, useMonth } from '@routine-note/package-shared';
 
-import { useMonth } from '@/shared/hooks';
-import { cn, createDate, formatDate } from '@/shared/libs';
+import { cn, formatDate } from '@/shared/libs';
 import { Button, Dot } from '@/shared/ui';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
@@ -23,25 +23,25 @@ export function Calendar({ value, onSelectDate, recordDates, className }: Calend
   const days = useMemo(() => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
-    const startOfMonth = createDate(year, month, 1);
-    const endOfMonth = createDate(year, month + 1, 0);
+    const startOfMonth = createYearMonthDay(year, month, 1);
+    const endOfMonth = createYearMonthDay(year, month + 1, 0);
     const startWeekday = startOfMonth.getDay();
     const totalDays = endOfMonth.getDate();
     const cells: { date: Date; isCurrentMonth: boolean }[] = [];
 
     for (let i = 0; i < startWeekday; i += 1) {
-      const date = createDate(year, month, -(startWeekday - i - 1));
+      const date = createYearMonthDay(year, month, -(startWeekday - i - 1));
       cells.push({ date, isCurrentMonth: false });
     }
 
     for (let day = 1; day <= totalDays; day += 1) {
-      cells.push({ date: createDate(year, month, day), isCurrentMonth: true });
+      cells.push({ date: createYearMonthDay(year, month, day), isCurrentMonth: true });
     }
 
     const totalCells = Math.ceil((startWeekday + totalDays) / 7) * 7;
     const remaining = totalCells - cells.length;
     for (let i = 1; i <= remaining; i += 1) {
-      cells.push({ date: createDate(year, month + 1, i), isCurrentMonth: false });
+      cells.push({ date: createYearMonthDay(year, month + 1, i), isCurrentMonth: false });
     }
 
     return cells;

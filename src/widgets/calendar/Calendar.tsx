@@ -5,6 +5,7 @@ import { createYearMonthDay, useMonth } from '@routine-note/package-shared';
 import { cn, formatDate } from '@/shared/libs';
 import { Button, Dot } from '@/shared/ui';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import { isSameDay } from '@/shared/libs';
 
 type CalendarProps = {
   value?: Date | null;
@@ -14,9 +15,6 @@ type CalendarProps = {
 };
 
 const WEEK_DAYS = ['일', '월', '화', '수', '목', '금', '토'];
-
-const isSameDay = (a: Date, b: Date) =>
-  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
 export function Calendar({ value, onSelectDate, recordDates, className }: CalendarProps) {
   const { currentMonth, handleChangeSetMonth, monthLabel, handlePrevMonth, handleNextMonth } = useMonth(value);

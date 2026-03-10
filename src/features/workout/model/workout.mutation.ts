@@ -3,6 +3,7 @@ import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
 import { API, QUERY_KEYS, TOAST_MESSAGE } from '@/shared/constants';
 import { useToast } from '@/shared/hooks';
 import { api } from '@/shared/libs/api';
+import { trackEvent } from '@routine-note/package-shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface IWorkoutPayload {

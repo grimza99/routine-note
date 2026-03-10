@@ -1,5 +1,7 @@
 'use client';
 
+import '@/shared/libs/analytics/configureTrackEvent';
+
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

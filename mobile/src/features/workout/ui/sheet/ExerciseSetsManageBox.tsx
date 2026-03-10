@@ -1,7 +1,8 @@
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
+import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
 
-import { formatDate, trackEvent } from '../../../../shared/libs';
+import { formatDate } from '../../../../shared/libs';
 import { workoutApi } from '../../api/workoutApi';
 import { Button, Input, NumberStepper } from '../../../../shared/ui';
 import { WorkoutExerciseItem } from '../../../../shared/types';
@@ -80,17 +81,23 @@ export function ExerciseSetsManageBox({
           if (initialSetsIds.includes(set.id)) {
             // 기존 세트 업데이트 API 호출
             await workoutApi.updateSet(set.id, { weight: set.weight, reps: set.reps });
-            void trackEvent('workout_sets_updated', {
-              date: formatDate(selectedDate),
-              ...set,
+            void trackEvent({
+              eventName: ANALYTICS_EVENTS.WORKOUT_SETS_UPDATED,
+              properties: {
+                date: formatDate(selectedDate),
+                ...set,
+              },
             });
             continue;
           }
           //새로 추가된
           await workoutApi.createSet(exercise.id, set);
-          void trackEvent('workout_sets_created', {
-            date: formatDate(selectedDate),
-            ...set,
+          void trackEvent({
+            eventName: ANALYTICS_EVENTS.WORKOUT_SETS_CREATED,
+            properties: {
+              date: formatDate(selectedDate),
+              ...set,
+            },
           });
           Alert.alert('완료', '운동 기록을 생성했습니다.');
         }

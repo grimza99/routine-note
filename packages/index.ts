@@ -10,3 +10,12 @@ export { useMonth } from './shared/hooks/useMonth';
 export { createYearMonthDay } from './shared/libs/date/createDate';
 export { formatDate, formatDateYearMonth, formatMonthDay } from './shared/libs/date/formatDate';
 
+export {
+  ANALYTICS_EVENTS,
+  ANALYTICS_EVENT_NAMES,
+  configureTrackEvent,
+  trackEvent,
+  type AnalyticsEventName,
+  type BaseTrackEventPayload,
+  type AnalyticsProperties,
+} from './analytics';

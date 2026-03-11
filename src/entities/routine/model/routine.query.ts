@@ -1,6 +1,6 @@
 import { API, QUERY_KEYS } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
-import { IExercise } from '@/shared/types';
+import { IExercise } from '@routine-note/package-shared';
 import { useQuery } from '@tanstack/react-query';
 
 interface IRoutineResponse {

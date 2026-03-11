@@ -1,16 +1,18 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { TTraining } from '@routine-note/package-shared';
 
 import { useEditRoutineMutation } from '../model/routine.muation';
 import { useRoutineDetailQuery } from '@/entities';
 import { Button, InputField, BouncingDots } from '@/shared/ui';
 import { useToast } from '@/shared/hooks';
 import { A11Y_LABELS } from '@/shared/constants';
+import RoutineItem from './RoutineItem';
 
 interface EditRoutinePayload {
   name: string;
-  exercises: { id: string; name: string }[];
+  exercises: { id: string; name: string; trainingType?: TTraining }[];
 }
 const initialPayload: EditRoutinePayload = {
   name: '',
@@ -34,6 +36,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
         exercises: draftRoutineData.exercises.map((exercise) => ({
           id: exercise.id,
           name: exercise.name,
+          trainingType: exercise.trainingType,
         })),
       });
       nextIdRef.current = draftRoutineData.exercises.length;
@@ -116,30 +119,15 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
 
         <div className="flex flex-col gap-4">
           {editRoutinePayload.exercises.map((exercise, idx) => (
-            <div
+            <RoutineItem
               key={exercise.id}
-              className="flex flex-row gap-2 rounded-lg border p-3 items-end w-full"
-              style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}
-            >
-              <InputField
-                label={`운동${idx + 1} 이름`}
-                placeholder="예: 스쿼트"
-                value={exercise.name}
-                onChange={(event) => handlePayloadChange(exercise.id, event.target.value)}
-                required
-                className="flex-2"
-              />
-              <div className="flex items-center justify-between">
-                {editRoutinePayload.exercises.length > 1 ? (
-                  <Button
-                    label="삭제"
-                    className="w-auto"
-                    variant="secondary"
-                    onClick={() => handleRemoveExercise(exercise.id)}
-                  />
-                ) : null}
-              </div>
-            </div>
+              exercise={exercise}
+              idx={idx}
+              visibleRemoveButton={editRoutinePayload.exercises.length > 1}
+              onExerciseChange={(targetId, value) => handlePayloadChange(targetId, value)}
+              onRemoveExercise={() => handleRemoveExercise(exercise.id)}
+              initialTrainingType={exercise.trainingType as 'STRENGTH' | 'CARDIO'}
+            />
           ))}
         </div>
       </section>

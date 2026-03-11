@@ -6,24 +6,25 @@ import { useCreateRoutineMutation } from '../model/routine.muation';
 import { useToast } from '@/shared/hooks';
 import { InputField, Button, BouncingDots } from '@/shared/ui';
 import { A11Y_LABELS } from '@/shared/constants';
+import RoutineItem from './RoutineItem';
 
 export default function CreateRoutineModal({ onClose }: { onClose: () => void }) {
-  const nextIdRef = useRef(1);
+  const nextIdRef = useRef('1');
   const [routineName, setRoutineName] = useState('');
-  const [exercises, setExercises] = useState<{ id: number; name: string }[]>([{ id: nextIdRef.current, name: '' }]);
+  const [exercises, setExercises] = useState<{ id: string; name: string }[]>([{ id: nextIdRef.current, name: '' }]);
   const { mutateAsync: createRoutine, isPending } = useCreateRoutineMutation();
 
   const { showToast } = useToast();
   const handleAddExercise = () => {
-    nextIdRef.current += 1;
-    setExercises((prev) => [...prev, { id: nextIdRef.current, name: '' }]);
+    const nextId = (parseInt(nextIdRef.current) + 1).toString();
+    setExercises((prev) => [...prev, { id: nextId, name: '' }]);
   };
 
-  const handleRemoveExercise = (targetId: number) => {
+  const handleRemoveExercise = (targetId: string) => {
     setExercises((prev) => prev.filter((exercise) => exercise.id !== targetId));
   };
 
-  const handleExerciseChange = (targetId: number, value: string) => {
+  const handleExerciseChange = (targetId: string, value: string) => {
     setExercises((prev) =>
       prev.map((exercise) => (exercise.id === targetId ? { ...exercise, name: value } : exercise)),
     );
@@ -43,8 +44,8 @@ export default function CreateRoutineModal({ onClose }: { onClose: () => void })
       }),
     });
     setRoutineName('');
-    setExercises([{ id: 1, name: '' }]);
-    nextIdRef.current = 1;
+    setExercises([{ id: '1', name: '' }]);
+    nextIdRef.current = '1';
     onClose();
   };
 
@@ -79,30 +80,14 @@ export default function CreateRoutineModal({ onClose }: { onClose: () => void })
 
         <div className="flex flex-col gap-4">
           {exercises.map((exercise, idx) => (
-            <div
+            <RoutineItem
               key={exercise.id}
-              className="flex flex-row gap-2 rounded-lg border p-3 items-end w-full"
-              style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}
-            >
-              <InputField
-                label={`운동${idx + 1} 이름`}
-                placeholder="예: 스쿼트"
-                value={exercise.name}
-                onChange={(event) => handleExerciseChange(exercise.id, event.target.value)}
-                required
-                className="flex-2"
-              />
-              <div className="flex items-center justify-between">
-                {exercises.length > 1 ? (
-                  <Button
-                    label="삭제"
-                    className="w-auto"
-                    variant="secondary"
-                    onClick={() => handleRemoveExercise(exercise.id)}
-                  />
-                ) : null}
-              </div>
-            </div>
+              exercise={exercise}
+              idx={idx}
+              visibleRemoveButton={exercises.length > 1}
+              onExerciseChange={(targetId, value) => handleExerciseChange(targetId, value)}
+              onRemoveExercise={() => handleRemoveExercise(exercise.id)}
+            />
           ))}
         </div>
       </section>

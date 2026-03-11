@@ -31,4 +31,6 @@ export { BouncingDots } from './loaders/BouncingDots';
 export { NumberStepper } from './steppers/NumberStepper';
 export { Dot } from './dot/Dot';
 export { Tabs } from './tabs/Tabs';
+export { BinaryTabs } from './tabs/BinaryTabs';
+
 export { default as PageHeaderBanner } from './banners/PageHeaderBanner';

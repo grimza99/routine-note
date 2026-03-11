@@ -45,13 +45,14 @@ type RequestBody = {
     id?: string;
     name?: string;
     order?: number;
+    trainingType: TTraining;
   }[];
 };
 
 const mapRoutineExercises = (exercise: IExercise) => ({
   id: exercise.id,
   name: exercise.name ?? '',
-  training_type: exercise.training_type,
+  trainingType: exercise.training_type,
   sets:
     exercise.sets?.map((set) => ({
       id: set.id,
@@ -64,7 +65,7 @@ const mapStandaloneExercise = (exercise: IExercise) => ({
   id: exercise.id,
   name: exercise.name ?? '',
   order: exercise.order,
-  training_type: exercise.training_type,
+  trainingType: exercise.training_type,
   sets: (exercise.sets ?? []).map((set) => ({
     id: set.id,
     weight: set.weight,
@@ -278,6 +279,7 @@ export async function POST(request: NextRequest) {
       workout_id: workoutId,
       name: exercise.name?.trim() ?? null,
       item_order: order,
+      training_type: exercise.trainingType,
     });
 
     if (exerciseError) {

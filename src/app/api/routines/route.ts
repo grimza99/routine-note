@@ -94,8 +94,9 @@ export async function GET(request: NextRequest) {
 interface RoutinePayload {
   name: string;
   exercises: {
-    name?: string;
+    name: string;
     order?: number;
+    trainingType: TTraining;
   }[];
 }
 
@@ -144,12 +145,14 @@ export async function POST(request: NextRequest) {
     return json(500, { error: { code: 'routines DB_ERROR', message: routineError.message } });
   }
 
+  console.log('Created routine:', body.exercises);
   if (body.exercises.length) {
     const items = body.exercises.map((exercise, index) => ({
       id: randomUUID(),
       routine_id: routine.id,
       item_order: Number(exercise.order) > 0 ? Number(exercise.order) : index + 1,
       name: exercise.name?.trim(),
+      training_type: exercise.trainingType,
     }));
 
     const invalidExercise = items.find((item) => !item.name);

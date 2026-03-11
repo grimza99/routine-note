@@ -2,31 +2,40 @@
 
 import { useRef, useState } from 'react';
 
-import { useCreateRoutineMutation } from '../model/routine.muation';
+import { IRoutinePayload, useCreateRoutineMutation } from '../model/routine.muation';
 import { useToast } from '@/shared/hooks';
 import { InputField, Button, BouncingDots } from '@/shared/ui';
 import { A11Y_LABELS } from '@/shared/constants';
 import RoutineItem from './RoutineItem';
+import { TTraining } from '@routine-note/package-shared';
 
+interface CreateRoutineExercisePayload extends Omit<IRoutinePayload, 'exercises'> {
+  id: string;
+  name: string;
+  trainingType: TTraining;
+}
 export default function CreateRoutineModal({ onClose }: { onClose: () => void }) {
   const nextIdRef = useRef('1');
   const [routineName, setRoutineName] = useState('');
-  const [exercises, setExercises] = useState<{ id: string; name: string }[]>([{ id: nextIdRef.current, name: '' }]);
+  const [exercises, setExercises] = useState<CreateRoutineExercisePayload[]>([
+    { id: nextIdRef.current, name: '', trainingType: 'STRENGTH' },
+  ]);
   const { mutateAsync: createRoutine, isPending } = useCreateRoutineMutation();
 
   const { showToast } = useToast();
   const handleAddExercise = () => {
     const nextId = (parseInt(nextIdRef.current) + 1).toString();
-    setExercises((prev) => [...prev, { id: nextId, name: '' }]);
+    setExercises((prev) => [...prev, { id: nextId, name: '', trainingType: 'STRENGTH' }]);
+    nextIdRef.current = nextId;
   };
 
   const handleRemoveExercise = (targetId: string) => {
     setExercises((prev) => prev.filter((exercise) => exercise.id !== targetId));
   };
 
-  const handleExerciseChange = (targetId: string, value: string) => {
+  const handleExerciseChange = (targetId: string, value: string, trainingType: TTraining) => {
     setExercises((prev) =>
-      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, name: value } : exercise)),
+      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, name: value, trainingType } : exercise)),
     );
   };
 
@@ -40,11 +49,11 @@ export default function CreateRoutineModal({ onClose }: { onClose: () => void })
     await createRoutine({
       name: routineName,
       exercises: exercises.map((exercise) => {
-        return { id: exercise.id, name: exercise.name };
+        return { id: exercise.id, name: exercise.name, trainingType: exercise.trainingType };
       }),
     });
     setRoutineName('');
-    setExercises([{ id: '1', name: '' }]);
+    setExercises([{ id: '1', name: '', trainingType: 'STRENGTH' }]);
     nextIdRef.current = '1';
     onClose();
   };
@@ -85,7 +94,7 @@ export default function CreateRoutineModal({ onClose }: { onClose: () => void })
               exercise={exercise}
               idx={idx}
               visibleRemoveButton={exercises.length > 1}
-              onExerciseChange={(targetId, value) => handleExerciseChange(targetId, value)}
+              onExerciseChange={(targetId, value, trainingType) => handleExerciseChange(targetId, value, trainingType)}
               onRemoveExercise={() => handleRemoveExercise(exercise.id)}
             />
           ))}

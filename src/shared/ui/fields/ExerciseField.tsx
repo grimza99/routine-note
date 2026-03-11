@@ -2,9 +2,8 @@ import { BinaryTabs, Button, InputField } from '@/shared/ui';
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { TTraining } from '@routine-note/package-shared';
 import { useState } from 'react';
-import { set } from 'zod';
 
-interface RoutineItemProps {
+interface ExerciseFieldProps {
   exercise: { id: string; name: string };
   idx: number;
   visibleRemoveButton: boolean;
@@ -13,14 +12,14 @@ interface RoutineItemProps {
   initialTrainingType?: TTraining;
 }
 
-export default function RoutineItem({
+export function ExerciseField({
   exercise,
   idx,
   visibleRemoveButton,
   onExerciseChange,
   onRemoveExercise,
   initialTrainingType = 'STRENGTH',
-}: RoutineItemProps) {
+}: ExerciseFieldProps) {
   const [trainingType, setTrainingType] = useState<TTraining>(initialTrainingType);
   const handleExerciseChange = (value?: string, trainingTypeValue?: TTraining) => {
     onExerciseChange(exercise.id, value || exercise.name, trainingTypeValue || trainingType);

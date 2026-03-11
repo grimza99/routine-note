@@ -4,9 +4,8 @@ import { useRef, useState } from 'react';
 
 import { IRoutinePayload, useCreateRoutineMutation } from '../model/routine.muation';
 import { useToast } from '@/shared/hooks';
-import { InputField, Button, BouncingDots } from '@/shared/ui';
+import { InputField, Button, BouncingDots, ExerciseField } from '@/shared/ui';
 import { A11Y_LABELS } from '@/shared/constants';
-import RoutineItem from './RoutineItem';
 import { TTraining } from '@routine-note/package-shared';
 
 interface CreateRoutineExercisePayload extends Omit<IRoutinePayload, 'exercises'> {
@@ -89,7 +88,7 @@ export default function CreateRoutineModal({ onClose }: { onClose: () => void })
 
         <div className="flex flex-col gap-4">
           {exercises.map((exercise, idx) => (
-            <RoutineItem
+            <ExerciseField
               key={exercise.id}
               exercise={exercise}
               idx={idx}

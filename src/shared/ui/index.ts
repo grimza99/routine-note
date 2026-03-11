@@ -14,6 +14,7 @@ export { AnimatedContainer } from './containers/AnimatedContainer';
 export { CopyableField } from './fields/CopyableField';
 export { InputField } from './fields/InputField';
 export { TextareaField } from './fields/TextareaField';
+export { ExerciseField } from './fields/ExerciseField';
 
 //cards
 export { RoutineCard } from './cards/RoutineCard';

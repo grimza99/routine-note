@@ -3,12 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { TTraining } from '@routine-note/package-shared';
 
-import { IRoutinePayload, useEditRoutineMutation } from '../model/routine.muation';
+import { useEditRoutineMutation } from '../model/routine.muation';
 import { useRoutineDetailQuery } from '@/entities';
-import { Button, InputField, BouncingDots } from '@/shared/ui';
+import { Button, InputField, BouncingDots, ExerciseField } from '@/shared/ui';
 import { useToast } from '@/shared/hooks';
 import { A11Y_LABELS } from '@/shared/constants';
-import RoutineItem from './RoutineItem';
 
 interface EditRoutinePayload {
   name: string;
@@ -128,7 +127,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
 
         <div className="flex flex-col gap-4">
           {editRoutinePayload.exercises.map((exercise, idx) => (
-            <RoutineItem
+            <ExerciseField
               key={exercise.id}
               exercise={exercise}
               idx={idx}

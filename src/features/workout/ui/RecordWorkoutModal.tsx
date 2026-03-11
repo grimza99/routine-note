@@ -26,7 +26,6 @@ export default function RecordWorkoutModal({
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(currentRoutineIds);
   const [addedExercises, setAddedExercises] = useState<IExercise[]>(currentStandaloneExercises);
 
-  console.log(currentStandaloneExercises);
   const { showToast } = useToast();
 
   const { data: routineTemplate } = useRoutineList();

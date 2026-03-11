@@ -39,8 +39,9 @@ export function ExerciseField({
       <BinaryTabs
         value={trainingType}
         onChange={() => {
+          const newTrainingType = trainingType === 'STRENGTH' ? 'CARDIO' : 'STRENGTH';
           setTrainingType((prev) => (prev === 'STRENGTH' ? 'CARDIO' : 'STRENGTH'));
-          handleExerciseChange();
+          handleExerciseChange(undefined, newTrainingType);
         }}
         options={[
           { label: '근력', value: 'STRENGTH' as TTraining },

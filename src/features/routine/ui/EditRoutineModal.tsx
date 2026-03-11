@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { TTraining } from '@routine-note/package-shared';
 
-import { useEditRoutineMutation } from '../model/routine.muation';
+import { IRoutinePayload, useEditRoutineMutation } from '../model/routine.muation';
 import { useRoutineDetailQuery } from '@/entities';
 import { Button, InputField, BouncingDots } from '@/shared/ui';
 import { useToast } from '@/shared/hooks';
@@ -12,12 +12,13 @@ import RoutineItem from './RoutineItem';
 
 interface EditRoutinePayload {
   name: string;
-  exercises: { id: string; name: string; trainingType?: TTraining }[];
+  exercises: { id: string; name: string; trainingType: TTraining }[];
 }
 const initialPayload: EditRoutinePayload = {
   name: '',
   exercises: [],
 };
+const initialExercise: EditRoutinePayload['exercises'][0] = { id: '1', name: '', trainingType: 'STRENGTH' };
 
 export default function EditRoutineModal({ routineId, onClose }: { routineId: string; onClose: () => void }) {
   const nextIdRef = useRef(1);
@@ -48,7 +49,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
     nextIdRef.current += 1;
     setEditRoutinePayload((prev) => ({
       ...prev,
-      exercises: [...prev.exercises, { id: nextIdRef.current.toString(), name: '' }],
+      exercises: [...prev.exercises, initialExercise],
     }));
   };
 
@@ -59,7 +60,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
     }));
   };
 
-  const handlePayloadChange = (key: 'name' | string, value: string) => {
+  const handlePayloadChange = (key: 'name' | string, value: string, trainingType?: TTraining) => {
     setIsFormDirty(true);
     if (key === 'name') {
       setEditRoutinePayload((prev) => ({
@@ -70,7 +71,9 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
       setEditRoutinePayload((prev) => ({
         ...prev,
         exercises: prev.exercises.map((exercise) =>
-          exercise.id === key.toString() ? { ...exercise, name: value.trim() } : exercise,
+          exercise.id === key.toString()
+            ? { ...exercise, name: value.trim(), trainingType: trainingType || 'STRENGTH' }
+            : exercise,
         ),
       }));
     }
@@ -82,7 +85,13 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
       showToast({ message: '하나이상의 운동이 필요합니다.', variant: 'error' });
       return;
     }
-    await editRoutine(editRoutinePayload);
+    await editRoutine({
+      name: editRoutinePayload.name,
+      exercises: editRoutinePayload.exercises.map(({ name, trainingType }) => ({
+        name,
+        trainingType,
+      })),
+    });
     setEditRoutinePayload(initialPayload);
     nextIdRef.current = 1;
     onClose();
@@ -124,7 +133,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
               exercise={exercise}
               idx={idx}
               visibleRemoveButton={editRoutinePayload.exercises.length > 1}
-              onExerciseChange={(targetId, value) => handlePayloadChange(targetId, value)}
+              onExerciseChange={(targetId, value, trainingType) => handlePayloadChange(targetId, value, trainingType)}
               onRemoveExercise={() => handleRemoveExercise(exercise.id)}
               initialTrainingType={exercise.trainingType as 'STRENGTH' | 'CARDIO'}
             />

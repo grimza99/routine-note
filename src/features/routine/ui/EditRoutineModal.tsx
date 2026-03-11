@@ -134,7 +134,6 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
               visibleRemoveButton={editRoutinePayload.exercises.length > 1}
               onExerciseChange={(targetId, value, trainingType) => handlePayloadChange(targetId, value, trainingType)}
               onRemoveExercise={() => handleRemoveExercise(exercise.id)}
-              initialTrainingType={exercise.trainingType as 'STRENGTH' | 'CARDIO'}
             />
           ))}
         </div>

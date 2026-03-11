@@ -1,15 +1,15 @@
-import { BinaryTabs, Button, InputField } from '@/shared/ui';
-import { TrashIcon } from '@heroicons/react/24/solid';
-import { TTraining } from '@routine-note/package-shared';
+'use client';
 import { useState } from 'react';
+import { TrashIcon } from '@heroicons/react/24/solid';
+import { IExercise, TTraining } from '@routine-note/package-shared';
 
+import { BinaryTabs, Button, InputField } from '@/shared/ui';
 interface ExerciseFieldProps {
-  exercise: { id: string; name: string };
+  exercise: IExercise;
   idx: number;
   visibleRemoveButton: boolean;
   onExerciseChange: (targetId: string, value: string, trainingType: TTraining) => void;
   onRemoveExercise: (targetId: string) => void;
-  initialTrainingType?: TTraining;
 }
 
 export function ExerciseField({
@@ -18,9 +18,9 @@ export function ExerciseField({
   visibleRemoveButton,
   onExerciseChange,
   onRemoveExercise,
-  initialTrainingType = 'STRENGTH',
 }: ExerciseFieldProps) {
-  const [trainingType, setTrainingType] = useState<TTraining>(initialTrainingType);
+  const [trainingType, setTrainingType] = useState<TTraining>(exercise.trainingType);
+
   const handleExerciseChange = (value?: string, trainingTypeValue?: TTraining) => {
     onExerciseChange(exercise.id, value || exercise.name, trainingTypeValue || trainingType);
   };
@@ -40,7 +40,7 @@ export function ExerciseField({
         value={trainingType}
         onChange={() => {
           setTrainingType((prev) => (prev === 'STRENGTH' ? 'CARDIO' : 'STRENGTH'));
-          handleExerciseChange(undefined, initialTrainingType === 'STRENGTH' ? 'CARDIO' : 'STRENGTH');
+          handleExerciseChange();
         }}
         options={[
           { label: '근력', value: 'STRENGTH' as TTraining },

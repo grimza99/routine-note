@@ -20,12 +20,23 @@ export function ExerciseSets({ initialExercise, onChangeEx }: Props) {
   const handleSetLengthChagne = (type: 'decreased' | 'increased') => {
     if (type === 'decreased') {
       setSets((prev) => prev.slice(0, prev.length - 1));
+      onChangeEx({
+        ...initialExercise,
+        sets: initialExercise.sets.slice(0, initialExercise.sets.length - 1),
+      });
     } else {
       if (initialExercise.trainingType === 'CARDIO') {
         setSets((prev) => [...prev, { id: crypto.randomUUID(), type: 'DISTANCE', value: 0 } as ICardioSet]);
       } else {
         setSets((prev) => [...prev, { id: crypto.randomUUID(), weight: 0, reps: 0 } as IStrengthSet]);
       }
+      onChangeEx({
+        ...initialExercise,
+        sets:
+          initialExercise.trainingType === 'CARDIO'
+            ? ([...sets, { id: crypto.randomUUID(), type: 'DISTANCE', value: 0 } as ICardioSet] as ICardioSet[])
+            : ([...sets, { id: crypto.randomUUID(), weight: 0, reps: 0 } as IStrengthSet] as IStrengthSet[]),
+      });
     }
   };
 

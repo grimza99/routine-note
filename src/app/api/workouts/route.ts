@@ -2,21 +2,11 @@ import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
 import { json } from '@/shared/libs/api-route';
-import { TTraining } from '@routine-note/package-shared';
+import { ICardioSet, IStrengthSet, IWorkoutExercise, TTraining } from '@routine-note/package-shared';
 
-type ExerciseSet = {
-  id: string;
-  weight: number | null;
-  reps: number | null;
-};
-
-type IExercise = {
-  id: string;
-  name: string | null;
-  sets: ExerciseSet[] | null;
-  order?: number;
+interface IExercise extends Omit<IWorkoutExercise, 'trainingType'> {
   training_type: TTraining;
-};
+}
 
 type WorkoutRoutine = {
   id: string;
@@ -48,29 +38,37 @@ type RequestBody = {
     trainingType: TTraining;
   }[];
 };
-
+const mapSetResponse = (sets: any) => {
+  const returnSets = [];
+  for (const set of sets) {
+    if (set.cardio_record_type && set.cardio_record_value) {
+      returnSets.push({
+        id: set.id,
+        type: set.cardio_record_type,
+        value: set.cardio_record_value,
+      } as ICardioSet);
+    } else {
+      returnSets.push({
+        id: set.id,
+        weight: set.weight,
+        reps: set.reps,
+      } as IStrengthSet);
+    }
+  }
+  return returnSets;
+};
 const mapRoutineExercises = (exercise: IExercise) => ({
   id: exercise.id,
   name: exercise.name ?? '',
   trainingType: exercise.training_type,
-  sets:
-    exercise.sets?.map((set) => ({
-      id: set.id,
-      weight: set.weight,
-      reps: set.reps,
-    })) ?? [],
+  sets: mapSetResponse(exercise.sets) ?? [],
 });
 
 const mapStandaloneExercise = (exercise: IExercise) => ({
   id: exercise.id,
   name: exercise.name ?? '',
-  order: exercise.order,
   trainingType: exercise.training_type,
-  sets: (exercise.sets ?? []).map((set) => ({
-    id: set.id,
-    weight: set.weight,
-    reps: set.reps,
-  })),
+  sets: mapSetResponse(exercise.sets) ?? [],
 });
 
 const mapWorkoutResponse = (workout: WorkoutResponse) => ({
@@ -107,8 +105,10 @@ const workoutSelect = `
       sets (
       id,
       weight,
-      reps
-    )
+      reps,
+      cardio_record_type,
+      cardio_record_value
+      )
     )
   ),
   workout_standalone_exercises (
@@ -119,7 +119,9 @@ const workoutSelect = `
     sets (
       id,
       weight,
-      reps
+      reps,
+      cardio_record_type,
+      cardio_record_value
     )
   )
 `;

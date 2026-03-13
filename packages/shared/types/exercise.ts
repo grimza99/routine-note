@@ -17,6 +17,7 @@ export interface IExercise {
   name: string;
   trainingType: TTraining;
 }
+
 export interface IWorkoutExercise extends IExercise {
-  sets: ICardioSet[] | IStrengthSet[];
+  sets: (ICardioSet | IStrengthSet)[];
 }

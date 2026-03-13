@@ -1,13 +1,10 @@
 import { API, QUERY_KEYS } from '@/shared/constants';
 import { useToast } from '@/shared/hooks';
 import { api } from '@/shared/libs/api';
+import { ICardioSet, IStrengthSet } from '@routine-note/package-shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-interface ISetsPayload {
-  id: string; // exercise 아이디
-  weight: number; // 무게
-  reps: number; // 반복 횟수
-}
+type ISetsPayload = ICardioSet | IStrengthSet;
 
 //sets 초기 생성
 export const useSetsCreateMutation = () => {

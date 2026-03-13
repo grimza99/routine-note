@@ -111,9 +111,8 @@ export function WorkoutManageModal({
             note,
           });
         }
-
-        showToast({ message: TOAST_MESSAGE.SUCCESS_UPDATE_WORKOUT });
       }
+      showToast({ message: TOAST_MESSAGE.SUCCESS_UPDATE_WORKOUT });
     } catch (error) {
       showToast({ message: '실패', variant: 'error' });
       return;

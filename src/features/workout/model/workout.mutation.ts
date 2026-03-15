@@ -1,4 +1,4 @@
-import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
+import { ANALYTICS_EVENTS, trackEvent, TTraining } from '@routine-note/package-shared';
 
 import { API, QUERY_KEYS, TOAST_MESSAGE } from '@/shared/constants';
 import { useToast } from '@/shared/hooks';
@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 interface IWorkoutPayload {
   date: string; // YYYY-MM-DD
   routines: { routineId: string; note?: '' }[];
-  standalone_exercises: { name: string; note?: '' }[];
+  standalone_exercises: { name: string; trainingType: TTraining }[];
 }
 
 //-----------------------------------------------workout 생성---------------------------------------------//

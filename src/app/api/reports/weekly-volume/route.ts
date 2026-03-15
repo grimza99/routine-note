@@ -1,11 +1,16 @@
 import { NextRequest } from 'next/server';
+import { ICardioSet } from '@routine-note/package-shared';
+
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { getCurrentWeekRange, getDayLabel, json } from '@/shared/libs/api-route';
 
 type WeeklyVolumeItem = {
   day: string;
   volume: number;
+  cardioValue: number | null;
 };
+
+type DailyCardioMap = Map<string, number>;
 
 export async function GET(request: NextRequest) {
   const userId = await getAuthUserId(request);
@@ -37,7 +42,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (!workoutIds.length) {
-    return json(200, buildWeeklyVolumes(startDate, endDate, new Map()));
+    return json(200, buildWeeklyVolumes(startDate, endDate, new Map(), new Map()));
   }
 
   const { data: workoutExercises, error: workoutExercisesError } = await supabase
@@ -73,12 +78,12 @@ export async function GET(request: NextRequest) {
   const routineItemIds = routineItems?.map((item) => item.id) ?? [];
 
   if (!workoutExerciseIds.length && !routineItemIds.length) {
-    return json(200, buildWeeklyVolumes(startDate, endDate, new Map()));
+    return json(200, buildWeeklyVolumes(startDate, endDate, new Map(), new Map()));
   }
 
   const { data: sets, error: setsError } = await supabase
     .from('sets')
-    .select('weight, reps, workout_exercise_id, workout_routine_item_id, type')
+    .select('weight, reps, cardio_record_type, cardio_record_value, workout_exercise_id, workout_routine_item_id, type')
     .or(
       `workout_exercise_id.in.(${workoutExerciseIds.join(',')}),workout_routine_item_id.in.(${routineItemIds.join(',')})`,
     );
@@ -87,6 +92,7 @@ export async function GET(request: NextRequest) {
     return json(500, { error: { code: 'DB_ERROR', message: setsError.message } });
   }
   const dailyVolume = new Map<string, number>();
+  const dailyCardio = new Map<string, number>();
   (sets ?? []).forEach((set) => {
     const workoutId =
       set.type === 'ROUTINE_EXERCISE'
@@ -99,20 +105,30 @@ export async function GET(request: NextRequest) {
     const reps = Number(set.reps ?? 0);
     const volume = weight * reps;
     dailyVolume.set(workoutDate, (dailyVolume.get(workoutDate) ?? 0) + volume);
+
+    if (set.cardio_record_type && set.cardio_record_value !== null) {
+      const cardioValue = Number(set.cardio_record_value ?? 0);
+      dailyCardio.set(workoutDate, (dailyCardio.get(workoutDate) ?? 0) + cardioValue);
+    }
   });
 
-  return json(200, buildWeeklyVolumes(startDate, endDate, dailyVolume));
+  return json(200, buildWeeklyVolumes(startDate, endDate, dailyVolume, dailyCardio));
 }
 
-function buildWeeklyVolumes(startDate: Date, endDate: Date, dailyVolume: Map<string, number>) {
+function buildWeeklyVolumes(
+  startDate: Date,
+  endDate: Date,
+  dailyVolume: Map<string, number>,
+  dailyCardio: DailyCardioMap,
+) {
   const result: WeeklyVolumeItem[] = [];
   const cursor = new Date(startDate);
-
   while (cursor <= endDate) {
     const key = cursor.toISOString().slice(0, 10);
     result.push({
       day: getDayLabel(cursor),
       volume: dailyVolume.get(key) ?? 0,
+      cardioValue: dailyCardio.get(key) ?? null,
     });
     cursor.setUTCDate(cursor.getUTCDate() + 1);
   }

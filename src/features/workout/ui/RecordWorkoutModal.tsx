@@ -1,11 +1,11 @@
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
+import { IExercise, TTraining } from '@routine-note/package-shared';
 
 import { useRoutineList } from '@/entities';
 import { useCreateWorkoutMutation, useUpdateWorkoutMutation } from '../model/workout.mutation';
-import { Button, InputField, RoutineCard } from '@/shared/ui';
+import { Button, ExerciseField, RoutineCard } from '@/shared/ui';
 import { cn, formatDate } from '@/shared/libs';
-import { IExercise } from '@/shared/types';
 import { useToast } from '@/shared/hooks';
 import { A11Y_LABELS, PATHS } from '@/shared/constants';
 export interface RecordWorkoutModalProps {
@@ -16,11 +16,6 @@ export interface RecordWorkoutModalProps {
   workoutId?: string;
 }
 
-interface Exercise {
-  id: string;
-  name: string;
-}
-
 export default function RecordWorkoutModal({
   date,
   currentRoutineIds,
@@ -29,7 +24,7 @@ export default function RecordWorkoutModal({
   workoutId,
 }: RecordWorkoutModalProps) {
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(currentRoutineIds);
-  const [addedExercises, setAddedExercises] = useState<Exercise[]>(currentStandaloneExercises);
+  const [addedExercises, setAddedExercises] = useState<IExercise[]>(currentStandaloneExercises);
 
   const { showToast } = useToast();
 
@@ -52,7 +47,7 @@ export default function RecordWorkoutModal({
   };
 
   const handleExerciseAdd = () => {
-    const newExercise: Exercise = { id: nextIdRef.current.toString(), name: '' };
+    const newExercise: IExercise = { id: nextIdRef.current.toString(), name: '', trainingType: 'STRENGTH' };
     nextIdRef.current += 1;
     setAddedExercises((prev) => [...prev, newExercise]);
   };
@@ -61,9 +56,9 @@ export default function RecordWorkoutModal({
     setAddedExercises((prev) => prev.filter((exercise) => exercise.id !== targetId));
   };
 
-  const handleExerciseChange = (targetId: string, value: string) => {
+  const handleExerciseChange = (targetId: string, value: string, trainingType: TTraining) => {
     setAddedExercises((prev) =>
-      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, name: value } : exercise)),
+      prev.map((exercise) => (exercise.id === targetId ? { ...exercise, name: value, trainingType } : exercise)),
     );
   };
 
@@ -77,13 +72,19 @@ export default function RecordWorkoutModal({
       await updateWorkout({
         date: formatDate(date), // YYYY-MM-DD
         routines: selectedRoutineIds.map((id) => ({ routineId: id })),
-        standalone_exercises: addedExercises.map((exercise) => ({ name: exercise.name })),
+        standalone_exercises: addedExercises.map((exercise) => ({
+          name: exercise.name,
+          trainingType: exercise.trainingType,
+        })),
       });
     } else {
       await createWorkout({
         date: formatDate(date), // YYYY-MM-DD
         routines: selectedRoutineIds.map((id) => ({ routineId: id })),
-        standalone_exercises: addedExercises.map((exercise) => ({ name: exercise.name })),
+        standalone_exercises: addedExercises.map((exercise) => ({
+          name: exercise.name,
+          trainingType: exercise.trainingType,
+        })),
       });
     }
     onClose();
@@ -125,28 +126,14 @@ export default function RecordWorkoutModal({
       {addedExercises.length > 0 && (
         <>
           {addedExercises.map((exercise, idx) => (
-            <div
+            <ExerciseField
               key={exercise.id}
-              className="flex flex-row gap-2 rounded-lg border p-3 items-end w-full"
-              style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}
-            >
-              <InputField
-                label={`운동${idx + 1} 이름`}
-                placeholder="예: 스쿼트"
-                value={exercise.name}
-                onChange={(event) => handleExerciseChange(exercise.id, event.target.value)}
-                required
-                className="flex-2"
-              />
-              <div className="flex items-center justify-between">
-                <Button
-                  label="삭제"
-                  className="w-auto"
-                  variant="secondary"
-                  onClick={() => handleRemoveExercise(exercise.id)}
-                />
-              </div>
-            </div>
+              exercise={exercise}
+              idx={idx}
+              visibleRemoveButton={true}
+              onExerciseChange={handleExerciseChange}
+              onRemoveExercise={handleRemoveExercise}
+            />
           ))}
         </>
       )}

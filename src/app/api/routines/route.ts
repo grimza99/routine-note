@@ -1,12 +1,15 @@
 import { NextRequest } from 'next/server';
-import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
+import { TTraining } from '@routine-note/package-shared';
 import { randomUUID } from 'crypto';
+
+import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
 
 type IExercise = {
   id: string;
   item_order: number;
   name: string;
+  training_type: TTraining;
 };
 
 type RoutineResponse = {
@@ -22,6 +25,7 @@ const mapRoutine = (routine: RoutineResponse) => ({
     id: item.id,
     order: item.item_order,
     name: item?.name ?? '',
+    training_type: item.training_type,
   })),
 });
 
@@ -63,7 +67,8 @@ export async function GET(request: NextRequest) {
         id,
         routine_id,
         item_order,
-        name
+        name,
+        training_type
       )
       `;
 
@@ -89,8 +94,9 @@ export async function GET(request: NextRequest) {
 interface RoutinePayload {
   name: string;
   exercises: {
-    name?: string;
+    name: string;
     order?: number;
+    trainingType: TTraining;
   }[];
 }
 
@@ -145,6 +151,7 @@ export async function POST(request: NextRequest) {
       routine_id: routine.id,
       item_order: Number(exercise.order) > 0 ? Number(exercise.order) : index + 1,
       name: exercise.name?.trim(),
+      training_type: exercise.trainingType,
     }));
 
     const invalidExercise = items.find((item) => !item.name);

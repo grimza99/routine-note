@@ -1,11 +1,12 @@
 import { API, QUERY_KEYS, TOAST_MESSAGE } from '@/shared/constants';
 import { useToast } from '@/shared/hooks';
 import { api } from '@/shared/libs/api';
+import { TTraining } from '@routine-note/package-shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-interface IRoutinePayload {
+export interface IRoutinePayload {
   name: string;
-  exercises: { name: string }[];
+  exercises: { name: string; trainingType: TTraining }[];
 }
 
 //-----------------------------------------------루틴 생성---------------------------------------------//

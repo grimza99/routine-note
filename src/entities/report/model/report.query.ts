@@ -45,6 +45,7 @@ export type RoutineDistributionItem = {
 export type WeeklyVolumeItem = {
   day: string;
   volume: number;
+  cardioValue: number | null;
 };
 
 //------------------------------------주차별 달성률 리포트 쿼리------------------------------------

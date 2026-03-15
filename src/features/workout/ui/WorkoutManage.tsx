@@ -5,7 +5,7 @@ import { useWorkoutByDate } from '@/entities';
 import { useDeleteWorkoutMutation } from '../model/workout.mutation';
 import { useModal } from '@/shared/hooks';
 import { formatDate, formatMonthDay } from '@/shared/libs';
-import { Button, Spinner, RecordedRoutineCard } from '@/shared/ui';
+import { Button, RecordedRoutineCard, Spinner } from '@/shared/ui';
 import { A11Y_LABELS } from '@/shared/constants';
 
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
@@ -57,24 +57,25 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
       </header>
       {workoutByDateData ? (
         <>
-          {workoutByDateData.routines.length > 0 ? (
+          {workoutByDateData.routines.length > 0 || workoutByDateData.standalone_exercises.length > 0 ? (
             <div className="flex gap-4 w-full flex-wrap">
-              {workoutByDateData.routines.map((routine) => (
-                <div
-                  key={routine.id}
-                  className="flex items-center gap-2"
-                  onClick={() =>
-                    openModal('manageWorkout', {
-                      title: routine.name,
-                      initialExercises: routine.exercises,
-                      initialNote: routine.note,
-                      routineId: routine.id,
-                    })
-                  }
-                >
-                  <RecordedRoutineCard title={routine.name} exercises={routine.exercises} note={routine.note} />
-                </div>
-              ))}
+              {workoutByDateData.routines.length > 0 &&
+                workoutByDateData.routines.map((routine) => (
+                  <div
+                    key={routine.id}
+                    className="flex items-center gap-2"
+                    onClick={() =>
+                      openModal('manageWorkout', {
+                        title: routine.name,
+                        initialExercises: routine.exercises,
+                        initialNote: routine.note,
+                        routineId: routine.id,
+                      })
+                    }
+                  >
+                    <RecordedRoutineCard title={routine.name} exercises={routine.exercises} note={routine.note} />
+                  </div>
+                ))}
               {currentStandaloneExercises.length > 0 && (
                 <div
                   className="flex items-center gap-2"

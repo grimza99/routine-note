@@ -1,4 +1,4 @@
-import { IExercise } from '@routine-note/package-shared';
+import { IExercise, IWorkoutExercise } from '@routine-note/package-shared';
 
 import { CommonConfirmModal } from '@/shared/ui/modals/CommonConfirmModal';
 import RecordWorkoutModal, { RecordWorkoutModalProps } from '../workout/ui/RecordWorkoutModal';
@@ -19,9 +19,9 @@ type DeleteWorkoutProps = {
 };
 interface IRecordWorkoutProps extends Omit<RecordWorkoutModalProps, 'onClose'> {}
 
-type ManageRoutineProps = {
+type ManageWorkoutProps = {
   title: string;
-  initialExercises: IExercise[] | null;
+  initialExercises: IWorkoutExercise[] | null;
   initialNote?: string;
   routineId: string;
 };
@@ -57,7 +57,7 @@ export const modalRegistry: ModalRegistry = {
   manageWorkout: {
     modalId: 'manageWorkout',
     render: (payload, { closeModal }) => {
-      const data = payload as ManageRoutineProps;
+      const data = payload as ManageWorkoutProps;
       return <WorkoutManageModal {...data} onClose={closeModal} />;
     },
   },

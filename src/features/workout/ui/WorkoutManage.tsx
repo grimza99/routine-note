@@ -5,7 +5,7 @@ import { useWorkoutByDate } from '@/entities';
 import { useDeleteWorkoutMutation } from '../model/workout.mutation';
 import { useModal } from '@/shared/hooks';
 import { formatDate, formatMonthDay } from '@/shared/libs';
-import { Button, Spinner, RecordedRoutineCard } from '@/shared/ui';
+import { Button, RecordedRoutineCard } from '@/shared/ui';
 import { A11Y_LABELS } from '@/shared/constants';
 
 export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) {
@@ -17,6 +17,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
   const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.routineId) || [];
   const currentStandaloneExercises = workoutByDateData?.standalone_exercises || [];
 
+  console.log('workoutByDateData', workoutByDateData);
   return (
     <section className="border-2 rounded-xl border-primary w-full min-h-50 p-4 bg-white">
       <header className="flex items-center justify-between mb-2">
@@ -56,49 +57,44 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
         </div>
       </header>
       {workoutByDateData ? (
-        <>
-          {workoutByDateData.routines.length > 0 ? (
-            <div className="flex gap-4 w-full flex-wrap">
-              {workoutByDateData.routines.map((routine) => (
-                <div
-                  key={routine.id}
-                  className="flex items-center gap-2"
-                  onClick={() =>
-                    openModal('manageWorkout', {
-                      title: routine.name,
-                      initialExercises: routine.exercises,
-                      initialNote: routine.note,
-                      routineId: routine.id,
-                    })
-                  }
-                >
-                  <RecordedRoutineCard title={routine.name} exercises={routine.exercises} note={routine.note} />
-                </div>
-              ))}
-              {currentStandaloneExercises.length > 0 && (
-                <div
-                  className="flex items-center gap-2"
-                  onClick={() =>
-                    openModal('manageWorkout', {
-                      title: '루틴외에 추가된 운동',
-                      initialExercises: currentStandaloneExercises,
-                    })
-                  }
-                >
-                  <RecordedRoutineCard
-                    key="additional-exercises"
-                    title="루틴외에 추가된 운동"
-                    exercises={currentStandaloneExercises}
-                  />
-                </div>
-              )}
+        <div className="flex gap-4 w-full flex-wrap">
+          {workoutByDateData.routines.length > 0 &&
+            workoutByDateData.routines.map((routine) => (
+              <div
+                key={routine.id}
+                className="flex items-center gap-2"
+                onClick={() =>
+                  openModal('manageWorkout', {
+                    title: routine.name,
+                    initialExercises: routine.exercises,
+                    initialNote: routine.note,
+                    routineId: routine.id,
+                  })
+                }
+              >
+                <RecordedRoutineCard title={routine.name} exercises={routine.exercises} note={routine.note} />
+              </div>
+            ))}
+          {currentStandaloneExercises.length > 0 && (
+            <div
+              className="flex items-center gap-2"
+              onClick={() =>
+                openModal('manageWorkout', {
+                  title: '루틴외에 추가된 운동',
+                  initialExercises: currentStandaloneExercises,
+                })
+              }
+            >
+              <RecordedRoutineCard
+                key="additional-exercises"
+                title="루틴외에 추가된 운동"
+                exercises={currentStandaloneExercises}
+              />
             </div>
-          ) : (
-            <p className="mt-4 text-text-secondary">운동 기록이 없습니다.</p>
           )}
-        </>
+        </div>
       ) : (
-        <Spinner />
+        <p className="mt-4 text-text-secondary">운동 기록이 없습니다.</p>
       )}
     </section>
   );

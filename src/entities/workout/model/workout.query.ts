@@ -1,6 +1,8 @@
 import { API, QUERY_KEYS } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
-import { IExercise, IRoutine } from '@/shared/types';
+import { IRoutine } from '@/shared/types';
+import { IWorkoutRoutine } from '@/shared/types/domain.type';
+import { IWorkoutExercise } from '@routine-note/package-shared';
 import { useQuery } from '@tanstack/react-query';
 
 type TWorkoutReportParams = string; // 'YYYY-MM-DD' 형식
@@ -37,8 +39,8 @@ export function useWorkoutQuery(params: TWorkoutReportParams) {
 interface IWorkoutByDateResponse {
   id: string; // workoutId
   date: string; // 'YYYY-MM-DD' 형식
-  routines: IRoutine[];
-  standalone_exercises: IExercise[]; // 루틴에 속하지 않은 운동들
+  routines: IWorkoutRoutine[];
+  standalone_exercises: IWorkoutExercise[]; // 루틴에 속하지 않은 운동들
 }
 
 export function useWorkoutByDate(params: TWorkoutReportParams) {

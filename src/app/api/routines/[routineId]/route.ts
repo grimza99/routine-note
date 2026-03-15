@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
+import { TTraining } from '@routine-note/package-shared';
+import { randomUUID } from 'crypto';
 
 type Params = Promise<{ routineId?: string }>;
 
@@ -8,6 +10,7 @@ type RoutineItem = {
   id: string;
   item_order: number;
   name?: string;
+  training_type: TTraining;
 };
 
 type RoutineResponse = {
@@ -17,9 +20,10 @@ type RoutineResponse = {
 };
 
 type RoutineExerciseRequest = {
-  id?: string;
-  name?: string;
+  id: string;
+  name: string;
   order?: number;
+  trainingType: TTraining;
 };
 
 const mapRoutine = (routine: RoutineResponse) => ({
@@ -29,6 +33,7 @@ const mapRoutine = (routine: RoutineResponse) => ({
     id: ex.id,
     order: ex.item_order,
     name: ex.name ?? '',
+    trainingType: ex.training_type,
   })),
 });
 
@@ -37,6 +42,7 @@ const parseExercises = (exercises?: RoutineExerciseRequest[]) =>
     id: ex.id,
     name: ex.name?.trim(),
     order: Number(ex.order) > 0 ? Number(ex.order) : index + 1,
+    training_type: ex.trainingType,
   }));
 
 //------------------ GET /api/routines?routineId='' -detail routine --------------------------------------------
@@ -62,7 +68,8 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       routine_items (
         id,
         item_order,
-        name
+        name,
+        training_type
       )
       `;
 
@@ -138,13 +145,16 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   }
 
   const parsedExercises = parseExercises(exercises);
+
   const items = parsedExercises.map((exercise) => ({
-    id: exercise.id,
+    id: randomUUID(),
     routine_id: routineId,
     item_order: exercise.order,
     name: exercise.name,
+    training_type: exercise.training_type,
   }));
 
+  console.log(exercises);
   const invalidExercise = items.find((item) => !item.name);
 
   if (invalidExercise) {

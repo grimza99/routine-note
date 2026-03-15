@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
+import { TTraining } from '@routine-note/package-shared';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
@@ -18,6 +19,7 @@ type IExercise = {
   name: string | null;
   sets: ExerciseSet[] | null;
   order?: number;
+  training_type: TTraining;
 };
 
 type WorkoutRoutine = {
@@ -46,8 +48,7 @@ type ExerciseRequest = {
   id: string;
   name: string;
   order?: number;
-  note?: string;
-  routineIndex?: number;
+  trainingType: TTraining;
 };
 
 type RequestBody = {
@@ -62,12 +63,14 @@ const mapRoutineItem = (item: IExercise) => ({
   note: null,
   order: item.order,
   sets: [],
+  trainingType: item.training_type as TTraining,
 });
 
 const mapStandaloneExercise = (exercise: IExercise) => ({
   id: exercise.id,
   name: exercise.name ?? '',
   order: exercise.order,
+  trainingType: exercise.training_type as TTraining,
   sets: (exercise.sets ?? []).map((set) => ({
     id: set.id,
     weight: set.weight,
@@ -340,6 +343,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
       workout_id: workoutId,
       name: exercise.name?.trim() ?? '',
       item_order: order,
+      training_type: exercise.trainingType,
     });
 
     if (exerciseError) {
@@ -363,13 +367,15 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
         routines ( id, name ),
         workout_routine_items (
           id,
-          name
+          name,
+          training_type
         )
       ),
       workout_standalone_exercises (
         id,
         name,
         item_order,
+        training_type,
         sets (
           id,
           weight,

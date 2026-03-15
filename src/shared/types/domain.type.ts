@@ -1,10 +1,4 @@
-export interface IExercise {
-  //todo 두개의 인터페이스는 record 된 데이터의 타입임
-  id: string;
-  name: string;
-  note?: string;
-  sets: { id: string; weight: number; reps: number; note?: string }[];
-}
+import { IExercise, IWorkoutExercise } from '@routine-note/package-shared';
 
 export interface IRoutine {
   id: string;
@@ -13,4 +7,13 @@ export interface IRoutine {
   order: number;
   exercises: IExercise[];
   note?: string;
+}
+
+export interface IWorkoutRoutine {
+  id: string;
+  routineId: string;
+  name: string;
+  order: number;
+  note?: string;
+  exercises: IWorkoutExercise[];
 }

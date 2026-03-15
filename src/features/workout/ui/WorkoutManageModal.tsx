@@ -1,19 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { IWorkoutExercise } from '@routine-note/package-shared';
 
 import { useSetsCreateMutation, useSetsDeleteMutation, useSetsEditMutation } from '../model/sets.mutation';
 import { useNoteMutation } from '../model/note.mutation';
-import { Button, NumberStepper, TextareaField } from '@/shared/ui';
-import SetManageBox from './SetManageBox';
-import { IExercise } from '@/shared/types';
+import { Button, TextareaField } from '@/shared/ui';
 import { useToast } from '@/shared/hooks';
 import { TOAST_MESSAGE, A11Y_LABELS } from '@/shared/constants';
-import { cn } from '@/shared/libs';
+import { ExerciseSets } from './ExerciseSets';
 
 type RoutineRecordModalContentProps = {
   title: string;
-  initialExercises: IExercise[] | null;
+  initialExercises: IWorkoutExercise[] | null;
   initialNote?: string;
   routineId?: string;
   onClose: () => void;
@@ -27,7 +26,7 @@ export function WorkoutManageModal({
   onClose,
 }: RoutineRecordModalContentProps) {
   const [note, setNote] = useState(initialNote);
-  const [exerciseState, setExerciseState] = useState(initialExercises);
+  const [exercises, setExercises] = useState(initialExercises || []);
 
   const { showToast } = useToast();
 
@@ -39,60 +38,25 @@ export function WorkoutManageModal({
 
   if (!initialExercises) return;
 
-  const handleSetLengthChagne = (exerciseId: string, isDecrease: boolean) => {
-    if (isDecrease) {
-      setExerciseState(
-        (prev) =>
-          prev?.map((exercise) => {
-            if (exercise.id === exerciseId) {
-              const newSets = exercise.sets.slice(0, -1);
-              return { ...exercise, sets: newSets };
-            }
-            return exercise;
-          }) || null,
-      );
-      return;
-    }
-    setExerciseState(
-      (prev) =>
-        prev?.map((exercise) => {
-          if (exercise.id === exerciseId) {
-            const newSet = { id: crypto.randomUUID(), weight: 0, note: '', reps: 0 };
-            return { ...exercise, sets: [...exercise.sets, newSet] };
-          }
-          return exercise;
-        }) || null,
-    );
-  };
-
-  const handleSetChange = (exerciseId: string, setId: string, weight: number, reps: number) => {
-    setExerciseState(
-      (prev) =>
-        prev?.map((exercise) => {
-          if (exercise.id === exerciseId) {
-            const updatedSets = exercise.sets.map((set) => {
-              if (set.id === setId) {
-                return { ...set, weight, reps };
-              }
-              return set;
-            });
-            return { ...exercise, sets: updatedSets };
-          }
-          return exercise;
-        }) || [],
-    );
-  };
-
   const initialSetsIds = initialExercises.flatMap((exercise) => exercise.sets.map((set) => set.id));
 
-  const handleSubmit = async () => {
-    if (!exerciseState) return;
+  const handleChagneExercises = (exercises: IWorkoutExercise) => {
+    setExercises((prev) =>
+      prev.map((ex) => {
+        if (ex.id === exercises.id) {
+          return exercises;
+        }
+        return ex;
+      }),
+    );
+  };
 
+  const handleSubmit = async () => {
     try {
-      for (const exercise of exerciseState) {
+      for (const ex of exercises || []) {
         const removedSets = initialExercises
-          .find((initialExercise) => initialExercise.id === exercise.id)
-          ?.sets.filter((set) => !exercise.sets.some((currentSet) => currentSet.id === set.id));
+          .find((initialExercise) => initialExercise.id === ex.id)
+          ?.sets.filter((set) => !ex.sets.some((currentSet) => currentSet.id === set.id));
 
         // 삭제된 세트 처리
         if (removedSets && removedSets.length > 0) {
@@ -100,34 +64,56 @@ export function WorkoutManageModal({
             await deleteSet(set.id);
           }
         }
-        for (const set of exercise.sets) {
-          if (set.reps === 0) {
-            showToast({ message: '횟수는 0보다 커야 합니다.', variant: 'error' });
-            continue;
-          }
-          if (initialSetsIds.includes(set.id)) {
-            await editSets({
-              id: set.id,
+        for (const set of ex.sets) {
+          if ('reps' in set && 'weight' in set) {
+            if (set.reps === 0 || set.weight === 0) {
+              showToast({ message: '유효한 값을 입력해주세요', variant: 'error' });
+              continue;
+            }
+            if (initialSetsIds.includes(set.id)) {
+              await editSets({
+                id: set.id,
+                weight: set.weight,
+                reps: set.reps,
+              });
+              continue;
+            }
+            await createSets({
+              id: ex.id,
               weight: set.weight,
               reps: set.reps,
             });
-            continue;
           }
 
-          await createSets({
-            id: exercise.id,
-            weight: set.weight,
-            reps: set.reps,
+          if ('value' in set && 'type' in set) {
+            if (set.value === 0) {
+              showToast({ message: '유효한 값을 입력해주세요', variant: 'error' });
+              continue;
+            }
+            if (initialSetsIds.includes(set.id)) {
+              await editSets({
+                id: set.id,
+                type: set.type,
+                value: set.value,
+              });
+              continue;
+            }
+            await createSets({
+              id: ex.id,
+              type: set.type,
+              value: set.value,
+            });
+          }
+        }
+
+        if (note.trim() !== '') {
+          await manageNote({
+            note,
           });
         }
       }
-      if (note.trim() !== '') {
-        await manageNote({
-          note,
-        });
-      }
       showToast({ message: TOAST_MESSAGE.SUCCESS_UPDATE_WORKOUT });
-    } catch {
+    } catch (error) {
       showToast({ message: '실패', variant: 'error' });
       return;
     }
@@ -141,37 +127,9 @@ export function WorkoutManageModal({
       </header>
 
       <section className="flex flex-col gap-3">
-        {exerciseState &&
-          exerciseState.map((exercise) => (
-            <div key={exercise.id} className={cn('rounded-lg border p-2 bg-surface border-border flex flex-col gap-2')}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-text-primary">{exercise.name}</p>
-                </div>
-                <NumberStepper
-                  value={exercise.sets.length || 0}
-                  min={0}
-                  onDecrease={() => handleSetLengthChagne(exercise.id, true)}
-                  onIncrease={() => handleSetLengthChagne(exercise.id, false)}
-                  ariaLabel={{
-                    increase: A11Y_LABELS.WORKOUT_SETS.addSet,
-                    decrease: A11Y_LABELS.WORKOUT_SETS.deleteSet,
-                  }}
-                />
-              </div>
-              {exercise.sets.length > 0 && (
-                <div className="flex-col flex gap-2 px-2">
-                  {exercise.sets.map((set, index) => (
-                    <SetManageBox
-                      key={set.id}
-                      index={index}
-                      initialSet={{ weight: set.weight, reps: set.reps }}
-                      onChange={(weight, reps) => handleSetChange(exercise.id, set.id, weight, reps)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
+        {exercises &&
+          exercises.map((ex) => (
+            <ExerciseSets key={ex.id} initialExercise={ex} onChangeEx={(ex) => handleChagneExercises(ex)} />
           ))}
       </section>
 

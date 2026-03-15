@@ -27,6 +27,13 @@ export const A11Y_LABELS = {
 
     weightInput: '세트 무게 입력',
     repsInput: '세트 반복 횟수 입력',
+
+    addCardioSet: '유산소 세트 추가하기',
+    deleteCardioSet: '유산소 세트 삭제하기',
+
+    cardioTypeSelect: '유산소 세트 타입 선택',
+    cardioValueInput: '유산소 세트 값 입력',
+
     memoInput: '루틴 메모 입력',
 
     confirmCreate: '세트 저장',

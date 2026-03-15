@@ -1,10 +1,10 @@
-import { IExercise } from '@/shared/types/domain.type';
+import { IWorkoutExercise } from '@routine-note/package-shared';
 import { cn } from '../../libs/cn';
 import { NoteBadge } from '../badges/NoteBadge';
 
 type RecordedRoutineCardProps = {
   title: string;
-  exercises: IExercise[];
+  exercises: IWorkoutExercise[];
   className?: string;
   note?: string;
 };

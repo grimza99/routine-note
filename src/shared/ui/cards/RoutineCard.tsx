@@ -1,4 +1,4 @@
-import { IExercise } from '@/shared/types';
+import { IExercise } from '@routine-note/package-shared';
 import { cn } from '../../libs/cn';
 
 type RoutineCardProps = {

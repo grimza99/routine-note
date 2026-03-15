@@ -14,6 +14,7 @@ export { AnimatedContainer } from './containers/AnimatedContainer';
 export { CopyableField } from './fields/CopyableField';
 export { InputField } from './fields/InputField';
 export { TextareaField } from './fields/TextareaField';
+export { ExerciseField } from './fields/ExerciseField';
 
 //cards
 export { RoutineCard } from './cards/RoutineCard';
@@ -31,4 +32,6 @@ export { BouncingDots } from './loaders/BouncingDots';
 export { NumberStepper } from './steppers/NumberStepper';
 export { Dot } from './dot/Dot';
 export { Tabs } from './tabs/Tabs';
+export { BinaryTabs } from './tabs/BinaryTabs';
+
 export { default as PageHeaderBanner } from './banners/PageHeaderBanner';

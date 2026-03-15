@@ -2,9 +2,25 @@ import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
 import { json } from '@/shared/libs/api-route';
+import { ICardioSet, IStrengthSet } from '@routine-note/package-shared';
 
 type Params = Promise<{ workoutExerciseId: string }>;
 
+const mapSetResponse = (set: any) => {
+  if (set.cardio_record_type && set.cardio_record_value) {
+    return {
+      id: set.id,
+      type: set.cardio_record_type,
+      value: set.cardio_record_value,
+    } as ICardioSet;
+  } else {
+    return {
+      id: set.id,
+      weight: set.weight,
+      reps: set.reps,
+    } as IStrengthSet;
+  }
+};
 export async function POST(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
 
@@ -12,7 +28,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
-  const body = (await request.json()) as { weight?: number; reps?: number; note?: string };
+  const body = (await request.json()) as ICardioSet | IStrengthSet;
 
   const { workoutExerciseId } = await Promise.resolve(context.params);
 
@@ -36,19 +52,21 @@ export async function POST(request: NextRequest, context: { params: Params }) {
       .insert({
         id: randomUUID(),
         workout_exercise_id: workoutExerciseId,
-        weight: body.weight ?? null,
-        reps: body.reps ?? null,
+        weight: 'weight' in body ? body.weight : null,
+        reps: 'reps' in body ? body.reps : null,
+        cardio_record_type: 'type' in body ? body.type : null,
+        cardio_record_value: 'value' in body ? body.value : null,
         type: 'STANDALONE_EXERCISE',
         created_at: new Date(),
       })
-      .select('id, weight, reps')
+      .select('id, weight, reps,cardio_record_type,cardio_record_value')
       .single();
 
     if (error) {
       return json(500, { error: { code: 'DB_ERROR', message: 'sets DB insert :' + error.message } });
     }
 
-    return json(201, data);
+    return json(201, mapSetResponse(data));
   } else {
     const { data: routineExercise, error: rouineItemsDataError } = await supabase
       .from('workout_routine_items')
@@ -70,18 +88,20 @@ export async function POST(request: NextRequest, context: { params: Params }) {
       .insert({
         id: randomUUID(),
         workout_routine_item_id: workoutExerciseId,
-        weight: body.weight ?? null,
-        reps: body.reps ?? null,
+        weight: 'weight' in body ? body.weight : null,
+        reps: 'reps' in body ? body.reps : null,
+        cardio_record_type: 'type' in body ? body.type : null,
+        cardio_record_value: 'value' in body ? body.value : null,
         type: 'ROUTINE_EXERCISE',
         created_at: new Date(),
       })
-      .select('id, weight, reps')
+      .select('id, weight, reps,cardio_record_type,cardio_record_value')
       .single();
 
     if (error) {
       return json(500, { error: { code: 'DB_ERROR', message: 'sets DB insert' + error.message } });
     }
 
-    return json(201, data);
+    return json(201, mapSetResponse(data));
   }
 }

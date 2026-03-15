@@ -145,7 +145,6 @@ export async function POST(request: NextRequest) {
     return json(500, { error: { code: 'routines DB_ERROR', message: routineError.message } });
   }
 
-  console.log('Created routine:', body.exercises);
   if (body.exercises.length) {
     const items = body.exercises.map((exercise, index) => ({
       id: randomUUID(),

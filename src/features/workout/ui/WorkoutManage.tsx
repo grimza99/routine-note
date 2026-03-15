@@ -17,7 +17,6 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
   const currentRoutineIds = workoutByDateData?.routines.map((routine) => routine.routineId) || [];
   const currentStandaloneExercises = workoutByDateData?.standalone_exercises || [];
 
-  console.log('workoutByDateData', workoutByDateData);
   return (
     <section className="border-2 rounded-xl border-primary w-full min-h-50 p-4 bg-white">
       <header className="flex items-center justify-between mb-2">

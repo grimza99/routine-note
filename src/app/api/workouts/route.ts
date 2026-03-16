@@ -57,14 +57,7 @@ const mapSetResponse = (sets: any) => {
   }
   return returnSets;
 };
-const mapRoutineExercises = (exercise: IExercise) => ({
-  id: exercise.id,
-  name: exercise.name ?? '',
-  trainingType: exercise.training_type,
-  sets: mapSetResponse(exercise.sets) ?? [],
-});
-
-const mapStandaloneExercise = (exercise: IExercise) => ({
+const mapExercises = (exercise: IExercise) => ({
   id: exercise.id,
   name: exercise.name ?? '',
   trainingType: exercise.training_type,
@@ -83,10 +76,10 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
       name: routine.routines?.name ?? null,
       note: routine.note,
       order: routine.item_order,
-      exercises: routineExercises.map(mapRoutineExercises),
+      exercises: routineExercises.map(mapExercises),
     };
   }),
-  standalone_exercises: (workout.workout_standalone_exercises ?? []).map(mapStandaloneExercise),
+  standalone_exercises: (workout.workout_standalone_exercises ?? []).map(mapExercises),
 });
 
 const workoutSelect = `

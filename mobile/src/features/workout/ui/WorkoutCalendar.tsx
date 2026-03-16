@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { createYearMonthDay } from '@routine-note/package-shared';
 
 import { workoutApi } from '../api/workoutApi';
 import { Button, DefaultContainer, Dot } from '../../../shared/ui';
 import { isSameDay } from '../../../shared/libs';
-import { createYearMonthDay, useMonth } from '@routine-note/package-shared';
+import { useMonth } from '@/shared/hooks/useMonth';
 
 type CalendarCell = {
   key: string;

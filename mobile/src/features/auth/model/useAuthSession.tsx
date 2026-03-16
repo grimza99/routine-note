@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
-import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
+import { ANALYTICS_EVENTS, ISignupPayload, trackEvent } from '@routine-note/package-shared';
 
 import { authApi } from '../api/authApi';
 import { installStorage, tokenStorage } from '../../../shared/libs/storage';
@@ -8,6 +8,7 @@ import { setAuthExpiredHandler, validateStoredSession } from '../../../shared/li
 type AuthContextValue = {
   isInitialized: boolean;
   isAuthenticated: boolean;
+  signup: (payload: ISignupPayload) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -73,6 +74,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     () => ({
       isInitialized,
       isAuthenticated,
+      signup: async (payload: ISignupPayload) => {
+        await authApi.signup(payload);
+        await authApi.login({
+          email: payload.email,
+          password: payload.password,
+        });
+        setIsAuthenticated(true);
+      },
       login: async (email: string, password: string) => {
         await authApi.login({ email, password });
         setIsAuthenticated(true);

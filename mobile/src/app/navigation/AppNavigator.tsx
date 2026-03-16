@@ -9,6 +9,7 @@ import type { MainTabParamList, RootStackParamList } from './types';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Button } from '../../shared/ui';
+import { SignupScreen } from '@/features/auth/ui/SignupScreen';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const MainTabs = createBottomTabNavigator<MainTabParamList>();
@@ -83,7 +84,10 @@ export const AppNavigator = () => {
       {isAuthenticated ? (
         <RootStack.Screen name="MainTabs" component={MainTabsScreen} />
       ) : (
-        <RootStack.Screen name="Login" component={LoginScreen} />
+        <>
+          <RootStack.Screen name="Login" component={LoginScreen} />
+          <RootStack.Screen name="Signup" component={SignupScreen} />
+        </>
       )}
     </RootStack.Navigator>
   );

@@ -17,7 +17,7 @@ type WorkoutRoutine = {
   workout_routine_items: IExercise[] | null;
 };
 
-type WorkoutResponse = {
+export type WorkoutResponse = {
   id: string;
   workout_date: string;
   workout_routines: WorkoutRoutine[] | null;
@@ -50,7 +50,7 @@ const mapExercises = (exercise: IExercise) => ({
   sets: mapSetResponse(exercise.sets) ?? [],
 });
 
-const mapWorkoutResponse = (workout: WorkoutResponse) => ({
+export const mapWorkoutResponse = (workout: WorkoutResponse) => ({
   id: workout.id,
   date: workout.workout_date,
   routines: (workout.workout_routines ?? []).map((routine) => {
@@ -72,6 +72,7 @@ const workoutSelect = `
   workout_date,
   workout_routines (
     id,
+    routine_id, 
     name,
     note,
     workout_routine_items (
@@ -203,13 +204,13 @@ export async function POST(request: NextRequest) {
   const workoutId = data.id;
 
   for (const [_, routine] of targetRoutines.entries()) {
-    const note = routines.find((r) => r.id === routine.id)?.note ?? '';
     const { data: createdRoutine, error: routineError } = await supabase
       .from('workout_routines')
       .insert({
         workout_id: workoutId,
+        routine_id: routine.id,
         name: routine?.name ?? '',
-        note,
+        note: '',
         date: body.date,
       })
       .select('id,workout_id,name,note')
@@ -234,7 +235,7 @@ export async function POST(request: NextRequest) {
         id: randomUUID(),
         workout_id: createdRoutine.workout_id,
         workout_routine_id: createdRoutine.id,
-        name: item.name ?? null,
+        name: item.name ?? '',
       }));
 
       const { error: workoutRoutineItemsError } = await supabase

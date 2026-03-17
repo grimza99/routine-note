@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TOKEN } from '@/shared/constants';
 import { json } from '@/shared/libs/api-route';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
+import { TOKEN } from '@routine-note/package-shared';
 
 export async function DELETE(request: NextRequest) {
   const userId = await getAuthUserId(request);

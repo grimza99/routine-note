@@ -77,6 +77,7 @@ export async function GET(request: NextRequest) {
     .select(routineSelect)
     .eq('user_id', userId)
     .is('deleted_at', null)
+    .is('updated_at', null)
     .order('created_at', { ascending: false });
 
   if (error) {

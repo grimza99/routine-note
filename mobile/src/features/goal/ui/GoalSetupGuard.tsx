@@ -2,8 +2,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { GoalSetupPromptModal } from './GoalSetupPromptModal';
 import { goalApi } from '../api/goalApi';
+import { useAuthSession } from '@/features/auth/model/useAuthSession';
 
 export default function GoalSetupGuard() {
+  const { isAuthenticated } = useAuthSession();
   const [isGoalSetupPromptOpen, setIsGoalSetupPromptOpen] = useState(true);
   const [goalData, setGoalData] = useState<{
     month: string;
@@ -38,6 +40,9 @@ export default function GoalSetupGuard() {
     hasOpenedRef.current = true;
   }, [goalData]);
 
+  if (!isAuthenticated) {
+    return null;
+  }
   if (isGoalSetupPromptOpen) {
     return <GoalSetupPromptModal visible={isGoalSetupPromptOpen} onClose={() => setIsGoalSetupPromptOpen(false)} />;
   }

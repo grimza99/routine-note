@@ -1,18 +1,22 @@
 import type { StyleProp, TextStyle, TextInputProps } from 'react-native';
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput, Text, View } from 'react-native';
 
 type InputProps = Omit<TextInputProps, 'style'> & {
   style?: StyleProp<TextStyle>;
+  helperText?: string;
 };
 
-export const Input = ({ style, placeholderTextColor, editable = true, ...props }: InputProps) => {
+export const Input = ({ style, helperText, placeholderTextColor, editable = true, ...props }: InputProps) => {
   return (
-    <TextInput
-      {...props}
-      editable={editable}
-      placeholderTextColor={placeholderTextColor ?? '#666666'}
-      style={[styles.base, !editable && styles.disabled, style]}
-    />
+    <View>
+      <TextInput
+        {...props}
+        editable={editable}
+        placeholderTextColor={placeholderTextColor ?? '#666666'}
+        style={[styles.base, !editable && styles.disabled, style]}
+      />
+      {helperText && <Text style={styles.helperText}>{helperText}</Text>}
+    </View>
   );
 };
 
@@ -29,5 +33,10 @@ const styles = StyleSheet.create({
   disabled: {
     backgroundColor: '#F7F7F7',
     color: '#666666',
+  },
+  helperText: {
+    color: '#666666',
+    fontSize: 10,
+    marginLeft: 4,
   },
 });

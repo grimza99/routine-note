@@ -26,3 +26,4 @@ export { API } from './shared/constants/api';
 // types
 export type { ICardioSet, IStrengthSet, TTraining, IExercise, IWorkoutExercise } from './shared/types/exercise';
 export type { IWorkoutPayload } from './shared/types/workout';
+export type { ISignupPayload } from './shared/types/auth';

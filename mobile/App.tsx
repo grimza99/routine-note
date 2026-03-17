@@ -16,8 +16,8 @@ export default function App() {
           <StatusBar style="auto" />
           <AppNavigator />
         </NavigationContainer>
+        <GoalSetupGuard />
       </AuthProvider>
-      <GoalSetupGuard />
     </SafeAreaProvider>
   );
 }

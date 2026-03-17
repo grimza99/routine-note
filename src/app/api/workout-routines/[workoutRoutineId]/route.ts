@@ -55,7 +55,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     .from('workout_routines')
     .update(update)
     .eq('id', workoutRoutineId)
-    .select('id, routine_id, item_order, note')
+    .select('id, routine_id, note')
     .maybeSingle();
 
   if (error) {
@@ -65,7 +65,6 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   return json(200, {
     id: data?.id,
     routineId: data?.routine_id,
-    order: data?.item_order,
     note: data?.note,
   });
 }

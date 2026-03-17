@@ -71,7 +71,7 @@ export default function RecordWorkoutModal({
     if (workoutId) {
       await updateWorkout({
         date: formatDate(date), // YYYY-MM-DD
-        routines: selectedRoutineIds.map((id) => ({ routineId: id })),
+        routines: selectedRoutineIds.map((id) => ({ id })),
         standalone_exercises: addedExercises.map((exercise) => ({
           name: exercise.name,
           trainingType: exercise.trainingType,
@@ -80,7 +80,7 @@ export default function RecordWorkoutModal({
     } else {
       await createWorkout({
         date: formatDate(date), // YYYY-MM-DD
-        routines: selectedRoutineIds.map((id) => ({ routineId: id })),
+        routines: selectedRoutineIds.map((id) => ({ id })),
         standalone_exercises: addedExercises.map((exercise) => ({
           name: exercise.name,
           trainingType: exercise.trainingType,

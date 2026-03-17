@@ -3,9 +3,10 @@ import { FormEvent, useState } from 'react';
 
 import { useSignupMutation } from '../model/auth.mutation';
 import { Button, InputField } from '@/shared/ui';
+import { ISignupPayload } from '@routine-note/package-shared';
 
 export default function SignupForm() {
-  const [payload, setPayload] = useState({
+  const [payload, setPayload] = useState<ISignupPayload>({
     email: '',
     username: '',
     nickname: '',
@@ -54,7 +55,7 @@ export default function SignupForm() {
         label="닉네임"
         placeholder="닉네임을 입력하세요"
         helperText="미입력시 이름이 닉네임으로 설정됩니다."
-        value={payload.nickname}
+        value={payload.nickname ?? ''}
         onChange={handleChange}
         name="nickname"
       />

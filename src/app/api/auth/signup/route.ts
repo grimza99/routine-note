@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin, getSupabaseAnon } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
-
-interface ISignUpPayload {
-  email: string;
-  password: string;
-  username: string;
-  nickname?: string | null;
-  age?: number;
-  policy: boolean;
-}
+import { ISignupPayload } from '@routine-note/package-shared';
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as ISignUpPayload;
+  const body = (await request.json()) as ISignupPayload;
 
   if (!body?.email || !body?.password || !body?.username) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: '이메일, 이름, 비밀번호는 필수 입력입니다.' } });
@@ -57,7 +49,7 @@ export async function POST(request: NextRequest) {
         username: body.username.trim(),
         nickname: normalizedNickname,
         age: body.age ?? null,
-        privacy_policy: body.policy,
+        privacy_policy: body.policy_policy,
       },
     },
   });
@@ -73,7 +65,7 @@ export async function POST(request: NextRequest) {
       username: body.username.trim(),
       nickname: normalizedNickname,
       age: body.age ?? null,
-      privacy_policy: body.policy,
+      privacy_policy: body.policy_policy,
       token: data.session?.access_token ?? null,
       profile_image: null,
     },

@@ -6,7 +6,7 @@ import { IWorkoutExercise } from '@routine-note/package-shared';
 import { useSetsCreateMutation, useSetsDeleteMutation, useSetsEditMutation } from '../model/sets.mutation';
 import { useNoteMutation } from '../model/note.mutation';
 import { Button, TextareaField } from '@/shared/ui';
-import { useToast } from '@/shared/hooks';
+import { useModal, useToast } from '@/shared/hooks';
 import { TOAST_MESSAGE, A11Y_LABELS } from '@/shared/constants';
 import { ExerciseSets } from './ExerciseSets';
 
@@ -16,6 +16,7 @@ type RoutineRecordModalContentProps = {
   initialNote?: string;
   routineId?: string;
   onClose: () => void;
+  date: string;
 };
 
 export function WorkoutManageModal({
@@ -23,12 +24,14 @@ export function WorkoutManageModal({
   initialExercises,
   initialNote = '',
   routineId,
+  date,
   onClose,
 }: RoutineRecordModalContentProps) {
   const [note, setNote] = useState(initialNote);
   const [exercises, setExercises] = useState(initialExercises || []);
 
   const { showToast } = useToast();
+  const { openModal } = useModal();
 
   const { mutateAsync: createSets } = useSetsCreateMutation();
   const { mutateAsync: deleteSet } = useSetsDeleteMutation();
@@ -120,6 +123,17 @@ export function WorkoutManageModal({
     onClose();
   };
 
+  const handleDeleteRoutine = () => {
+    openModal('deleteWorkoutRoutine', {
+      date, // 날짜 정보가 필요하다면 여기에 추가
+      routineName: title,
+      isPending: false,
+      onConfirm: async () => {
+        console.log('루틴 삭제 API 호출');
+        // 루틴 삭제 API 호출
+      },
+    });
+  };
   return (
     <div className="flex flex-col gap-4 p-6">
       <header className="flex flex-col gap-1">
@@ -143,8 +157,12 @@ export function WorkoutManageModal({
       )}
 
       <div className="flex justify-end gap-2">
-        <Button label="취소" variant="secondary" onClick={onClose} />
-        <Button label="저장" onClick={handleSubmit} aria-label={A11Y_LABELS.WORKOUT_SETS.confirmCreate} />
+        {routineId ? (
+          <Button label="운동 기록 삭제" variant="secondary" onClick={handleDeleteRoutine} />
+        ) : (
+          <Button label="취소" variant="tertiary" onClick={onClose} />
+        )}
+        <Button label="세트 저장" onClick={handleSubmit} aria-label={A11Y_LABELS.WORKOUT_SETS.confirmCreate} />
       </div>
     </div>
   );

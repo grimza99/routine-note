@@ -2,151 +2,37 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
-import { TTraining } from '@routine-note/package-shared';
+import { IWorkoutPayload } from '@routine-note/package-shared';
+import { WorkoutResponse } from '../route';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
 type Params = Promise<{ workoutId: string }>;
 
-type ExerciseSet = {
-  id: string;
-  weight: number | null;
-  reps: number | null;
-};
-
-type IExercise = {
-  id: string;
-  name: string | null;
-  sets: ExerciseSet[] | null;
-  order?: number;
-  training_type: TTraining;
-};
-
-type WorkoutRoutine = {
-  id: string;
-  routine_id: string;
-  item_order: number;
-  note: string | null;
-  routines: { id: string; name: string } | null;
-  workout_routine_items: IExercise[] | null;
-};
-
-type WorkoutResponse = {
-  id: string;
-  workout_date: string;
-  workout_routines: WorkoutRoutine[] | null;
-  workout_standalone_exercises: IExercise[] | null;
-};
-
-type RoutineRequest = {
-  routineId?: string;
-  order?: number;
-  note?: string;
-};
-
-type ExerciseRequest = {
-  id: string;
-  name: string;
-  order?: number;
-  trainingType: TTraining;
-};
-
-type RequestBody = {
-  date?: string;
-  routines?: RoutineRequest[];
-  standalone_exercises?: ExerciseRequest[];
-};
-
-const mapRoutineItem = (item: IExercise) => ({
-  id: item.id,
-  name: item.name ?? '',
-  note: null,
-  order: item.order,
-  sets: [],
-  trainingType: item.training_type as TTraining,
-});
-
-const mapStandaloneExercise = (exercise: IExercise) => ({
-  id: exercise.id,
-  name: exercise.name ?? '',
-  order: exercise.order,
-  trainingType: exercise.training_type as TTraining,
-  sets: (exercise.sets ?? []).map((set) => ({
-    id: set.id,
-    weight: set.weight,
-    reps: set.reps,
-  })),
-});
-
 const mapWorkoutResponse = (workout: WorkoutResponse) => ({
   id: workout.id,
   date: workout.workout_date,
-  routines: (workout.workout_routines ?? []).map((routine) => ({
-    id: routine.id,
-    routineId: routine.routine_id,
-    name: routine.routines?.name ?? null,
-    order: routine.item_order,
-    note: routine.note,
-    exercises: (routine.workout_routine_items ?? []).map(mapRoutineItem),
+  routines: (workout.workout_routines ?? []).map((routine) => {
+    const routineExercises = routine.workout_routine_items ?? [];
+
+    return {
+      id: routine.id,
+      name: routine.name,
+      routineId: routine.routine_id,
+      note: routine.note ?? '',
+      exercises: routineExercises.map((exercise) => ({
+        id: exercise.id,
+        name: exercise.name ?? '',
+        trainingType: exercise.training_type,
+      })),
+    };
+  }),
+  standalone_exercises: (workout.workout_standalone_exercises ?? []).map((exercise) => ({
+    id: exercise.id,
+    name: exercise.name ?? '',
+    trainingType: exercise.training_type,
   })),
-  standalone_exercises: (workout.workout_standalone_exercises ?? []).map(mapStandaloneExercise),
 });
-
-export async function GET(request: NextRequest, context: { params: Params }) {
-  const { workoutId } = await Promise.resolve(context.params);
-  const userId = await getAuthUserId(request);
-
-  if (!userId) {
-    return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
-  }
-
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from('workouts')
-    .select(
-      `
-      id,
-      workout_date,
-      workout_routines (
-        id,
-        routine_id,
-        item_order,
-        note,
-        routines ( id, name ),
-        workout_routine_items (
-          name,
-          item_order
-        )
-      ),
-      workout_standalone_exercises (
-        id,
-        name,
-        item_order,
-        sets (
-          id,
-          weight,
-          reps,
-          note,
-          set_order
-        )
-      )
-      `,
-    )
-    .eq('id', workoutId)
-    .eq('user_id', userId)
-    .maybeSingle();
-
-  if (error) {
-    return json(500, { error: { code: 'DB_ERROR', message: error.message } });
-  }
-
-  if (!data) {
-    return json(404, { error: { code: 'NOT_FOUND', message: 'workout not found' } });
-  }
-
-  return json(200, mapWorkoutResponse(data as unknown as WorkoutResponse));
-}
-
 export async function PUT(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
 
@@ -154,7 +40,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
-  const body = (await request.json()) as RequestBody;
+  const body = (await request.json()) as IWorkoutPayload;
 
   if (!body?.date || !body?.routines || !body?.standalone_exercises) {
     return json(400, {
@@ -167,12 +53,6 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
 
   if (!Array.isArray(routines) || !Array.isArray(standalone_exercises)) {
     return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routines/exercises must be arrays' } });
-  }
-
-  for (const routine of routines) {
-    if (!routine?.routineId) {
-      return json(400, { error: { code: 'VALIDATION_ERROR', message: 'routineId is required' } });
-    }
   }
 
   for (const exercise of standalone_exercises) {
@@ -202,33 +82,70 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     return json(404, { error: { code: 'NOT_FOUND', message: 'workout not found' } });
   }
 
+  const { data: workoutPrevRoutines, error: workoutRoutinesError } = await supabase
+    .from('workout_routines')
+    .select()
+    .eq('workout_id', workoutId);
+
+  if (workoutRoutinesError) {
+    return json(500, {
+      error: { code: 'workout_routines delete DB_ERROR', message: workoutRoutinesError.message },
+    });
+  }
+
+  const bodyRoutines = new Set(routines.map((item) => item.id));
+
+  const removed = workoutPrevRoutines.filter((item) => !bodyRoutines.has(item.routine_id));
+  if (removed.length) {
+    const { error: deleteWorkoutRoutinesError } = await supabase
+      .from('workout_routines')
+      .delete()
+      .eq('workout_id', workoutId)
+      .in(
+        'routine_id',
+        removed.map((routine) => routine.routine_id),
+      );
+
+    if (deleteWorkoutRoutinesError) {
+      return json(500, {
+        error: { code: 'workout_routines delete DB_ERROR', message: deleteWorkoutRoutinesError.message },
+      });
+    }
+  }
+
+  const newRoutineIds = routines
+    .map((item) => item.id)
+    .filter((id) => !workoutPrevRoutines.some((prev) => prev.routine_id === id));
+
+  const targetRoutines = [];
+
   if (routines.length) {
-    const routineIds = routines.map((routine) => routine.routineId).filter(Boolean) as string[];
     const { data: routineRows, error: routineError } = await supabase
       .from('routines')
-      .select('id')
-      .in('id', routineIds)
+      .select('id, name')
+      .in('id', newRoutineIds)
       .eq('user_id', userId);
 
     if (routineError) {
       return json(500, { error: { code: 'routines table select DB_ERROR', message: routineError.message } });
     }
-
-    if ((routineRows?.length ?? 0) !== routineIds.length) {
-      return json(404, { error: { code: 'NOT_FOUND', message: 'routine not found' } });
-    }
+    targetRoutines.push(...routineRows);
   }
 
-  const { error: updateError } = await supabase
+  const { data: existWorkouts, error } = await supabase
     .from('workouts')
-    .update({ workout_date: body.date })
+    .select('id')
+    .eq('workout_date', body.date)
     .eq('id', workoutId)
-    .eq('user_id', userId);
+    .eq('user_id', userId)
+    .maybeSingle();
 
-  if (updateError) {
-    const isConflict = updateError.code === '23505';
-    return json(isConflict ? 409 : 500, {
-      error: { code: isConflict ? 'CONFLICT' : 'workouts update DB_ERROR', message: updateError.message },
+  if (!existWorkouts) {
+    return json(400, { error: { code: 'INVALID', message: 'workout with the same date,workoutId not exists' } });
+  }
+  if (error) {
+    return json(500, {
+      error: { code: 'workouts select DB_ERROR', message: error },
     });
   }
 
@@ -243,36 +160,14 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     });
   }
 
-  const { data: workoutRoutineRows, error: workoutRoutineSelectError } = await supabase
-    .from('workout_routines')
-    .select('id')
-    .eq('workout_id', workoutId);
-
-  if (workoutRoutineSelectError) {
-    return json(500, {
-      error: { code: 'workout_routines select DB_ERROR', message: workoutRoutineSelectError.message },
-    });
-  }
-
-  const workoutRoutineIds = (workoutRoutineRows ?? []).map((row) => row.id);
-
-  if (workoutRoutineIds.length) {
-    const { error: deleteWorkoutRoutineItemsError } = await supabase
-      .from('workout_routine_items')
-      .delete()
-      .in('workout_routine_id', workoutRoutineIds);
-
-    if (deleteWorkoutRoutineItemsError) {
-      return json(500, {
-        error: { code: 'workout_routine_items delete DB_ERROR', message: deleteWorkoutRoutineItemsError.message },
-      });
-    }
-  }
-
   const { error: deleteWorkoutRoutinesError } = await supabase
     .from('workout_routines')
     .delete()
-    .eq('workout_id', workoutId);
+    .eq('workout_id', workoutId)
+    .in(
+      'routine_id',
+      targetRoutines.map((routine) => routine.id),
+    );
 
   if (deleteWorkoutRoutinesError) {
     return json(500, {
@@ -280,19 +175,18 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     });
   }
 
-  const createdRoutines: { id: string; routineId: string; order: number; note: string | null }[] = [];
-
-  for (const [index, routine] of routines.entries()) {
-    const order = routine.order ?? index + 1;
+  for (const [_, routine] of targetRoutines.entries()) {
     const { data: createdRoutine, error: routineError } = await supabase
       .from('workout_routines')
       .insert({
+        id: randomUUID(),
         workout_id: workoutId,
-        routine_id: routine.routineId,
-        item_order: order,
-        note: routine.note ?? '',
+        routine_id: routine.id,
+        date: body.date,
+        note: '',
+        name: routine.name ?? '',
       })
-      .select('id, routine_id, item_order, note')
+      .select('id, note')
       .single();
 
     if (routineError) {
@@ -301,8 +195,8 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
 
     const { data: routineItems, error: routineItemsError } = await supabase
       .from('routine_items')
-      .select('id, name, item_order')
-      .eq('routine_id', routine.routineId)
+      .select('id, name, routine_id')
+      .eq('routine_id', routine.id)
       .order('item_order', { ascending: true });
 
     if (routineItemsError) {
@@ -311,9 +205,10 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
 
     if (routineItems?.length) {
       const workoutRoutineItemsPayload = routineItems.map((item) => ({
-        id: item.id,
+        id: randomUUID(),
+        workout_id: workoutId,
         workout_routine_id: createdRoutine.id,
-        name: item.name ?? null,
+        name: item.name ?? '',
       }));
 
       const { error: workoutRoutineItemsError } = await supabase
@@ -326,23 +221,13 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
         });
       }
     }
-
-    createdRoutines.push({
-      id: createdRoutine.id,
-      routineId: createdRoutine.routine_id,
-      order: createdRoutine.item_order,
-      note: createdRoutine.note,
-    });
   }
 
-  for (const [index, exercise] of standalone_exercises.entries()) {
-    const order = exercise.order ?? index + 1;
-
+  for (const [_, exercise] of standalone_exercises.entries()) {
     const { error: exerciseError } = await supabase.from('workout_standalone_exercises').insert({
       id: randomUUID(),
       workout_id: workoutId,
       name: exercise.name?.trim() ?? '',
-      item_order: order,
       training_type: exercise.trainingType,
     });
 
@@ -362,9 +247,8 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
       workout_routines (
         id,
         routine_id,
-        item_order,
         note,
-        routines ( id, name ),
+        name,
         workout_routine_items (
           id,
           name,
@@ -374,14 +258,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
       workout_standalone_exercises (
         id,
         name,
-        item_order,
-        training_type,
-        sets (
-          id,
-          weight,
-          reps,
-          order
-        )
+        training_type
       )
       `,
     )

@@ -24,6 +24,7 @@ type ManageWorkoutProps = {
   initialExercises: IWorkoutExercise[] | null;
   initialNote?: string;
   routineId: string;
+  date: string;
 };
 //-------------------------------routine modals types-------------------------------//
 
@@ -61,7 +62,27 @@ export const modalRegistry: ModalRegistry = {
       return <WorkoutManageModal {...data} onClose={closeModal} />;
     },
   },
-
+  deleteWorkoutRoutine: {
+    //workout 기록된 루틴 삭제 확인 모달
+    modalId: 'deleteWorkoutRoutine',
+    render: (payload, { closeModal }) => {
+      const data = payload as {
+        onConfirm: () => void;
+        date: string;
+        routineName: string;
+        isPending: boolean;
+        ariaLabel?: { leftButton: string; rightButton: string };
+      };
+      return (
+        <CommonConfirmModal
+          title="운동 기록에서 루틴 삭제"
+          message={`${data.date}일자의 운동기록에서 [${data.routineName}] 루틴을 삭제하시겠습니까?`}
+          onClose={closeModal}
+          {...data}
+        />
+      );
+    },
+  },
   //-------------------------------routine modals-------------------------------//
   createRoutine: {
     modalId: 'createRoutine',

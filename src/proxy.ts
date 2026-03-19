@@ -1,5 +1,5 @@
+import { TOKEN } from '@routine-note/package-shared';
 import { NextRequest, NextResponse } from 'next/server';
-import { TOKEN } from './shared/constants';
 
 const APP_HOME_PATH = '/workout/workout-cal';
 const AUTH_PATH = '/auth';

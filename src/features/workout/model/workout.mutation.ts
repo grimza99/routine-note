@@ -1,15 +1,9 @@
-import { ANALYTICS_EVENTS, trackEvent, TTraining } from '@routine-note/package-shared';
+import { ANALYTICS_EVENTS, IWorkoutPayload, trackEvent } from '@routine-note/package-shared';
 
 import { API, QUERY_KEYS, TOAST_MESSAGE } from '@/shared/constants';
 import { useToast } from '@/shared/hooks';
 import { api } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-interface IWorkoutPayload {
-  date: string; // YYYY-MM-DD
-  routines: { routineId: string; note?: '' }[];
-  standalone_exercises: { name: string; trainingType: TTraining }[];
-}
 
 //-----------------------------------------------workout 생성---------------------------------------------//
 
@@ -128,6 +122,37 @@ export const useDeleteWorkoutMutation = (workoutId: string | undefined) => {
     },
     onSuccess: () => {
       showToast({ message: TOAST_MESSAGE.SUCCESS_DELETE_WORKOUT });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_REPORT] });
+    },
+    onError: (error) => {
+      showToast({ message: error.message, variant: 'error' });
+    },
+  });
+};
+
+//-----------------------------------------------workout에서 특정 루틴만 삭제---------------------------------------------//
+export const useDeleteWorkoutRoutineMutation = () => {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation({
+    mutationFn: async (workoutRoutineId: string) => {
+      if (!workoutRoutineId) {
+        throw new Error('Invalid workout ID');
+      }
+      try {
+        const res = await api.delete(API.WORKOUT.DELETE_ROUTINE(workoutRoutineId));
+
+        if (res.error) {
+          throw res.error;
+        }
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_BY_DATE] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.WORKOUT_REPORT] });
     },

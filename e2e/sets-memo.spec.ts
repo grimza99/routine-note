@@ -32,7 +32,7 @@ test.describe.serial('sets-memo 테스트', () => {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         data: {
           date: formatDate(new Date()),
-          routines: [{ routineId: routineData.routineId }],
+          routines: [{ id: routineData.routineId }],
           standalone_exercises: [],
         },
       });

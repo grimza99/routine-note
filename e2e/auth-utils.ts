@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { TOKEN } from '../src/shared/constants/cookie';
+import { TOKEN } from '../packages/index';
 
 export const getAuthToken = async (page: Page) => {
   const cookies = await page.context().cookies();

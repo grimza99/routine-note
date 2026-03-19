@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
-import { TOKEN } from '@/shared/constants';
+import { TOKEN } from '@routine-note/package-shared';
 
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as { newPassword?: string };

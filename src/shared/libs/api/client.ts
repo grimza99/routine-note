@@ -1,6 +1,5 @@
-import { TOKEN } from '@/shared/constants';
 import { supabaseClient } from '@/shared/libs/supabase';
-import { CLIENT_PLATFORM, MOBILE_META_HEADERS } from '@routine-note/package-shared';
+import { CLIENT_PLATFORM, MOBILE_META_HEADERS, TOKEN } from '@routine-note/package-shared';
 
 type ApiError = {
   code: string;

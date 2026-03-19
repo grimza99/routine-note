@@ -9,6 +9,7 @@ import { Button, TextareaField } from '@/shared/ui';
 import { useModal, useToast } from '@/shared/hooks';
 import { TOAST_MESSAGE, A11Y_LABELS } from '@/shared/constants';
 import { ExerciseSets } from './ExerciseSets';
+import { useDeleteWorkoutRoutineMutation } from '../model/workout.mutation';
 
 type RoutineRecordModalContentProps = {
   title: string;
@@ -37,6 +38,7 @@ export function WorkoutManageModal({
   const { mutateAsync: deleteSet } = useSetsDeleteMutation();
   const { mutateAsync: editSets } = useSetsEditMutation();
 
+  const { mutateAsync: deleteWorkoutRoutine } = useDeleteWorkoutRoutineMutation();
   const { mutateAsync: manageNote } = useNoteMutation(routineId || '');
 
   if (!initialExercises) return;
@@ -125,12 +127,11 @@ export function WorkoutManageModal({
 
   const handleDeleteRoutine = () => {
     openModal('deleteWorkoutRoutine', {
-      date, // 날짜 정보가 필요하다면 여기에 추가
+      date,
       routineName: title,
       isPending: false,
       onConfirm: async () => {
-        console.log('루틴 삭제 API 호출');
-        // 루틴 삭제 API 호출
+        deleteWorkoutRoutine(routineId || '');
       },
     });
   };

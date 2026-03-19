@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from 'react';
 
 import { cn } from '@/shared/libs';
 
-type ButtonVariant = 'primary' | 'secondary';
+type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
@@ -18,7 +18,9 @@ export function Button({ variant = 'primary', className, type, style, label, ...
       type={type ?? 'button'}
       className={cn(
         'w-full rounded-lg px-4 py-2 text-sm font-semibold',
-        variant === 'primary' ? 'border-primary bg-primary text-white' : 'border-primary bg-white text-primary border',
+        variant === 'primary' && 'border-primary bg-primary text-white',
+        variant === 'secondary' && 'border-primary bg-white text-primary border',
+        variant === 'tertiary' && 'border border-border bg-white text-text-primary',
         isDisabled && 'cursor-not-allowed border-disabeld bg-gray-200 text-gray-400',
         className,
       )}

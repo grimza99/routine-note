@@ -99,5 +99,5 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
     return json(500, { error: { code: 'DB_ERROR', message: error.message } });
   }
 
-  return json(204, { ok: true });
+  return json(200, { ok: true });
 }

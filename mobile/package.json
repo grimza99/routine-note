@@ -9,12 +9,13 @@
     "ios": "expo run:ios"
   },
   "dependencies": {
-    "@routine-note/package-shared": "workspace:*",
     "@babel/runtime": "^7.28.6",
     "@expo/vector-icons": "^15.0.3",
+    "@react-native-picker/picker": "^2.11.4",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/native-stack": "^7.2.0",
+    "@routine-note/package-shared": "workspace:*",
     "expo": "~52.0.19",
     "expo-asset": "~11.0.5",
     "expo-linking": "~7.0.5",
@@ -28,8 +29,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
-    "babel-preset-expo": "~12.0.2",
     "@types/react": "^18.3.12",
+    "babel-preset-expo": "~12.0.2",
     "typescript": "^5.7.2"
   }
 }

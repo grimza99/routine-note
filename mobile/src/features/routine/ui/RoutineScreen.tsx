@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import { TTraining } from '@routine-note/package-shared';
 
 import { routineApi } from '../api/routineApi';
 import type { RoutineItem } from '../../../shared/types/routine';
-import { BinaryTabs, Button, DraggableSheet, Input } from '../../../shared/ui';
+import { Button, DraggableSheet, Input } from '../../../shared/ui';
+import { ExerciseRow } from '@/widget';
 
 export const RoutineScreen = () => {
   const [routines, setRoutines] = useState<RoutineItem[]>([]);
@@ -171,24 +171,13 @@ export const RoutineScreen = () => {
               }}
             />
             {exercises.map((exercise, idx) => (
-              <View key={exercise.id} style={styles.exerciseRow}>
-                <Text style={{ fontSize: 12 }}>{`운동 ${idx + 1}`}</Text>
-                <Input
-                  key={exercise.id}
-                  placeholder="예: 벤치프레스"
-                  value={exercise.name}
-                  style={{ flex: 1, minWidth: 180, minHeight: 40 }}
-                  onChangeText={(value) => handleExerciseChange(exercise.id, value)}
-                />
-                <BinaryTabs
-                  options={[
-                    { label: '근력', value: 'STRENGTH' as TTraining },
-                    { label: '유산소', value: 'CARDIO' as TTraining },
-                  ]}
-                  value={'CARDIO'}
-                  onChange={() => {}}
-                />
-              </View>
+              <ExerciseRow
+                key={exercise.id}
+                initialName={exercise.name}
+                initialTrainingType={undefined}
+                onChange={() => {}}
+                idx={idx}
+              />
             ))}
             <Button
               label={isSaving ? '저장 중...' : editingRoutineId ? '루틴 수정' : '루틴 생성'}
@@ -256,11 +245,5 @@ const styles = StyleSheet.create({
   cardActions: {
     flexDirection: 'row',
     gap: 8,
-  },
-  exerciseRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 4,
-    alignItems: 'center',
   },
 });

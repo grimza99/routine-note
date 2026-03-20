@@ -1,28 +1,23 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Input } from '../../../../shared/ui';
+import { Input } from '../../../shared/ui';
+import { IStrengthSet } from '@routine-note/package-shared';
 
-interface ISet {
-  weight: string;
-  reps: string;
-}
-const INITIALTE_SET: ISet = {
-  weight: '0',
-  reps: '0',
+const INITIALTE_SET: IStrengthSet = {
+  id: '',
+  weight: 0,
+  reps: 0,
 };
-interface SetBoxProps {
+interface IStrengthSetBoxProps {
   index: number;
-  initialSet?: {
-    weight: string;
-    reps: string;
-  };
-  onChange: (weight: string, reps: string) => void;
+  initialSet?: IStrengthSet;
+  onChange: (weight: number, reps: number) => void;
 }
-export default function SetBox({ index, initialSet, onChange }: SetBoxProps) {
-  const [currentSet, setCurrentSet] = useState<ISet>(initialSet || INITIALTE_SET);
+export default function StrengthSetBox({ index, initialSet, onChange }: IStrengthSetBoxProps) {
+  const [currentSet, setCurrentSet] = useState<IStrengthSet>(initialSet || INITIALTE_SET);
 
-  const handChangeSet = (value: string, name: keyof ISet) => {
+  const handChangeSet = (value: string, name: keyof IStrengthSet) => {
     const nextSet = {
       ...currentSet,
       [name]: Number(value),
@@ -35,7 +30,7 @@ export default function SetBox({ index, initialSet, onChange }: SetBoxProps) {
     <View style={styles.container}>
       <Text>{index + 1}set : </Text>
       <Input
-        value={currentSet.weight}
+        value={currentSet.weight.toString()}
         keyboardType="numeric"
         onChange={(text) => handChangeSet(text.nativeEvent.text, 'weight')}
         style={styles.input}
@@ -43,7 +38,7 @@ export default function SetBox({ index, initialSet, onChange }: SetBoxProps) {
       <Text>kg</Text>
       <Text>×</Text>
       <Input
-        value={currentSet.reps}
+        value={currentSet.reps.toString()}
         keyboardType="numeric"
         onChange={(text) => handChangeSet(text.nativeEvent.text, 'reps')}
         style={styles.input}

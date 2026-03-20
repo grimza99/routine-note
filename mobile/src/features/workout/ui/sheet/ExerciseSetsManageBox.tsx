@@ -6,7 +6,7 @@ import { formatDate } from '../../../../shared/libs';
 import { workoutApi } from '../../api/workoutApi';
 import { Button, Input, NumberStepper } from '../../../../shared/ui';
 import { WorkoutExerciseItem } from '../../../../shared/types';
-import SetBox from './SetBox';
+import StrengthSetBox from '../../../sets/ui/StrengthSetBox';
 
 interface ExerciseSetsSheetProps {
   type: 'routine-exercise' | 'standalone-exercise';
@@ -37,16 +37,14 @@ export function ExerciseSetsManageBox({
 
   const initialSetsIds = initialExercises.flatMap((exercise) => exercise.sets.map((set) => set.id));
 
-  const handleStandAloneSetsChange = (exerciseId: string, setId: string, weight: string, reps: string) => {
-    const weightNum = parseInt(weight, 10);
-    const repsNum = parseInt(reps, 10);
+  const handleStandAloneSetsChange = (exerciseId: string, setId: string, weight: number, reps: number) => {
     setExercisesState(
       (prev) =>
         prev?.map((exercise) => {
           if (exercise.id === exerciseId) {
             const updatedSets = exercise.sets.map((set) => {
               if (set.id === setId) {
-                return { ...set, weight: weightNum, reps: repsNum };
+                return { ...set, weight, reps };
               }
               return set;
             });
@@ -164,10 +162,10 @@ export function ExerciseSetsManageBox({
               {state.sets.length > 0 && (
                 <View style={styles.setList}>
                   {state.sets.map((set, index) => (
-                    <SetBox
+                    <StrengthSetBox
                       key={set.id}
                       index={index}
-                      initialSet={{ weight: set.weight?.toString() || '0', reps: set.reps?.toString() || '0' }}
+                      initialSet={{ id: set.id, weight: set.weight ?? 0, reps: set.reps ?? 0 }}
                       onChange={(weight, reps) => handleStandAloneSetsChange(state.id, set.id, weight, reps)}
                     />
                   ))}

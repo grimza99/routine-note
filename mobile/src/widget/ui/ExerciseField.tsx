@@ -1,16 +1,27 @@
-import { BinaryTabs, Input } from '@/shared/ui';
 import { TTraining } from '@routine-note/package-shared';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-interface ExerciseRowProps {
+import { BinaryTabs, Button, Input } from '@/shared/ui';
+import { FontAwesome6 } from '@expo/vector-icons';
+
+interface ExerciseFieldProps {
   initialTrainingType?: TTraining;
   initialName?: string;
   idx: number;
   onChange: (name: string, trainigType: TTraining) => void;
+  removeBtnVisible: boolean;
+  onRemove: () => void;
 }
 
-export function ExerciseRow({ initialTrainingType, initialName, idx, onChange }: ExerciseRowProps) {
+export function ExerciseField({
+  initialTrainingType,
+  initialName,
+  idx,
+  onChange,
+  removeBtnVisible,
+  onRemove,
+}: ExerciseFieldProps) {
   const [name, setName] = useState<string>(initialName ?? '');
   const [trainingType, setTrainingType] = useState<TTraining>(initialTrainingType ?? 'STRENGTH');
 
@@ -43,6 +54,13 @@ export function ExerciseRow({ initialTrainingType, initialName, idx, onChange }:
         value={trainingType}
         onChange={(trainingType) => handleExerciseChange(undefined, trainingType)}
       />
+      {removeBtnVisible && (
+        <Button
+          label={<FontAwesome6 name="trash" size={12} color="#ffffff" />}
+          style={styles.removeButton}
+          onPress={onRemove}
+        />
+      )}
     </View>
   );
 }
@@ -51,12 +69,18 @@ const styles = StyleSheet.create({
   exerciseRow: {
     display: 'flex',
     flexDirection: 'row',
-    gap: 4,
+    gap: 2,
     alignItems: 'center',
   },
   input: {
     flex: 1,
-    minWidth: 180,
+    minWidth: 150,
     minHeight: 40,
+  },
+  removeButton: {
+    width: 28,
+    height: 28,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
   },
 });

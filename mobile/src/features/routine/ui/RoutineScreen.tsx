@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { TTraining } from '@routine-note/package-shared';
 
 import { routineApi } from '../api/routineApi';
 import type { RoutineItem } from '../../../shared/types/routine';
-import { Button, Input } from '../../../shared/ui';
+import { BinaryTabs, Button, DraggableSheet, Input } from '../../../shared/ui';
 
 export const RoutineScreen = () => {
   const [routines, setRoutines] = useState<RoutineItem[]>([]);
@@ -12,6 +13,7 @@ export const RoutineScreen = () => {
   const [routineName, setRoutineName] = useState('');
   const [exercises, setExercises] = useState([{ name: '', id: Math.random().toString() }]);
   const [editingRoutineId, setEditingRoutineId] = useState<string | null>(null);
+  const [sheetMode, setSheetMode] = useState<'create' | 'edit' | null>(null);
 
   const loadRoutines = useCallback(async () => {
     try {
@@ -28,10 +30,11 @@ export const RoutineScreen = () => {
     void loadRoutines();
   }, [loadRoutines]);
 
-  const resetForm = () => {
+  const resetSheet = () => {
     setRoutineName('');
     setExercises([{ name: '', id: Math.random().toString() }]);
     setEditingRoutineId(null);
+    setSheetMode(null);
   };
 
   const handleSubmit = async () => {
@@ -58,7 +61,7 @@ export const RoutineScreen = () => {
         await routineApi.create(payload);
       }
 
-      resetForm();
+      resetSheet();
       await loadRoutines();
     } catch (error) {
       Alert.alert('저장 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
@@ -78,7 +81,7 @@ export const RoutineScreen = () => {
             await routineApi.remove(routineId);
             await loadRoutines();
             if (editingRoutineId === routineId) {
-              resetForm();
+              resetSheet();
             }
           } catch (error) {
             Alert.alert('삭제 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
@@ -97,6 +100,7 @@ export const RoutineScreen = () => {
         id: exercise.id,
       })),
     );
+    setSheetMode('edit');
   };
 
   if (isLoading) {
@@ -117,42 +121,6 @@ export const RoutineScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.form}>
-        <Input placeholder="루틴 이름" value={routineName} onChangeText={setRoutineName} />
-        <Button
-          label="운동 추가"
-          variant="secondary"
-          onPress={handleAddExercise}
-          disabled={isSaving}
-          style={{
-            width: 80,
-            alignSelf: 'flex-end',
-            paddingHorizontal: 4,
-            paddingVertical: 6,
-          }}
-        />
-        {exercises.map((exercise, idx) => (
-          <View key={exercise.id} style={{ display: 'flex', flexDirection: 'row', gap: 4, alignItems: 'center' }}>
-            <Text>{`운동 ${idx + 1}`}</Text>
-            <Input
-              key={exercise.id}
-              placeholder="예: 벤치프레스"
-              value={exercise.name}
-              style={{ flex: 1 }}
-              onChangeText={(value) => handleExerciseChange(exercise.id, value)}
-            />
-          </View>
-        ))}
-        <View style={styles.actionsRow}>
-          <Button
-            label={isSaving ? '저장 중...' : editingRoutineId ? '루틴 수정' : '루틴 생성'}
-            onPress={handleSubmit}
-            disabled={isSaving}
-          />
-          {editingRoutineId ? <Button label="취소" variant="tertiary" onPress={resetForm} disabled={isSaving} /> : null}
-        </View>
-      </View>
-
       <FlatList
         data={routines}
         keyExtractor={(item) => item.routineId}
@@ -164,9 +132,69 @@ export const RoutineScreen = () => {
             <Text style={styles.cardTitle}>{item.name}</Text>
             <Text style={styles.cardSubTitle}>{item.exercises.map((exercise) => exercise.name).join(', ')}</Text>
             <View style={styles.cardActions}>
-              <Button label="수정" onPress={() => handleEdit(item)} variant="secondary" />
-              <Button label="삭제" onPress={() => handleDelete(item.routineId)} variant="tertiary" />
+              <Button
+                label="수정"
+                onPress={() => handleEdit(item)}
+                variant="secondary"
+                textStyle={{ fontSize: 12 }}
+                style={{ paddingHorizontal: 8, paddingVertical: 9 }}
+              />
+              <Button
+                label="삭제"
+                onPress={() => handleDelete(item.routineId)}
+                variant="tertiary"
+                textStyle={{ fontSize: 12 }}
+                style={{ paddingHorizontal: 8, paddingVertical: 9 }}
+              />
             </View>
+          </View>
+        )}
+      />
+      <Button label="루틴 추가하기" onPress={() => setSheetMode('create')} />
+
+      <DraggableSheet
+        visible={!!sheetMode}
+        onClose={resetSheet}
+        renderContent={() => (
+          <View style={styles.form}>
+            <Input placeholder="루틴 이름" value={routineName} onChangeText={setRoutineName} />
+            <Button
+              label="운동 추가"
+              variant="secondary"
+              onPress={handleAddExercise}
+              disabled={isSaving}
+              style={{
+                width: 80,
+                alignSelf: 'flex-end',
+                paddingHorizontal: 4,
+                paddingVertical: 6,
+              }}
+            />
+            {exercises.map((exercise, idx) => (
+              <View key={exercise.id} style={styles.exerciseRow}>
+                <Text style={{ fontSize: 12 }}>{`운동 ${idx + 1}`}</Text>
+                <Input
+                  key={exercise.id}
+                  placeholder="예: 벤치프레스"
+                  value={exercise.name}
+                  style={{ flex: 1, minWidth: 180, minHeight: 40 }}
+                  onChangeText={(value) => handleExerciseChange(exercise.id, value)}
+                />
+                <BinaryTabs
+                  options={[
+                    { label: '근력', value: 'STRENGTH' as TTraining },
+                    { label: '유산소', value: 'CARDIO' as TTraining },
+                  ]}
+                  value={'CARDIO'}
+                  onChange={() => {}}
+                />
+              </View>
+            ))}
+            <Button
+              label={isSaving ? '저장 중...' : editingRoutineId ? '루틴 수정' : '루틴 생성'}
+              onPress={handleSubmit}
+              disabled={isSaving}
+            />
           </View>
         )}
       />
@@ -198,10 +226,7 @@ const styles = StyleSheet.create({
   addExerciseButton: {
     width: 60,
   },
-  actionsRow: {
-    flexDirection: 'column',
-    gap: 4,
-  },
+
   listContent: {
     paddingTop: 14,
     paddingBottom: 32,
@@ -231,5 +256,11 @@ const styles = StyleSheet.create({
   cardActions: {
     flexDirection: 'row',
     gap: 8,
+  },
+  exerciseRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 4,
+    alignItems: 'center',
   },
 });

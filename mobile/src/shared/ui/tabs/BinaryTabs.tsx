@@ -51,15 +51,15 @@ export const BinaryTabs = <T extends string>({ options, value, onChange, style }
 
 const styles = StyleSheet.create({
   container: {
-    width: 140,
+    width: 130,
     flexDirection: 'row',
     alignSelf: 'flex-start',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#E6E6E6',
     backgroundColor: '#FFFFFF',
-    padding: 4,
-    gap: 4,
+    padding: 2,
+    gap: 2,
   },
   tab: {
     display: 'flex',

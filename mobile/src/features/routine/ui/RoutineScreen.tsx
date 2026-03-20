@@ -3,17 +3,14 @@ import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, V
 
 import { routineApi } from '../api/routineApi';
 import type { RoutineItem } from '../../../shared/types/routine';
-import { Button, DraggableSheet, Input } from '../../../shared/ui';
-import { ExerciseRow } from '@/widget';
+import { Button, DraggableSheet } from '../../../shared/ui';
+import { initialRoutineSheetProps, RoutineSheet, RoutineSheetProps } from './RoutineSheet';
 
 export const RoutineScreen = () => {
   const [routines, setRoutines] = useState<RoutineItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [routineName, setRoutineName] = useState('');
-  const [exercises, setExercises] = useState([{ name: '', id: Math.random().toString() }]);
-  const [editingRoutineId, setEditingRoutineId] = useState<string | null>(null);
   const [sheetMode, setSheetMode] = useState<'create' | 'edit' | null>(null);
+  const [sheetProps, setSheetProps] = useState<RoutineSheetProps>(initialRoutineSheetProps);
 
   const loadRoutines = useCallback(async () => {
     try {
@@ -31,43 +28,7 @@ export const RoutineScreen = () => {
   }, [loadRoutines]);
 
   const resetSheet = () => {
-    setRoutineName('');
-    setExercises([{ name: '', id: Math.random().toString() }]);
-    setEditingRoutineId(null);
     setSheetMode(null);
-  };
-
-  const handleSubmit = async () => {
-    if (!routineName.trim()) {
-      Alert.alert('입력 확인', '루틴 이름을 입력해 주세요.');
-      return;
-    }
-
-    if (!exercises.length) {
-      Alert.alert('입력 확인', '운동을 1개 이상 입력해 주세요.');
-      return;
-    }
-
-    try {
-      setIsSaving(true);
-      const payload = {
-        name: routineName.trim(),
-        exercises,
-      };
-
-      if (editingRoutineId) {
-        await routineApi.update(editingRoutineId, payload);
-      } else {
-        await routineApi.create(payload);
-      }
-
-      resetSheet();
-      await loadRoutines();
-    } catch (error) {
-      Alert.alert('저장 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
-    } finally {
-      setIsSaving(false);
-    }
   };
 
   const handleDelete = (routineId: string) => {
@@ -80,9 +41,6 @@ export const RoutineScreen = () => {
           try {
             await routineApi.remove(routineId);
             await loadRoutines();
-            if (editingRoutineId === routineId) {
-              resetSheet();
-            }
           } catch (error) {
             Alert.alert('삭제 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
           }
@@ -91,15 +49,34 @@ export const RoutineScreen = () => {
     ]);
   };
 
+  const handleCreate = () => {
+    setSheetProps({
+      initialName: '',
+      initialExercises: [{ name: '', id: '1', trainingType: 'STRENGTH' }],
+      editingRoutineId: null,
+      onSubmit: async () => {
+        await loadRoutines();
+        resetSheet();
+      },
+    });
+
+    setSheetMode('create');
+  };
   const handleEdit = (routine: RoutineItem) => {
-    setEditingRoutineId(routine.routineId);
-    setRoutineName(routine.name);
-    setExercises(
-      routine.exercises.map((exercise) => ({
+    setSheetProps({
+      initialName: routine.name,
+      initialExercises: routine.exercises.map((exercise) => ({
         name: exercise.name,
         id: exercise.id,
+        trainingType: exercise.trainingType,
       })),
-    );
+      editingRoutineId: routine.routineId,
+      onSubmit: async () => {
+        await loadRoutines();
+        resetSheet();
+      },
+    });
+
     setSheetMode('edit');
   };
 
@@ -110,14 +87,6 @@ export const RoutineScreen = () => {
       </View>
     );
   }
-
-  const handleExerciseChange = (id: string, text: string) => {
-    const updatedExercises = exercises.map((exercise) => (exercise.id === id ? { ...exercise, name: text } : exercise));
-    setExercises(updatedExercises);
-  };
-  const handleAddExercise = () => {
-    setExercises([...exercises, { name: '', id: Math.random().toString() }]);
-  };
 
   return (
     <View style={styles.container}>
@@ -150,42 +119,12 @@ export const RoutineScreen = () => {
           </View>
         )}
       />
-      <Button label="루틴 추가하기" onPress={() => setSheetMode('create')} />
+      <Button label="루틴 추가하기" onPress={handleCreate} />
 
       <DraggableSheet
         visible={!!sheetMode}
         onClose={resetSheet}
-        renderContent={() => (
-          <View style={styles.form}>
-            <Input placeholder="루틴 이름" value={routineName} onChangeText={setRoutineName} />
-            <Button
-              label="운동 추가"
-              variant="secondary"
-              onPress={handleAddExercise}
-              disabled={isSaving}
-              style={{
-                width: 80,
-                alignSelf: 'flex-end',
-                paddingHorizontal: 4,
-                paddingVertical: 6,
-              }}
-            />
-            {exercises.map((exercise, idx) => (
-              <ExerciseRow
-                key={exercise.id}
-                initialName={exercise.name}
-                initialTrainingType={undefined}
-                onChange={() => {}}
-                idx={idx}
-              />
-            ))}
-            <Button
-              label={isSaving ? '저장 중...' : editingRoutineId ? '루틴 수정' : '루틴 생성'}
-              onPress={handleSubmit}
-              disabled={isSaving}
-            />
-          </View>
-        )}
+        renderContent={() => <RoutineSheet {...sheetProps} />}
       />
     </View>
   );
@@ -203,19 +142,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
   },
-  form: {
-    marginTop: 8,
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E6E6E6',
-    backgroundColor: '#F7F7F7',
-    gap: 5,
-  },
   addExerciseButton: {
     width: 60,
   },
-
   listContent: {
     paddingTop: 14,
     paddingBottom: 32,

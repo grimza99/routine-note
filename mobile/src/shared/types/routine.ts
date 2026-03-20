@@ -1,3 +1,5 @@
+import { IExercise } from '@routine-note/package-shared';
+
 export interface RoutineExercise {
   id: string;
   name: string;
@@ -7,7 +9,7 @@ export interface RoutineExercise {
 export interface RoutineItem {
   routineId: string;
   name: string;
-  exercises: RoutineExercise[];
+  exercises: IExercise[];
 }
 
 export interface RoutinePayload {

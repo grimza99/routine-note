@@ -1,4 +1,4 @@
-import { TTraining } from '@routine-note/package-shared';
+import { IExercise, TTraining } from '@routine-note/package-shared';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -6,35 +6,24 @@ import { BinaryTabs, Button, Input } from '@/shared/ui';
 import { FontAwesome6 } from '@expo/vector-icons';
 
 interface ExerciseFieldProps {
-  initialTrainingType?: TTraining;
-  initialName?: string;
+  exercise: IExercise;
   idx: number;
-  onChange: (name: string, trainigType: TTraining) => void;
-  removeBtnVisible: boolean;
-  onRemove: () => void;
+  visibleRemoveButton: boolean;
+  onExerciseChange: (targetId: string, value: string, trainingType: TTraining) => void;
+  onRemoveExercise: () => void;
 }
 
 export function ExerciseField({
-  initialTrainingType,
-  initialName,
+  exercise,
   idx,
-  onChange,
-  removeBtnVisible,
-  onRemove,
+  onExerciseChange,
+  visibleRemoveButton,
+  onRemoveExercise,
 }: ExerciseFieldProps) {
-  const [name, setName] = useState<string>(initialName ?? '');
-  const [trainingType, setTrainingType] = useState<TTraining>(initialTrainingType ?? 'STRENGTH');
+  const [trainingType, setTrainingType] = useState<TTraining>(exercise.trainingType);
 
-  const handleExerciseChange = (value?: string, newTrainingType?: TTraining) => {
-    if (value?.trim()) {
-      const trimmedValue = value.trim();
-      setName(trimmedValue);
-      onChange(trimmedValue, trainingType);
-    }
-    if (newTrainingType) {
-      setTrainingType(newTrainingType);
-      onChange(name, newTrainingType);
-    }
+  const handleExerciseChange = (value?: string, trainingTypeValue?: TTraining) => {
+    onExerciseChange(exercise.id, value ?? exercise.name, trainingTypeValue || trainingType);
   };
 
   return (
@@ -42,7 +31,7 @@ export function ExerciseField({
       <Text style={{ fontSize: 12 }}>{`운동 ${idx + 1}`}</Text>
       <Input
         placeholder="예: 벤치프레스"
-        value={name}
+        value={exercise.name}
         style={styles.input}
         onChangeText={(value) => handleExerciseChange(value)}
       />
@@ -52,13 +41,17 @@ export function ExerciseField({
           { label: '유산소', value: 'CARDIO' as TTraining },
         ]}
         value={trainingType}
-        onChange={(trainingType) => handleExerciseChange(undefined, trainingType)}
+        onChange={() => {
+          const newTrainingType = trainingType === 'STRENGTH' ? 'CARDIO' : 'STRENGTH';
+          setTrainingType((prev) => (prev === 'STRENGTH' ? 'CARDIO' : 'STRENGTH'));
+          handleExerciseChange(undefined, newTrainingType);
+        }}
       />
-      {removeBtnVisible && (
+      {visibleRemoveButton && (
         <Button
           label={<FontAwesome6 name="trash" size={12} color="#ffffff" />}
           style={styles.removeButton}
-          onPress={onRemove}
+          onPress={onRemoveExercise}
         />
       )}
     </View>

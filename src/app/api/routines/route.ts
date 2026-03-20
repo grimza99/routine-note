@@ -25,7 +25,7 @@ const mapRoutine = (routine: RoutineResponse) => ({
     id: item.id,
     order: item.item_order,
     name: item?.name ?? '',
-    training_type: item.training_type,
+    trainingType: item.training_type,
   })),
 });
 

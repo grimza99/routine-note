@@ -6,11 +6,6 @@ export interface RoutineExercise {
   order?: number;
   sets: { id: string; weight: number; reps: number }[];
 }
-export interface RoutineItem {
-  routineId: string;
-  name: string;
-  exercises: IExercise[];
-}
 
 export interface RoutinePayload {
   name: string;

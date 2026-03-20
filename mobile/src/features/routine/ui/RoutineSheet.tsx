@@ -1,10 +1,10 @@
-import { Button, Input } from '@/shared/ui';
-import { ExerciseField } from '@/widget';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
-import { routineApi } from '../api/routineApi';
-import { useRef } from 'react';
 import { IExercise, TTraining } from '@routine-note/package-shared';
+
+import { ExerciseField } from '@/widget';
+import { Button, Input } from '@/shared/ui';
+import { routineApi } from '../api/routineApi';
 
 export interface RoutineSheetProps {
   initialName?: string;

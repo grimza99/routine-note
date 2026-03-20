@@ -1,10 +1,10 @@
-import { API } from '@routine-note/package-shared';
+import { API, IRoutine } from '@routine-note/package-shared';
 import { apiClient } from '../../../shared/libs/network';
-import type { RoutineItem, RoutinePayload } from '../../../shared/types/routine';
+import type { RoutinePayload } from '../../../shared/types/routine';
 
 export const routineApi = {
   async list() {
-    const response = await apiClient.request<RoutineItem[]>(API.ROUTINE.LIST);
+    const response = await apiClient.request<IRoutine[]>(API.ROUTINE.LIST);
 
     if (response.error) {
       throw new Error(response.error.message);

@@ -1,12 +1,11 @@
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState, useCallback, useEffect } from 'react';
-import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
+import { ANALYTICS_EVENTS, IRoutine, trackEvent } from '@routine-note/package-shared';
 
 import { routineApi } from '../../../routine/api/routineApi';
 import { formatDate, formatMonthDay } from '../../../../shared/libs';
 import { workoutApi } from '../../api/workoutApi';
 import { Button, Input } from '../../../../shared/ui';
-import { RoutineItem } from '../../../../shared/types/routine';
 import { WorkoutBydateResponse, WorkoutPayload } from '../../../../shared/types';
 import { WorkoutRoutineCard } from '../WorkoutRoutineCard';
 
@@ -28,7 +27,7 @@ const nomalizedResponseToPayload = (response: WorkoutBydateResponse): WorkoutPay
 
 export function WorkoutSheet({ selectedDate, initialWorkoutData, onSubmitSuccess }: WorkoutSheetProps) {
   const type = initialWorkoutData ? 'manage' : 'create';
-  const [routines, setRoutines] = useState<RoutineItem[]>([]);
+  const [routines, setRoutines] = useState<IRoutine[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>(
     initialWorkoutData ? initialWorkoutData.routines.map((routine) => routine.routineId) : [],

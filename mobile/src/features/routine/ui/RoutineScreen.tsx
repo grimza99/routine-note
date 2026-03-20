@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { IRoutine } from '@routine-note/package-shared';
 
 import { routineApi } from '../api/routineApi';
-import type { RoutineItem } from '../../../shared/types/routine';
 import { Button, DraggableSheet } from '../../../shared/ui';
 import { initialRoutineSheetProps, RoutineSheet, RoutineSheetProps } from './RoutineSheet';
 
 export const RoutineScreen = () => {
-  const [routines, setRoutines] = useState<RoutineItem[]>([]);
+  const [routines, setRoutines] = useState<IRoutine[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sheetMode, setSheetMode] = useState<'create' | 'edit' | null>(null);
   const [sheetProps, setSheetProps] = useState<RoutineSheetProps>(initialRoutineSheetProps);
@@ -62,7 +62,7 @@ export const RoutineScreen = () => {
 
     setSheetMode('create');
   };
-  const handleEdit = (routine: RoutineItem) => {
+  const handleEdit = (routine: IRoutine) => {
     setSheetProps({
       initialName: routine.name,
       initialExercises: routine.exercises.map((exercise) => ({

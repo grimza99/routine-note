@@ -7,7 +7,7 @@ export interface IWorkoutPayload {
   standalone_exercises: { name: string; trainingType: TTraining }[];
 }
 
-export interface WorkoutBydateResponse {
+export interface IWorkoutBydateResponse {
   id: string;
   date: string;
   routines: IWorkoutRoutine[];

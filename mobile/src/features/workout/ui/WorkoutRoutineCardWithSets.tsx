@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { WorkoutExerciseItem } from '../../../shared/types/workout';
+import { IWorkoutExercise } from '@routine-note/package-shared';
+
 import { NoteBadge } from '../../../shared/ui/badge/NoteBadge';
 
 interface WorkoutRoutineCardProps {
   title: string;
-  exercises: WorkoutExerciseItem[];
+  exercises: IWorkoutExercise[];
   memo?: string;
 }
 

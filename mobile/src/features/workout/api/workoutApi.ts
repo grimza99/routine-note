@@ -1,7 +1,7 @@
-import { API } from '@routine-note/package-shared';
+import { API, IWorkoutBydateResponse, IWorkoutPayload } from '@routine-note/package-shared';
 import { apiClient } from '../../../shared/libs/network';
 import { IMonthlyReportResponse } from '../../../shared/types/report';
-import type { WorkoutBydateResponse, WorkoutPayload, WorkoutSetPayload } from '../../../shared/types/workout';
+import type { WorkoutSetPayload } from '../../../shared/types/workout';
 
 const toDate = (value: Date) => {
   const year = value.getFullYear();
@@ -26,7 +26,7 @@ export const workoutApi = {
   parseExercises,
 
   async getByDate(date: string) {
-    const response = await apiClient.request<WorkoutBydateResponse>(API.WORKOUT.BY_DATE(date));
+    const response = await apiClient.request<IWorkoutBydateResponse>(API.WORKOUT.BY_DATE(date));
 
     if (response.error) {
       throw new Error(response.error.message);
@@ -55,8 +55,8 @@ export const workoutApi = {
     return data;
   },
 
-  async create(payload: WorkoutPayload) {
-    const response = await apiClient.request<WorkoutBydateResponse>(API.WORKOUT.CREATE, {
+  async create(payload: IWorkoutPayload) {
+    const response = await apiClient.request<IWorkoutBydateResponse>(API.WORKOUT.CREATE, {
       method: 'POST',
       body: JSON.stringify(payload),
     });
@@ -68,8 +68,8 @@ export const workoutApi = {
     return response.data;
   },
 
-  async update(workoutId: string, payload: WorkoutPayload) {
-    const response = await apiClient.request<WorkoutBydateResponse>(API.WORKOUT.UPDATE(workoutId), {
+  async update(workoutId: string, payload: IWorkoutPayload) {
+    const response = await apiClient.request<IWorkoutBydateResponse>(API.WORKOUT.UPDATE(workoutId), {
       method: 'PUT',
       body: JSON.stringify(payload),
     });

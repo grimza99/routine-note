@@ -10,7 +10,7 @@ interface ExerciseFieldProps {
   idx: number;
   visibleRemoveButton: boolean;
   onExerciseChange: (targetId: string, value: string, trainingType: TTraining) => void;
-  onRemoveExercise: () => void;
+  onRemoveExercise: (targetId: string) => void;
 }
 
 export function ExerciseField({
@@ -51,7 +51,7 @@ export function ExerciseField({
         <Button
           label={<FontAwesome6 name="trash" size={12} color="#ffffff" />}
           style={styles.removeButton}
-          onPress={onRemoveExercise}
+          onPress={() => onRemoveExercise(exercise.id)}
         />
       )}
     </View>

@@ -1,18 +1,26 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { IWorkoutBydateResponse } from '@routine-note/package-shared';
 
 import { formatMonthDay } from '../../../../shared/libs';
-import { WorkoutBydateResponse } from '../../../../shared/types';
-import { ExerciseSetsManageBox } from './ExerciseSetsManageBox';
+import { ExerciseWithSet } from '@/features/sets/ui/ExerciseWithSet';
+import { Button } from '@/shared/ui';
+import { useState } from 'react';
 
 interface WorkoutSheetSetsProps {
   selectedDate: Date;
-  initialWorkoutData?: WorkoutBydateResponse | null;
+  initialWorkoutData?: IWorkoutBydateResponse | null;
   onSubmitSuccess: (date: Date) => void;
 }
 
 export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuccess }: WorkoutSheetSetsProps) {
+  const [note, setNote] = useState('');
+
+  const [isSaving, setIsSaving] = useState(false);
+
   const routines = initialWorkoutData ? initialWorkoutData.routines : [];
   const standaloneExercises = initialWorkoutData ? initialWorkoutData.standalone_exercises : [];
+
+  const handleSubmit = async () => {};
 
   if (routines.length === 0 && standaloneExercises.length === 0) {
     return (
@@ -27,41 +35,47 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
       <Text style={styles.sheetTitle}>{formatMonthDay(selectedDate)} 운동 세트 관리</Text>
       <ScrollView contentContainerStyle={styles.list}>
         {routines.map((routine) => (
-          <ExerciseSetsManageBox
-            key={routine.id}
-            type="routine-exercise"
-            label={routine.name}
-            selectedDate={selectedDate}
-            initialExercises={routine.exercises}
-            initialNote={routine.note}
-            workoutRoutineId={routine.id}
-            onSubmitSuccess={onSubmitSuccess}
-          />
+          <View>
+            <Text style={styles.routineName}>{routine.name}</Text>
+            {routine.exercises.map((exercise) => (
+              <ExerciseWithSet key={exercise.id} initialExercise={exercise} onChangeEx={() => {}} />
+            ))}
+          </View>
         ))}
-        <ExerciseSetsManageBox
-          label={'루틴 외 운동'}
-          type="standalone-exercise"
-          selectedDate={selectedDate}
-          initialExercises={standaloneExercises}
-          onSubmitSuccess={onSubmitSuccess}
-        />
+        {standaloneExercises.map((ex) => (
+          <ExerciseWithSet key={ex.id} initialExercise={ex} onChangeEx={() => {}} />
+        ))}
       </ScrollView>
+      {/* {type === 'routine-exercise' && (
+        <Input
+          placeholder="루틴에 대한 메모를 자유롭게 남겨주세요."
+          value={note}
+          onChange={(text) => setNote(text.nativeEvent.text)}
+          multiline
+          style={{ height: 60, textAlignVertical: 'top' }}
+        />
+      )} */}
+      <Button label={isSaving ? '...' : '저장'} onPress={handleSubmit} disabled={isSaving} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   sheetContent: {
-    gap: 10,
-    paddingBottom: 40,
+    gap: 20,
   },
   sheetTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: '#1A1A1A',
   },
+  routineName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
   list: {
     height: 'auto',
-    gap: 8,
+    gap: 4,
   },
 });

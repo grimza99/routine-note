@@ -28,22 +28,22 @@ export default function StrengthSetBox({ index, initialSet, onChange }: IStrengt
 
   return (
     <View style={styles.container}>
-      <Text>{index + 1}set : </Text>
+      <Text style={styles.xsText}>{index + 1}set : </Text>
       <Input
         value={currentSet.weight.toString()}
         keyboardType="numeric"
         onChange={(text) => handChangeSet(text.nativeEvent.text, 'weight')}
         style={styles.input}
       />
-      <Text>kg</Text>
-      <Text>×</Text>
+      <Text style={styles.xsText}>kg</Text>
+      <Text style={styles.xsText}>×</Text>
       <Input
         value={currentSet.reps.toString()}
         keyboardType="numeric"
         onChange={(text) => handChangeSet(text.nativeEvent.text, 'reps')}
         style={styles.input}
       />
-      <Text>회</Text>
+      <Text style={styles.xsText}>회</Text>
     </View>
   );
 }
@@ -54,9 +54,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
+  xsText: {
+    fontSize: 12,
+  },
   input: {
     width: 60,
-    height: 20,
+    height: 35,
+
     paddingHorizontal: 4,
     paddingVertical: 0,
     color: '#000',

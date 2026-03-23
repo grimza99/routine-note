@@ -1,12 +1,12 @@
-import { API, ICardioSet, IStrengthSet, IWorkoutBydateResponse } from '@routine-note/package-shared';
+import { API, ICardioSet, IStrengthSet } from '@routine-note/package-shared';
 import { apiClient } from '../../../shared/libs/network';
-import { IMonthlyReportResponse } from '../../../shared/types/report';
 
 type ISetsPayload = ICardioSet | IStrengthSet;
 
+type ISetResponse = ICardioSet | IStrengthSet;
 export const setsApi = {
   async create(payload: ISetsPayload) {
-    const response = await apiClient.request<IMonthlyReportResponse>(API.WORKOUT.SETS.CREATE(payload.id), {
+    const response = await apiClient.request<ISetResponse>(API.WORKOUT.SETS.CREATE(payload.id), {
       method: 'POST',
       body: JSON.stringify(payload),
     });
@@ -24,7 +24,7 @@ export const setsApi = {
   },
 
   async update(payload: ISetsPayload) {
-    const response = await apiClient.request<IWorkoutBydateResponse>(API.WORKOUT.SETS.EDIT(payload.id), {
+    const response = await apiClient.request<ISetResponse>(API.WORKOUT.SETS.EDIT(payload.id), {
       method: 'PATCH',
       body: JSON.stringify(payload),
     });

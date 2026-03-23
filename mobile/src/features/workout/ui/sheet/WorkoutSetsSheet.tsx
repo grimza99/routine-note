@@ -1,10 +1,12 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { IWorkoutBydateResponse } from '@routine-note/package-shared';
+import { IWorkoutBydateResponse, IWorkoutExercise } from '@routine-note/package-shared';
+import { useState } from 'react';
 
 import { formatMonthDay } from '../../../../shared/libs';
 import { ExerciseWithSet } from '@/features/sets/ui/ExerciseWithSet';
 import { Button } from '@/shared/ui';
-import { useState } from 'react';
+import { setsApi } from '@/features/sets/api/setsApi';
+import WorkoutRoutine from '@/features/sets/ui/WorkoutRoutine';
 
 interface WorkoutSheetSetsProps {
   selectedDate: Date;
@@ -13,14 +15,81 @@ interface WorkoutSheetSetsProps {
 }
 
 export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuccess }: WorkoutSheetSetsProps) {
-  const [note, setNote] = useState('');
-
-  const [isSaving, setIsSaving] = useState(false);
+  const [isStandAloneSaving, setIsStandAloneSaving] = useState(false);
+  const [currentStandaloneExercises, setCurrentStandaloneExercises] = useState(
+    initialWorkoutData ? initialWorkoutData.standalone_exercises : [],
+  );
 
   const routines = initialWorkoutData ? initialWorkoutData.routines : [];
   const standaloneExercises = initialWorkoutData ? initialWorkoutData.standalone_exercises : [];
+  const initialStandAloneSetsIds = initialWorkoutData
+    ? initialWorkoutData.standalone_exercises.flatMap((exercise) => exercise.sets.map((set) => set.id))
+    : [];
 
-  const handleSubmit = async () => {};
+  const handleChangeEx = (newEx: IWorkoutExercise) => {
+    setCurrentStandaloneExercises((prev) => {
+      const otherExercises = prev.filter((ex) => ex.id !== newEx.id);
+      return [...otherExercises, newEx];
+    });
+  };
+  const handleSubmitStandalone = async () => {
+    try {
+      for (const ex of currentStandaloneExercises || []) {
+        const removedSets = standaloneExercises
+          .find((initialExercise) => initialExercise.id === ex.id)
+          ?.sets.filter((set) => !ex.sets.some((currentSet) => currentSet.id === set.id));
+
+        // 삭제된 세트 처리
+        if (removedSets && removedSets.length > 0) {
+          for (const set of removedSets) {
+            // await deleteSet(set.id);
+          }
+        }
+        for (const set of ex.sets) {
+          if ('reps' in set && 'weight' in set) {
+            if (set.reps === 0 || set.weight === 0) {
+              continue;
+            }
+            if (initialStandAloneSetsIds.includes(set.id)) {
+              await setsApi.update({
+                id: set.id,
+                weight: set.weight,
+                reps: set.reps,
+              });
+              continue;
+            }
+            await setsApi.create({
+              id: ex.id,
+              weight: set.weight,
+              reps: set.reps,
+            });
+          }
+
+          if ('value' in set && 'type' in set) {
+            if (set.value === 0) {
+              continue;
+            }
+            if (initialStandAloneSetsIds.includes(set.id)) {
+              await setsApi.update({
+                id: set.id,
+                type: set.type,
+                value: set.value,
+              });
+              continue;
+            }
+            await setsApi.create({
+              id: ex.id,
+              type: set.type,
+              value: set.value,
+            });
+          }
+        }
+      }
+    } catch (error) {
+      return;
+    }
+    onSubmitSuccess(selectedDate);
+  };
 
   if (routines.length === 0 && standaloneExercises.length === 0) {
     return (
@@ -35,27 +104,24 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
       <Text style={styles.sheetTitle}>{formatMonthDay(selectedDate)} 운동 세트 관리</Text>
       <ScrollView contentContainerStyle={styles.list}>
         {routines.map((routine) => (
-          <View>
-            <Text style={styles.routineName}>{routine.name}</Text>
-            {routine.exercises.map((exercise) => (
-              <ExerciseWithSet key={exercise.id} initialExercise={exercise} onChangeEx={() => {}} />
-            ))}
-          </View>
+          <WorkoutRoutine
+            key={routine.routineId}
+            routine={routine}
+            onSubmitSuccess={() => onSubmitSuccess(selectedDate)}
+          />
         ))}
         {standaloneExercises.map((ex) => (
-          <ExerciseWithSet key={ex.id} initialExercise={ex} onChangeEx={() => {}} />
+          <>
+            <Text style={styles.title}>루틴외 운동</Text>
+            <ExerciseWithSet key={ex.id} initialExercise={ex} onChangeEx={handleChangeEx} />
+            <Button
+              label={isStandAloneSaving ? '...' : '세트 저장'}
+              onPress={handleSubmitStandalone}
+              disabled={isStandAloneSaving}
+            />
+          </>
         ))}
       </ScrollView>
-      {/* {type === 'routine-exercise' && (
-        <Input
-          placeholder="루틴에 대한 메모를 자유롭게 남겨주세요."
-          value={note}
-          onChange={(text) => setNote(text.nativeEvent.text)}
-          multiline
-          style={{ height: 60, textAlignVertical: 'top' }}
-        />
-      )} */}
-      <Button label={isSaving ? '...' : '저장'} onPress={handleSubmit} disabled={isSaving} />
     </View>
   );
 }
@@ -69,7 +135,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1A1A1A',
   },
-  routineName: {
+  title: {
     fontSize: 16,
     fontWeight: '600',
     color: '#1A1A1A',

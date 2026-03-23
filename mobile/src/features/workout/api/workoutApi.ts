@@ -1,7 +1,6 @@
 import { API, IWorkoutBydateResponse, IWorkoutPayload } from '@routine-note/package-shared';
 import { apiClient } from '../../../shared/libs/network';
 import { IMonthlyReportResponse } from '../../../shared/types/report';
-import type { WorkoutSetPayload } from '../../../shared/types/workout';
 
 const toDate = (value: Date) => {
   const year = value.getFullYear();
@@ -84,63 +83,6 @@ export const workoutApi = {
   async remove(workoutId: string) {
     const response = await apiClient.request<{ ok: boolean }>(API.WORKOUT.DELETE(workoutId), {
       method: 'DELETE',
-    });
-
-    if (response.error) {
-      throw new Error(response.error.message);
-    }
-
-    return response.data;
-  },
-
-  async createSet(workoutExerciseId: string | undefined, payload: WorkoutSetPayload) {
-    if (!workoutExerciseId) {
-      throw new Error('workoutExerciseId is required to create a set');
-    }
-    const response = await apiClient.request<{ id: string; weight: number | null; reps: number | null }>(
-      API.WORKOUT.SETS.CREATE(workoutExerciseId),
-      {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      },
-    );
-
-    if (response.error) {
-      throw new Error(response.error.message);
-    }
-
-    return response.data;
-  },
-  async updateSet(setId: string, payload: WorkoutSetPayload) {
-    const response = await apiClient.request<{ id: string; weight: number | null; reps: number | null }>(
-      API.WORKOUT.SETS.EDIT(setId),
-      {
-        method: 'PATCH',
-        body: JSON.stringify(payload),
-      },
-    );
-
-    if (response.error) {
-      throw new Error(response.error.message);
-    }
-
-    return response.data;
-  },
-  async deleteSet(setId: string) {
-    const response = await apiClient.request<{ ok: boolean }>(API.WORKOUT.SETS.DELETE(setId), {
-      method: 'DELETE',
-    });
-
-    if (response.error) {
-      throw new Error(response.error.message);
-    }
-
-    return response.data;
-  },
-  async createWorkoutRoutineNote(workoutRoutineId: string, note: string) {
-    const response = await apiClient.request<{ id: string; note: string }>(API.WORKOUT.NOTE.ROUTINE(workoutRoutineId), {
-      method: 'PATCH',
-      body: JSON.stringify({ note }),
     });
 
     if (response.error) {

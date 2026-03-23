@@ -17,9 +17,3 @@ export interface WorkoutExerciseItem {
     reps: number;
   }[];
 }
-
-export interface WorkoutSetPayload {
-  weight?: number;
-  reps?: number;
-  note?: string;
-}

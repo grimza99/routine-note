@@ -33,6 +33,7 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
     });
   };
   const handleSubmitStandalone = async () => {
+    setIsStandAloneSaving(true);
     try {
       for (const ex of currentStandaloneExercises || []) {
         const removedSets = standaloneExercises
@@ -88,6 +89,7 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
     } catch (error) {
       return;
     }
+    setIsStandAloneSaving(false);
     onSubmitSuccess(selectedDate);
   };
 

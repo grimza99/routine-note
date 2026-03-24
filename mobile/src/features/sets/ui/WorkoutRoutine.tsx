@@ -115,7 +115,7 @@ export default function WorkoutRoutine({ routine, onSubmitSuccess }: WorkoutRout
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <Text style={styles.title}>{routine.name}</Text>
       {routine.exercises.map((exercise) => (
         <ExerciseWithSet key={exercise.id} initialExercise={exercise} onChangeEx={handleChangeEx} />
@@ -137,18 +137,29 @@ export default function WorkoutRoutine({ routine, onSubmitSuccess }: WorkoutRout
         />
         <Button label={isSaving ? '...' : '세트 저장'} onPress={handleSubmit} disabled={isSaving} style={{ flex: 1 }} />
       </View>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    borderColor: '#E0E0E0',
+    borderWidth: 2,
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
+  },
   title: {
     fontSize: 16,
     fontWeight: '600',
     color: '#1A1A1A',
   },
   input: {
-    height: 60,
+    minHeight: 60,
+    maxHeight: 100,
     textAlignVertical: 'top',
   },
   buttonContainer: {

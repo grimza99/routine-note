@@ -74,31 +74,34 @@ export function ExerciseWithSet({ initialExercise, onChangeEx }: ExerciseWithSet
           onIncrease={() => handleSetLengthChagne('increased')}
         />
       </View>
-      <View style={styles.setList}>
-        {initialExercise.trainingType === 'CARDIO' ? (
-          <>
-            {sets.map((set, idx) => (
-              <CardioSetBox
-                index={idx}
-                key={set.id}
-                initialSet={set as ICardioSet}
-                onChange={(type, value) => handleSetChange({ id: set.id, type, value } as ICardioSet)}
-              />
-            ))}
-          </>
-        ) : (
-          <>
-            {sets.map((set, idx) => (
-              <StrengthSetBox
-                index={idx}
-                key={set.id}
-                initialSet={set as IStrengthSet}
-                onChange={(weight, reps) => handleSetChange({ id: set.id, weight, reps } as IStrengthSet)}
-              />
-            ))}
-          </>
-        )}
-      </View>
+      {sets.length > 0 && (
+        <View style={styles.setList}>
+          <View style={{ width: 'auto', height: 1, backgroundColor: '#E0E0E0', marginBottom: 2 }} />
+          {initialExercise.trainingType === 'CARDIO' ? (
+            <>
+              {sets.map((set, idx) => (
+                <CardioSetBox
+                  index={idx}
+                  key={set.id}
+                  initialSet={set as ICardioSet}
+                  onChange={(type, value) => handleSetChange({ id: set.id, type, value } as ICardioSet)}
+                />
+              ))}
+            </>
+          ) : (
+            <>
+              {sets.map((set, idx) => (
+                <StrengthSetBox
+                  index={idx}
+                  key={set.id}
+                  initialSet={set as IStrengthSet}
+                  onChange={(weight, reps) => handleSetChange({ id: set.id, weight, reps } as IStrengthSet)}
+                />
+              ))}
+            </>
+          )}
+        </View>
+      )}
     </View>
   );
 }
@@ -107,8 +110,11 @@ const styles = StyleSheet.create({
   listContainer: {
     display: 'flex',
     gap: 8,
-    paddingHorizontal: 4,
+    paddingHorizontal: 12,
     paddingVertical: 8,
+    borderColor: '#E0E0E0',
+    borderWidth: 1.5,
+    borderRadius: 6,
   },
   topContainer: {
     display: 'flex',
@@ -118,6 +124,7 @@ const styles = StyleSheet.create({
   },
   exName: {
     fontWeight: 400,
+    color: '#575757',
   },
   setList: {
     display: 'flex',

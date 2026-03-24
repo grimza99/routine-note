@@ -104,11 +104,7 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
       <Text style={styles.sheetTitle}>{formatMonthDay(selectedDate)} 운동 세트 관리</Text>
       <ScrollView contentContainerStyle={styles.list}>
         {routines.map((routine) => (
-          <WorkoutRoutine
-            key={routine.routineId}
-            routine={routine}
-            onSubmitSuccess={() => onSubmitSuccess(selectedDate)}
-          />
+          <WorkoutRoutine key={routine.id} routine={routine} onSubmitSuccess={() => onSubmitSuccess(selectedDate)} />
         ))}
         {standaloneExercises.map((ex) => (
           <>

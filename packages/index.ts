@@ -22,8 +22,11 @@ export {
 
 // constants
 export { API } from './shared/constants/api';
-
+export { TOKEN } from './shared/constants/cookie';
 // types
-export type { ICardioSet, IStrengthSet, TTraining, IExercise, IWorkoutExercise } from './shared/types/exercise';
-export type { IWorkoutPayload } from './shared/types/workout';
-export type { ISignupPayload } from './shared/types/auth';
+export type { ICardioSet, IStrengthSet } from './shared/types/set';
+export type { TTraining, IExercise, IWorkoutExercise } from './shared/types/exercise';
+export type { IRoutine, IWorkoutRoutine } from './shared/types/routine';
+export type { ISignupPayload, IAuthResponse, IAuthMobileResponse } from './shared/types/auth';
+
+export type { IWorkoutPayload, IWorkoutBydateResponse } from './shared/types/workout';

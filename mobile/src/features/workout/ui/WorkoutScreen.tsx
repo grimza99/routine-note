@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { ANALYTICS_EVENTS, trackEvent } from '@routine-note/package-shared';
+import { ANALYTICS_EVENTS, IWorkoutBydateResponse, trackEvent } from '@routine-note/package-shared';
 
 import { workoutApi } from '../api/workoutApi';
 import { Button, DraggableSheet } from '../../../shared/ui';
 import { WorkoutCalendar } from './WorkoutCalendar';
 import { formatDate, formatMonthDay } from '../../../shared/libs';
 import { WorkoutRoutineCardWithSets } from './WorkoutRoutineCardWithSets';
-import { WorkoutBydateResponse } from '../../../shared/types';
 import { WorkoutSheet } from './sheet/WorkoutSheet';
 import { WorkoutSetsSheet } from './sheet/WorkoutSetsSheet';
 import { IMonthlyReportResponse } from '../../../shared/types/report';
@@ -17,7 +16,7 @@ export const WorkoutScreen = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [sheetMode, setSheetMode] = useState<'create' | 'manage' | 'sets' | null>(null); //null이면 닫힘
-  const [workoutByDate, setWorkoutByDate] = useState<WorkoutBydateResponse | null>(null);
+  const [workoutByDate, setWorkoutByDate] = useState<IWorkoutBydateResponse | null>(null);
   const [monthlyReport, setMonthlyReport] = useState<IMonthlyReportResponse | null>(null);
 
   const loadInitialData = useCallback(
@@ -68,7 +67,7 @@ export const WorkoutScreen = () => {
         style: 'destructive',
         onPress: async () => {
           try {
-            await workoutApi.remove(workoutByDate.id);
+            await workoutApi.delete(workoutByDate.id);
             await loadInitialData(formatDate(selectedDate));
             setSheetMode(null);
             Alert.alert('완료', '운동 기록을 삭제했습니다.');
@@ -135,10 +134,10 @@ export const WorkoutScreen = () => {
               {workoutByDate?.routines.length > 0 &&
                 workoutByDate?.routines.map((routine) => (
                   <WorkoutRoutineCardWithSets
-                    key={routine.id}
+                    key={routine.routineId}
                     title={routine.name ?? '루틴'}
                     exercises={routine.exercises}
-                    memo={routine.note}
+                    memo={''}
                   />
                 ))}
             </>
@@ -165,8 +164,10 @@ export const WorkoutScreen = () => {
           <ScrollView contentContainerStyle={styles.sheetContent}>
             {sheetMode !== 'sets' ? (
               <WorkoutSheet
-                selectedDate={selectedDate}
-                initialWorkoutData={workoutByDate}
+                date={selectedDate}
+                currentRoutineIds={workoutByDate?.routines.map((routine) => routine.routineId) ?? []}
+                currentStandaloneExercises={workoutByDate?.standalone_exercises ?? []}
+                workoutId={workoutByDate?.id}
                 onSubmitSuccess={async (date) => {
                   await loadInitialData(formatDate(date));
                   setSheetMode(null);

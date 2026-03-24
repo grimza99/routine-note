@@ -17,29 +17,3 @@ export interface WorkoutExerciseItem {
     reps: number;
   }[];
 }
-
-export interface WorkoutBydateResponse {
-  id: string;
-  date: string;
-  routines: WorkoutRoutineItem[];
-  standalone_exercises: WorkoutExerciseItem[];
-}
-
-export interface WorkoutPayload {
-  date: string;
-  routines: {
-    routineId: string;
-    order?: number;
-    note?: string;
-  }[];
-  standalone_exercises: {
-    name: string;
-    order?: number;
-  }[];
-}
-
-export interface WorkoutSetPayload {
-  weight?: number;
-  reps?: number;
-  note?: string;
-}

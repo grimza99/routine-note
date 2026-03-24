@@ -57,6 +57,7 @@ export default function EditRoutineModal({ routineId, onClose }: { routineId: st
       ...prev,
       exercises: prev.exercises.filter((exercise) => exercise.id !== targetId.toString()),
     }));
+    setIsFormDirty(true);
   };
 
   const handlePayloadChange = (key: 'name' | string, value: string, trainingType?: TTraining) => {

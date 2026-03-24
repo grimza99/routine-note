@@ -9,6 +9,9 @@ export { Dot } from './dot/Dot';
 // input
 export { Input } from './input/Input';
 
+// tabs
+export { BinaryTabs } from './tabs/BinaryTabs';
+
 // draggable-sheet
 export { DraggableSheet } from './draggable-sheet/DraggableSheet';
 

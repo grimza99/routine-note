@@ -1,9 +1,8 @@
 'use client';
 import { useAuthStoreActions } from '@/entities/auth/model/useAuthStore';
-import { ANALYTICS_EVENTS, ISignupPayload, trackEvent } from '@routine-note/package-shared';
+import { ANALYTICS_EVENTS, ISignupPayload, TOKEN, trackEvent } from '@routine-note/package-shared';
 import { API, PATHS, TOAST_MESSAGE } from '@/shared/constants';
 
-import { TOKEN } from '@/shared/constants';
 import { useToast } from '@/shared/hooks';
 import { api, deleteCookieValue } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

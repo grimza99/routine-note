@@ -80,7 +80,7 @@ export const workoutApi = {
     return response.data;
   },
 
-  async remove(workoutId: string) {
+  async delete(workoutId: string) {
     const response = await apiClient.request<{ ok: boolean }>(API.WORKOUT.DELETE(workoutId), {
       method: 'DELETE',
     });

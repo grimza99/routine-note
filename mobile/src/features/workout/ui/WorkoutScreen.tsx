@@ -67,7 +67,7 @@ export const WorkoutScreen = () => {
         style: 'destructive',
         onPress: async () => {
           try {
-            await workoutApi.remove(workoutByDate.id);
+            await workoutApi.delete(workoutByDate.id);
             await loadInitialData(formatDate(selectedDate));
             setSheetMode(null);
             Alert.alert('완료', '운동 기록을 삭제했습니다.');

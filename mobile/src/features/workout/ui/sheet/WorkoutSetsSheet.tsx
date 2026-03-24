@@ -107,7 +107,7 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
           <WorkoutRoutine key={routine.id} routine={routine} onSubmitSuccess={() => onSubmitSuccess(selectedDate)} />
         ))}
         {standaloneExercises.map((ex) => (
-          <>
+          <View key={ex.id}>
             <Text style={styles.title}>루틴외 운동</Text>
             <ExerciseWithSet key={ex.id} initialExercise={ex} onChangeEx={handleChangeEx} />
             <Button
@@ -115,7 +115,7 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
               onPress={handleSubmitStandalone}
               disabled={isStandAloneSaving}
             />
-          </>
+          </View>
         ))}
       </ScrollView>
     </View>

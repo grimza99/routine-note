@@ -106,17 +106,19 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
         {routines.map((routine) => (
           <WorkoutRoutine key={routine.id} routine={routine} onSubmitSuccess={() => onSubmitSuccess(selectedDate)} />
         ))}
-        {standaloneExercises.map((ex) => (
-          <View key={ex.id}>
-            <Text style={styles.title}>루틴외 운동</Text>
-            <ExerciseWithSet key={ex.id} initialExercise={ex} onChangeEx={handleChangeEx} />
+        {standaloneExercises.length > 0 && (
+          <View style={styles.standaloneExContainer}>
+            <Text style={styles.title}>루틴외에 운동</Text>
+            {standaloneExercises.map((ex) => (
+              <ExerciseWithSet key={ex.id} initialExercise={ex} onChangeEx={handleChangeEx} />
+            ))}
             <Button
               label={isStandAloneSaving ? '...' : '세트 저장'}
               onPress={handleSubmitStandalone}
               disabled={isStandAloneSaving}
             />
           </View>
-        ))}
+        )}
       </ScrollView>
     </View>
   );
@@ -139,5 +141,15 @@ const styles = StyleSheet.create({
   list: {
     height: 'auto',
     gap: 4,
+  },
+  standaloneExContainer: {
+    borderColor: '#E0E0E0',
+    borderWidth: 2,
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
   },
 });

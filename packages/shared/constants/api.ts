@@ -1,3 +1,5 @@
+import { DELETE } from '@/app/api/auth/hard-delete-withdraw/route';
+
 export const API = {
   AUTH: {
     SIGNUP: '/api/auth/signup',
@@ -18,6 +20,7 @@ export const API = {
     DELETE: (workoutId: string) => `/api/workouts/${workoutId}`,
     REPORT: (month: string) => `/api/reports/monthly?month=${month}`,
     BY_DATE: (date: string) => `/api/workouts?date=${date}`,
+    DELETE_ROUTINE: (workoutRoutineId: string) => `/api/workout-routines/${workoutRoutineId}`,
     SETS: {
       CREATE: (exerciseId: string) => `/api/workout-exercises/${exerciseId}/sets`,
       DELETE: (setId: string) => `/api/sets/${setId}`,

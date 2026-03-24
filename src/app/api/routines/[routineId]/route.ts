@@ -122,13 +122,23 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   }
 
   const supabase = getSupabaseAdmin();
-  const { data: routine, error: routineError } = await supabase
+  const { error: prevRoutineUpdateError } = await supabase
     .from('routines')
-    .update({ name: routineName })
+    .update({ updated_at: new Date() })
     .eq('id', routineId)
     .eq('user_id', userId)
     .select('id, name')
     .maybeSingle();
+
+  if (prevRoutineUpdateError) {
+    return json(500, { error: { code: 'routines DB_ERROR', message: prevRoutineUpdateError.message } });
+  }
+
+  const { data: routine, error: routineError } = await supabase
+    .from('routines')
+    .insert({ user_id: userId, name: routineName, id: randomUUID() })
+    .select('id, name')
+    .single();
 
   if (routineError) {
     return json(500, { error: { code: 'routines DB_ERROR', message: routineError.message } });
@@ -138,23 +148,16 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     return json(404, { error: { code: 'NOT_FOUND', message: 'routine not found' } });
   }
 
-  const { error: deleteError } = await supabase.from('routine_items').delete().eq('routine_id', routineId);
-
-  if (deleteError) {
-    return json(500, { error: { code: 'routine_items deleted DB_ERROR', message: deleteError.message } });
-  }
-
   const parsedExercises = parseExercises(exercises);
 
   const items = parsedExercises.map((exercise) => ({
     id: randomUUID(),
-    routine_id: routineId,
+    routine_id: routine.id,
     item_order: exercise.order,
     name: exercise.name,
     training_type: exercise.training_type,
   }));
 
-  console.log(exercises);
   const invalidExercise = items.find((item) => !item.name);
 
   if (invalidExercise) {

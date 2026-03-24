@@ -22,7 +22,7 @@ export function ExerciseField({
   const [trainingType, setTrainingType] = useState<TTraining>(exercise.trainingType);
 
   const handleExerciseChange = (value?: string, trainingTypeValue?: TTraining) => {
-    onExerciseChange(exercise.id, value || exercise.name, trainingTypeValue || trainingType);
+    onExerciseChange(exercise.id, value ?? exercise.name, trainingTypeValue || trainingType);
   };
 
   return (

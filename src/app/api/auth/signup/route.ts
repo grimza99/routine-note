@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getClientMeta, json } from '@/shared/libs/api-route';
 import { getSupabaseAdmin, getSupabaseAnon } from '@/shared/libs/supabase';
-import { json } from '@/shared/libs/api-route';
+import { CLIENT_PLATFORM, IAuthResponse, IAuthMobileResponse, MOBILE_META_HEADERS, TOKEN } from '@routine-note/package-shared';
 
 interface ISignUpPayload {
   email: string;
@@ -12,6 +13,13 @@ interface ISignUpPayload {
 }
 
 export async function POST(request: NextRequest) {
+  const clientMeta = getClientMeta(request);
+  if (clientMeta.missingHeaders.includes(MOBILE_META_HEADERS.PLATFORM)) {
+    return json(400, {
+      error: { code: 'VALIDATION_ERROR', message: `${MOBILE_META_HEADERS.PLATFORM} header is required` },
+    });
+  }
+
   const body = (await request.json()) as ISignUpPayload;
 
   if (!body?.email || !body?.password || !body?.username) {
@@ -66,22 +74,32 @@ export async function POST(request: NextRequest) {
     return json(400, { error: { code: 'AUTH_ERROR', message: error.message } });
   }
 
-  const response = NextResponse.json(
-    {
-      id: data.user?.id || null,
-      email: data.user?.email || null,
-      username: body.username.trim(),
-      nickname: normalizedNickname,
-      age: body.age ?? null,
-      privacy_policy: body.policy,
-      token: data.session?.access_token ?? null,
-      profile_image: null,
-    },
-    { status: 201 },
-  );
+  const { platform } = clientMeta;
+  const baseResponse: IAuthResponse = {
+    id: data.user?.id || '',
+    email: data.user?.email || '',
+    username: body.username.trim(),
+    nickname: normalizedNickname,
+    age: body.age ?? null,
+    privacy_policy: body.policy,
+    access_token: data.session?.access_token ?? null,
+    profile_image: null,
+  };
+
+  const responseBody: IAuthResponse | IAuthMobileResponse =
+    platform === CLIENT_PLATFORM.IOS || platform === CLIENT_PLATFORM.ANDROID
+      ? {
+          ...baseResponse,
+          refresh_token: data.session?.refresh_token ?? null,
+        }
+      : baseResponse;
+
+  const response: NextResponse<IAuthResponse | IAuthMobileResponse> = NextResponse.json(responseBody, {
+    status: 201,
+  });
 
   if (data.session?.refresh_token) {
-    response.cookies.set('sb_refresh_token', data.session.refresh_token, {
+    response.cookies.set(TOKEN.REFRESH, data.session.refresh_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

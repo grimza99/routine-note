@@ -55,7 +55,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     .from('workout_routines')
     .update(update)
     .eq('id', workoutRoutineId)
-    .select('id, routine_id, item_order, note')
+    .select('id, routine_id, note')
     .maybeSingle();
 
   if (error) {
@@ -65,7 +65,6 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
   return json(200, {
     id: data?.id,
     routineId: data?.routine_id,
-    order: data?.item_order,
     note: data?.note,
   });
 }
@@ -92,15 +91,6 @@ export async function DELETE(request: NextRequest, context: { params: Params }) 
 
   if (!owner) {
     return json(404, { error: { code: 'NOT_FOUND', message: 'workout routine not found' } });
-  }
-
-  const { error: deleteRoutineItemsError } = await supabase
-    .from('workout_routine_items')
-    .delete()
-    .eq('workout_routine_id', workoutRoutineId);
-
-  if (deleteRoutineItemsError) {
-    return json(500, { error: { code: 'DB_ERROR', message: deleteRoutineItemsError.message } });
   }
 
   const { error } = await supabase.from('workout_routines').delete().eq('id', workoutRoutineId);

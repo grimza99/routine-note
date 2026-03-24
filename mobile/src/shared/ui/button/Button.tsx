@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 
 type ButtonProps = Omit<PressableProps, 'children' | 'style'> & {
-  label: string;
+  label: string | JSX.Element;
   variant?: ButtonVariant;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;

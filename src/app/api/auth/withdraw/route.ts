@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TOKEN } from '@/shared/constants';
+import { TOKEN } from '@routine-note/package-shared';
+
 import { json } from '@/shared/libs/api-route';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 
@@ -12,7 +13,10 @@ export async function POST(request: NextRequest) {
 
   const supabaseAdmin = getSupabaseAdmin();
   const deletedAt = new Date().toISOString();
-  const { error: softDeleteError } = await supabaseAdmin.from('users').update({ deleted_at: deletedAt }).eq('id', userId);
+  const { error: softDeleteError } = await supabaseAdmin
+    .from('users')
+    .update({ deleted_at: deletedAt })
+    .eq('id', userId);
 
   if (softDeleteError) {
     return json(500, { error: { code: 'DB_ERROR', message: softDeleteError.message } });

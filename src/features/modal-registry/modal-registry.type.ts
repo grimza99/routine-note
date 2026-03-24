@@ -22,5 +22,6 @@ type ModalRegistryKey =
   | 'privacy'
   | 'terms'
   | 'cookie'
-  | 'contact';
+  | 'contact'
+  | 'deleteWorkoutRoutine';
 export type ModalRegistry = Record<ModalRegistryKey, ModalRegistryEntry>;

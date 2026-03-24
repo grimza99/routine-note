@@ -1,6 +1,7 @@
 import { setsApi } from '@/features/sets/api/setsApi';
 import { ExerciseWithSet } from '@/features/sets/ui/ExerciseWithSet';
 import { workoutNoteApi } from '@/features/workout-note/api/workoutNoteApi';
+import { workoutApi } from '@/features/workout/api/workoutApi';
 import { Button, Input } from '@/shared/ui';
 import { IWorkoutExercise, IWorkoutRoutine } from '@routine-note/package-shared';
 import { useState } from 'react';
@@ -100,7 +101,7 @@ export default function WorkoutRoutine({ routine, onSubmitSuccess }: WorkoutRout
         onPress: async () => {
           setIsSaving(true);
           try {
-            // await .delete(routine.id);
+            await workoutApi.deleteWorkoutRoutine(routine.id);
           } catch (error) {
             Alert.alert('삭제 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
             setIsSaving(false);

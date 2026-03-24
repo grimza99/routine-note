@@ -91,4 +91,15 @@ export const workoutApi = {
 
     return response.data;
   },
+  async deleteWorkoutRoutine(workoutRoutineId: string) {
+    const response = await apiClient.request<{ ok: boolean }>(API.WORKOUT.DELETE_ROUTINE(workoutRoutineId), {
+      method: 'DELETE',
+    });
+
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+
+    return response.data;
+  },
 };

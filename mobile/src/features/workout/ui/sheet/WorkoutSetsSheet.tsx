@@ -42,7 +42,7 @@ export function WorkoutSetsSheet({ selectedDate, initialWorkoutData, onSubmitSuc
         // 삭제된 세트 처리
         if (removedSets && removedSets.length > 0) {
           for (const set of removedSets) {
-            // await deleteSet(set.id);
+            await setsApi.delete(set.id);
           }
         }
         for (const set of ex.sets) {

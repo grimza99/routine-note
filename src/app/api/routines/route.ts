@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { IRoutine, TTraining } from '@routine-note/package-shared';
+import { IRoutine, RoutinePayload, TTraining } from '@routine-note/package-shared';
 import { randomUUID } from 'crypto';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
@@ -89,15 +89,6 @@ export async function GET(request: NextRequest) {
 }
 
 // ---------------------------------POST /api/routines -create routine
-
-interface RoutinePayload {
-  name: string;
-  exercises: {
-    name: string;
-    order?: number;
-    trainingType: TTraining;
-  }[];
-}
 
 export async function POST(request: NextRequest) {
   const userId = await getAuthUserId(request);

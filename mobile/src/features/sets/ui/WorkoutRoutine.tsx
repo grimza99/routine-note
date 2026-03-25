@@ -81,7 +81,7 @@ export default function WorkoutRoutine({ routine, onSubmitSuccess }: WorkoutRout
         }
       }
       if (note.trim() !== '') {
-        await workoutNoteApi.create(routine.id, note);
+        await workoutNoteApi.create(routine.routineId, note);
       }
     } catch (error) {
       Alert.alert('세트 관리 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
@@ -101,7 +101,7 @@ export default function WorkoutRoutine({ routine, onSubmitSuccess }: WorkoutRout
         onPress: async () => {
           setIsSaving(true);
           try {
-            await workoutApi.deleteWorkoutRoutine(routine.id);
+            await workoutApi.deleteWorkoutRoutine(routine.routineId);
           } catch (error) {
             Alert.alert('삭제 실패', error instanceof Error ? error.message : '오류가 발생했습니다.');
             setIsSaving(false);

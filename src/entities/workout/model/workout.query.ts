@@ -1,6 +1,5 @@
 import { API, QUERY_KEYS } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
-import { IRoutine } from '@/shared/types';
 import { IWorkoutRoutine } from '@/shared/types/domain.type';
 import { IWorkoutExercise } from '@routine-note/package-shared';
 import { useQuery } from '@tanstack/react-query';

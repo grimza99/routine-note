@@ -1,7 +1,6 @@
 import { IExercise, IWorkoutExercise } from './exercise';
 
 export interface IRoutine {
-  id: string;
   routineId: string;
   name: string;
   exercises: IExercise[];

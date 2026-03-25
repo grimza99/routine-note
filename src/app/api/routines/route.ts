@@ -1,35 +1,33 @@
 import { NextRequest } from 'next/server';
-import { TTraining } from '@routine-note/package-shared';
+import { IRoutine, TTraining } from '@routine-note/package-shared';
 import { randomUUID } from 'crypto';
 
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
 
-type IExercise = {
+type IDBExercise = {
   id: string;
-  item_order: number;
   name: string;
   training_type: TTraining;
 };
 
-type RoutineResponse = {
+type RoutineDBResponse = {
   id: string;
   name: string;
-  routine_items: IExercise[] | null;
+  routine_items: IDBExercise[] | null;
 };
 
-const mapRoutine = (routine: RoutineResponse) => ({
+const mapRoutine = (routine: RoutineDBResponse): IRoutine => ({
   routineId: routine.id,
   name: routine.name,
   exercises: (routine.routine_items ?? []).map((item) => ({
     id: item.id,
-    order: item.item_order,
     name: item?.name ?? '',
     trainingType: item.training_type,
   })),
 });
 
-const isRoutineResponse = (value: unknown): value is RoutineResponse => {
+const isRoutineResponse = (value: unknown): value is RoutineDBResponse => {
   if (!value || typeof value !== 'object') {
     return false;
   }

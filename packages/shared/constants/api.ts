@@ -1,5 +1,3 @@
-import { DELETE } from '@/app/api/auth/hard-delete-withdraw/route';
-
 export const API = {
   AUTH: {
     SIGNUP: '/api/auth/signup',

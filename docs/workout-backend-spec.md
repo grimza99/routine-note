@@ -508,20 +508,6 @@
 
 ### 운동 종목 기록
 
-#### POST /workouts/{workoutId}/exercises
-
-요청
-
-```json
-{ "exerciseId": "ex1", "order": 1, "note": "", "workoutRoutineId": "wr1" }
-```
-
-응답
-
-```json
-{ "id": "we1", "exerciseId": "ex1", "order": 1, "note": "", "workoutRoutineId": "wr1" }
-```
-
 #### PATCH /workout-exercises/{workoutExerciseId}
 
 요청
@@ -580,29 +566,6 @@
 
 ```json
 { "ok": true }
-```
-
-### 루틴 불러오기 (기록용 복사)
-
-#### POST /workouts/{workoutId}/apply-routine
-
-요청
-
-```json
-{ "routineId": "r1" }
-```
-
-응답
-
-```json
-{
-  "workoutId": "w1",
-  "workoutRoutineId": "wr1",
-  "createdExercises": [
-    { "id": "we1", "exerciseId": "ex1", "order": 1, "workoutRoutineId": "wr1" },
-    { "id": "we2", "exerciseId": "ex2", "order": 2, "workoutRoutineId": "wr1" }
-  ]
-}
 ```
 
 ### 리포트

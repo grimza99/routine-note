@@ -1,4 +1,4 @@
-export interface IMonthlyReportResponse {
+export interface IMonthlyReport {
   month: string; // 'YYYY-MM' 형식
   workoutDays: number;
   totalSets: number;

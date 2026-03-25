@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
 import { json } from '@/shared/libs/api-route';
-import { ICardioSet, IStrengthSet } from '@routine-note/package-shared';
+import { TSetPayload } from '@routine-note/package-shared';
 
 type Params = Promise<{ workoutExerciseId: string }>;
 
@@ -12,13 +12,13 @@ const mapSetResponse = (set: any) => {
       id: set.id,
       type: set.cardio_record_type,
       value: set.cardio_record_value,
-    } as ICardioSet;
+    } as TSetPayload;
   } else {
     return {
       id: set.id,
       weight: set.weight,
       reps: set.reps,
-    } as IStrengthSet;
+    } as TSetPayload;
   }
 };
 export async function POST(request: NextRequest, context: { params: Params }) {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
-  const body = (await request.json()) as ICardioSet | IStrengthSet;
+  const body = (await request.json()) as TSetPayload;
 
   const { workoutExerciseId } = await Promise.resolve(context.params);
 

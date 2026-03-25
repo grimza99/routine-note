@@ -7,7 +7,7 @@ import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 
 const eventSchema = z.object({
   eventName: z.enum(ANALYTICS_EVENT_NAMES),
-  userId: z.string().uuid().optional(),
+  userId: z.uuid().optional(),
   source: z.string().min(1).max(100).optional(),
   platform: z.string().min(1).max(20).optional(),
   appVersion: z.string().min(1).max(40).optional(),
@@ -17,7 +17,7 @@ const eventSchema = z.object({
   screenName: z.string().min(1).max(120).optional(),
   funnelStep: z.string().min(1).max(120).optional(),
   errorCode: z.string().min(1).max(120).optional(),
-  timestamp: z.string().datetime().optional(),
+  timestamp: z.iso.datetime().optional(),
   properties: z.record(z.string(), z.unknown()).optional(),
 });
 

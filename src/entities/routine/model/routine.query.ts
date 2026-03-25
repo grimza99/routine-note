@@ -1,13 +1,7 @@
 import { API, QUERY_KEYS } from '@/shared/constants';
 import { api } from '@/shared/libs/api';
-import { IExercise } from '@routine-note/package-shared';
+import { IRoutine } from '@routine-note/package-shared';
 import { useQuery } from '@tanstack/react-query';
-
-interface IRoutineResponse {
-  routineId: string;
-  name: string;
-  exercises: IExercise[];
-}
 
 //루틴 리스트 쿼리
 export function useRoutineList() {
@@ -15,7 +9,7 @@ export function useRoutineList() {
     queryKey: [QUERY_KEYS.ROUTINE.LIST],
     queryFn: async () => {
       try {
-        const res = await api.get<IRoutineResponse[]>(API.ROUTINE.LIST);
+        const res = await api.get<IRoutine[]>(API.ROUTINE.LIST);
 
         return res.data;
       } catch (error) {
@@ -34,7 +28,7 @@ export function useRoutineDetailQuery(routineId: string) {
     enabled: Boolean(routineId),
     queryFn: async () => {
       try {
-        const res = await api.get<IRoutineResponse>(API.ROUTINE.DETAIL(routineId));
+        const res = await api.get<IRoutine>(API.ROUTINE.DETAIL(routineId));
 
         return res.data;
       } catch (error) {

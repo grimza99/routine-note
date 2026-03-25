@@ -3,7 +3,7 @@ import { apiClient } from '../../../shared/libs/network';
 
 export const workoutNoteApi = {
   async create(workoutRoutineId: string, note: string) {
-    const response = await apiClient.request<{ id: string; note: string }>(API.WORKOUT.NOTE.ROUTINE(workoutRoutineId), {
+    const response = await apiClient.request<{ note: string }>(API.WORKOUT.NOTE.ROUTINE(workoutRoutineId), {
       method: 'PATCH',
       body: JSON.stringify({ note }),
     });

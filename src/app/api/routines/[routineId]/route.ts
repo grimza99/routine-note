@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { json } from '@/shared/libs/api-route';
-import { TTraining } from '@routine-note/package-shared';
+import { IRoutine, RoutinePayload, TTraining } from '@routine-note/package-shared';
 import { randomUUID } from 'crypto';
 
 type Params = Promise<{ routineId?: string }>;
@@ -13,20 +13,13 @@ type RoutineItem = {
   training_type: TTraining;
 };
 
-type RoutineResponse = {
+type DBRoutineResponse = {
   id: string;
   name: string;
   routine_items: RoutineItem[] | null;
 };
 
-type RoutineExerciseRequest = {
-  id: string;
-  name: string;
-  order?: number;
-  trainingType: TTraining;
-};
-
-const mapRoutine = (routine: RoutineResponse) => ({
+const mapRoutine = (routine: DBRoutineResponse): IRoutine => ({
   routineId: routine.id,
   name: routine.name,
   exercises: (routine.routine_items ?? []).map((ex) => ({
@@ -36,14 +29,6 @@ const mapRoutine = (routine: RoutineResponse) => ({
     trainingType: ex.training_type,
   })),
 });
-
-const parseExercises = (exercises?: RoutineExerciseRequest[]) =>
-  (exercises ?? []).map((ex, index) => ({
-    id: ex.id,
-    name: ex.name?.trim(),
-    order: Number(ex.order) > 0 ? Number(ex.order) : index + 1,
-    training_type: ex.trainingType,
-  }));
 
 //------------------ GET /api/routines?routineId='' -detail routine --------------------------------------------
 
@@ -88,15 +73,10 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     return json(404, { error: { code: 'NOT_FOUND', message: 'routine not found' } });
   }
 
-  return json(200, mapRoutine(data as unknown as RoutineResponse));
+  return json(200, mapRoutine(data as unknown as DBRoutineResponse));
 }
 
 //------------------ PATCH /api/routines?routineId='' - routine 수정 --------------------------------------------
-
-interface RoutinePayload {
-  name?: string;
-  exercises?: RoutineExerciseRequest[];
-}
 
 export async function PATCH(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
@@ -148,14 +128,12 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     return json(404, { error: { code: 'NOT_FOUND', message: 'routine not found' } });
   }
 
-  const parsedExercises = parseExercises(exercises);
-
-  const items = parsedExercises.map((exercise) => ({
+  const items = exercises.map((ex) => ({
     id: randomUUID(),
     routine_id: routine.id,
-    item_order: exercise.order,
-    name: exercise.name,
-    training_type: exercise.training_type,
+    item_order: ex.order,
+    name: ex.name,
+    training_type: ex.trainingType,
   }));
 
   const invalidExercise = items.find((item) => !item.name);

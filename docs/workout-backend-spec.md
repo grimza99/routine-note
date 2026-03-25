@@ -508,20 +508,6 @@
 
 ### 운동 종목 기록
 
-#### POST /workouts/{workoutId}/exercises
-
-요청
-
-```json
-{ "exerciseId": "ex1", "order": 1, "note": "", "workoutRoutineId": "wr1" }
-```
-
-응답
-
-```json
-{ "id": "we1", "exerciseId": "ex1", "order": 1, "note": "", "workoutRoutineId": "wr1" }
-```
-
 #### PATCH /workout-exercises/{workoutExerciseId}
 
 요청

@@ -31,3 +31,4 @@ export type { ISignupPayload, IAuthResponse, IAuthMobileResponse } from './share
 
 export type { IWorkoutPayload, IWorkoutBydateResponse } from './shared/types/workout';
 export type { IWorkoutRoutineNotePayload, IWorkoutRoutineNoteResponse } from './shared/types/workout-routine-note';
+export type { IMonthlyReport } from './shared/types/report';

@@ -7,6 +7,7 @@ export interface IRoutine {
 }
 
 export interface IWorkoutRoutine extends IRoutine {
+  id: string;
   note: string;
   exercises: IWorkoutExercise[];
 }

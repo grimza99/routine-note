@@ -69,7 +69,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
                         title: routine.name,
                         initialExercises: routine.exercises,
                         initialNote: routine.note,
-                        routineId: routine.routineId,
+                        routineId: routine.id,
                         date: formatDate(selectedDate),
                       })
                     }

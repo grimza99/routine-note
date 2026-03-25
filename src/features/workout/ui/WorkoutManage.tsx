@@ -62,7 +62,7 @@ export default function WorkoutManage({ selectedDate }: { selectedDate: Date }) 
               {workoutByDateData.routines.length > 0 &&
                 workoutByDateData.routines.map((routine) => (
                   <div
-                    key={routine.id}
+                    key={routine.routineId}
                     className="flex items-center gap-2"
                     onClick={() =>
                       openModal('manageWorkout', {

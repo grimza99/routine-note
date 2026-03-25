@@ -1,14 +1,17 @@
 import { NextRequest } from 'next/server';
-
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
+
+import { IWorkoutRoutineNotePayload, IWorkoutRoutineNoteResponse } from '@routine-note/package-shared';
+
 import { json } from '@/shared/libs/api-route';
 
 type Params = Promise<{ workoutRoutineId: string }>;
 
-type RequestPayload = {
-  order?: number;
-  note?: string;
-};
+const mapper = (data: any): IWorkoutRoutineNoteResponse => ({
+  id: data.id,
+  routineId: data.routine_id,
+  note: data.note,
+});
 
 export async function PATCH(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
@@ -17,10 +20,10 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     return json(401, { error: { code: 'UNAUTHORIZED', message: 'missing or invalid token' } });
   }
 
-  const body = (await request.json()) as RequestPayload;
+  const body = (await request.json()) as IWorkoutRoutineNotePayload;
 
-  if (body.order !== undefined && body.order < 1) {
-    return json(400, { error: { code: 'VALIDATION_ERROR', message: 'order must be >= 1' } });
+  if (body.note?.trim().length === 0) {
+    return;
   }
 
   const { workoutRoutineId } = await Promise.resolve(context.params);
@@ -41,19 +44,9 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     return json(404, { error: { code: 'NOT_FOUND', message: 'workout routine not found' } });
   }
 
-  const update: { item_order?: number; note?: string | null } = {};
-
-  if (body.order !== undefined) {
-    update.item_order = body.order;
-  }
-
-  if (body.note !== undefined) {
-    update.note = body.note;
-  }
-
   const { data, error } = await supabase
     .from('workout_routines')
-    .update(update)
+    .update({ note: body.note })
     .eq('id', workoutRoutineId)
     .select('id, routine_id, note')
     .maybeSingle();
@@ -62,11 +55,7 @@ export async function PATCH(request: NextRequest, context: { params: Params }) {
     return json(500, { error: { code: 'workout_routines update DB_ERROR', message: error.message } });
   }
 
-  return json(200, {
-    id: data?.id,
-    routineId: data?.routine_id,
-    note: data?.note,
-  });
+  return json(200, mapper(data));
 }
 
 export async function DELETE(request: NextRequest, context: { params: Params }) {

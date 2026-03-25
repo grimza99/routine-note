@@ -1,11 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { WorkoutExerciseItem } from '../../../shared/types/workout';
+import { IExercise } from '@routine-note/package-shared';
+
 import { WorkoutRoutineCardStyle as styles } from './WorkoutRoutineCardWithSets';
 
 // workout 생성시 루틴을 선택할수있는 카드
 interface WorkoutRoutineCardProps {
   routineName: string;
-  exercises: WorkoutExerciseItem[];
+  exercises: IExercise[];
   selected?: boolean;
   onPress?: () => void;
 }

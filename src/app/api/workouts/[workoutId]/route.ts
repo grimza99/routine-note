@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
 import { IWorkoutPayload } from '@routine-note/package-shared';
-import { WorkoutResponse } from '../route';
+
+import { WorkoutDBResponse } from '../route';
 
 const json = (status: number, body: unknown) => NextResponse.json(body, { status });
 
 type Params = Promise<{ workoutId: string }>;
 
-const mapWorkoutResponse = (workout: WorkoutResponse) => ({
+const mapWorkoutResponse = (workout: WorkoutDBResponse) => ({
   id: workout.id,
   date: workout.workout_date,
   routines: (workout.workout_routines ?? []).map((routine) => {
@@ -33,6 +33,7 @@ const mapWorkoutResponse = (workout: WorkoutResponse) => ({
     trainingType: exercise.training_type,
   })),
 });
+
 export async function PUT(request: NextRequest, context: { params: Params }) {
   const userId = await getAuthUserId(request);
 
@@ -270,7 +271,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     return json(500, { error: { code: 'DB_ERROR', message: workoutSelectError.message } });
   }
 
-  return json(200, workout ? mapWorkoutResponse(workout as unknown as WorkoutResponse) : null);
+  return json(200, workout ? mapWorkoutResponse(workout as unknown as WorkoutDBResponse) : null);
 }
 
 export async function DELETE(request: NextRequest, context: { params: Params }) {

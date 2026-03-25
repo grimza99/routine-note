@@ -27,7 +27,7 @@ const MainTabsScreen = () => {
         name="Workout"
         component={WorkoutScreen}
         options={{
-          title: '운동기록',
+          title: '캘린더',
           tabBarIcon: ({ size, color }) => <Entypo name="calendar" size={size} color={color} />,
         }}
       />
@@ -35,7 +35,7 @@ const MainTabsScreen = () => {
         name="Routine"
         component={RoutineScreen}
         options={{
-          title: '내 루틴 관리',
+          title: '루틴',
           tabBarIcon: ({ size, color }) => <FontAwesome6 name="dumbbell" size={size} color={color} />,
         }}
       />

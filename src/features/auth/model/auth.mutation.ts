@@ -1,21 +1,12 @@
 'use client';
 import { useAuthStoreActions } from '@/entities/auth/model/useAuthStore';
-import { ANALYTICS_EVENTS, TOKEN, trackEvent } from '@routine-note/package-shared';
+import { ANALYTICS_EVENTS, ISignupPayload, TOKEN, trackEvent } from '@routine-note/package-shared';
 import { API, PATHS, TOAST_MESSAGE } from '@/shared/constants';
 
 import { useToast } from '@/shared/hooks';
 import { api, deleteCookieValue } from '@/shared/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-
-interface SignupPayload {
-  username: string;
-  email: string;
-  nickname: string | null;
-  password: string;
-  age: number;
-  policy_policy: boolean;
-}
 
 export interface IAuthResponse {
   id: string;
@@ -35,7 +26,7 @@ export const useSignupMutation = () => {
   const { setAuth } = useAuthStoreActions();
 
   return useMutation({
-    mutationFn: async (payload: SignupPayload) => {
+    mutationFn: async (payload: ISignupPayload) => {
       try {
         const res = await api.post<IAuthResponse>(API.AUTH.SIGNUP, { ...payload });
 

@@ -1,10 +1,9 @@
 import { A11Y_LABELS } from '@/shared/constants';
+import { IStrengthSet } from '@routine-note/package-shared';
 import { ChangeEvent, useState } from 'react';
 
-interface ISet {
-  weight: number;
-  reps: number;
-}
+interface ISet extends Omit<IStrengthSet, 'id'> {}
+
 const INITIALTE_SET: ISet = {
   weight: 0,
   reps: 0,
@@ -18,7 +17,7 @@ interface SetManageBoxProps {
   onChange: (weight: number, reps: number) => void;
 }
 export default function SetManageBox({ index, initialSet, onChange }: SetManageBoxProps) {
-  const [currentSet, setCurrentSet] = useState<ISet>(initialSet || INITIALTE_SET);
+  const [currentSet, setCurrentSet] = useState(initialSet || INITIALTE_SET);
 
   const handChangeSet = (value: string, name: keyof ISet) => {
     const nextSet = {

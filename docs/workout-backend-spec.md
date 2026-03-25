@@ -582,29 +582,6 @@
 { "ok": true }
 ```
 
-### 루틴 불러오기 (기록용 복사)
-
-#### POST /workouts/{workoutId}/apply-routine
-
-요청
-
-```json
-{ "routineId": "r1" }
-```
-
-응답
-
-```json
-{
-  "workoutId": "w1",
-  "workoutRoutineId": "wr1",
-  "createdExercises": [
-    { "id": "we1", "exerciseId": "ex1", "order": 1, "workoutRoutineId": "wr1" },
-    { "id": "we2", "exerciseId": "ex2", "order": 2, "workoutRoutineId": "wr1" }
-  ]
-}
-```
-
 ### 리포트
 
 #### GET /reports/monthly?month=YYYY-MM

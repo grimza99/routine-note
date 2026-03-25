@@ -30,3 +30,4 @@ export type { IRoutine, IWorkoutRoutine, RoutinePayload } from './shared/types/r
 export type { ISignupPayload, IAuthResponse, IAuthMobileResponse } from './shared/types/auth';
 
 export type { IWorkoutPayload, IWorkoutBydateResponse } from './shared/types/workout';
+export type { IWorkoutRoutineNotePayload, IWorkoutRoutineNoteResponse } from './shared/types/workout-routine-note';

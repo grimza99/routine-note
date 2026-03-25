@@ -1,11 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { IWorkoutRoutineNotePayload, IWorkoutRoutineNoteResponse } from '@routine-note/package-shared';
+
 import { API, QUERY_KEYS } from '@/shared/constants';
 import { useToast } from '@/shared/hooks';
 import { api } from '@/shared/libs/api';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-interface INotePayload {
-  note: string;
-}
 
 //note 생성,수정
 export const useNoteMutation = (workoutRoutineId: string) => {
@@ -13,12 +11,14 @@ export const useNoteMutation = (workoutRoutineId: string) => {
   const { showToast } = useToast();
 
   return useMutation({
-    mutationFn: async (payload: INotePayload) => {
+    mutationFn: async (payload: IWorkoutRoutineNotePayload) => {
       if (!workoutRoutineId) {
         throw new Error('워크아웃 루틴 ID가 필요합니다.');
       }
       try {
-        const res = await api.patch(API.WORKOUT.NOTE.ROUTINE(workoutRoutineId), { ...payload });
+        const res = await api.patch<IWorkoutRoutineNoteResponse>(API.WORKOUT.NOTE.ROUTINE(workoutRoutineId), {
+          ...payload,
+        });
 
         if (res.error) {
           throw res.error;

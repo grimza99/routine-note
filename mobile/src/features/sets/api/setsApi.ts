@@ -1,12 +1,9 @@
-import { API, ICardioSet, IStrengthSet } from '@routine-note/package-shared';
+import { API, TSetPayload, TSetResponse } from '@routine-note/package-shared';
 import { apiClient } from '../../../shared/libs/network';
 
-type ISetsPayload = ICardioSet | IStrengthSet;
-
-type ISetResponse = ICardioSet | IStrengthSet;
 export const setsApi = {
-  async create(payload: ISetsPayload) {
-    const response = await apiClient.request<ISetResponse>(API.WORKOUT.SETS.CREATE(payload.id), {
+  async create(payload: TSetPayload) {
+    const response = await apiClient.request<TSetResponse>(API.WORKOUT.SETS.CREATE(payload.id), {
       method: 'POST',
       body: JSON.stringify(payload),
     });
@@ -23,8 +20,8 @@ export const setsApi = {
     return data;
   },
 
-  async update(payload: ISetsPayload) {
-    const response = await apiClient.request<ISetResponse>(API.WORKOUT.SETS.EDIT(payload.id), {
+  async update(payload: TSetPayload) {
+    const response = await apiClient.request<TSetResponse>(API.WORKOUT.SETS.EDIT(payload.id), {
       method: 'PATCH',
       body: JSON.stringify(payload),
     });

@@ -9,3 +9,6 @@ export interface IStrengthSet {
   weight: number; //kg 단위
   reps: number; //회 수
 }
+
+export type TSetPayload = ICardioSet | IStrengthSet;
+export type TSetResponse = TSetPayload;

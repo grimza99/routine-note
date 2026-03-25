@@ -4,8 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Input } from '../../../shared/ui';
 import { IStrengthSet } from '@routine-note/package-shared';
 
-const INITIALTE_SET: IStrengthSet = {
-  id: '',
+interface ISet extends Omit<IStrengthSet, 'id'> {}
+const INITIALTE_SET: ISet = {
   weight: 0,
   reps: 0,
 };
@@ -15,7 +15,7 @@ interface IStrengthSetBoxProps {
   onChange: (weight: number, reps: number) => void;
 }
 export default function StrengthSetBox({ index, initialSet, onChange }: IStrengthSetBoxProps) {
-  const [currentSet, setCurrentSet] = useState<IStrengthSet>(initialSet || INITIALTE_SET);
+  const [currentSet, setCurrentSet] = useState(initialSet || INITIALTE_SET);
 
   const handChangeSet = (value: string, name: keyof IStrengthSet) => {
     const nextSet = {

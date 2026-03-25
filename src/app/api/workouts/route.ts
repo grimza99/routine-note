@@ -2,13 +2,20 @@ import { NextRequest } from 'next/server';
 import { getAuthUserId, getSupabaseAdmin } from '@/shared/libs/supabase';
 import { randomUUID } from 'crypto';
 import { json } from '@/shared/libs/api-route';
-import { ICardioSet, IStrengthSet, IWorkoutExercise, IWorkoutPayload, TTraining } from '@routine-note/package-shared';
+import {
+  ICardioSet,
+  IStrengthSet,
+  IWorkoutBydateResponse,
+  IWorkoutExercise,
+  IWorkoutPayload,
+  TTraining,
+} from '@routine-note/package-shared';
 
 interface IExercise extends Omit<IWorkoutExercise, 'trainingType'> {
   training_type: TTraining;
 }
 
-type WorkoutRoutine = {
+type WorkoutRoutineDB = {
   id: string;
   name: string;
   routine_id: string;
@@ -17,10 +24,10 @@ type WorkoutRoutine = {
   workout_routine_items: IExercise[] | null;
 };
 
-export type WorkoutResponse = {
+export type WorkoutDBResponse = {
   id: string;
   workout_date: string;
-  workout_routines: WorkoutRoutine[] | null;
+  workout_routines: WorkoutRoutineDB[] | null;
   workout_standalone_exercises: IExercise[] | null;
 };
 
@@ -50,7 +57,7 @@ const mapExercises = (exercise: IExercise) => ({
   sets: mapSetResponse(exercise.sets) ?? [],
 });
 
-export const mapWorkoutResponse = (workout: WorkoutResponse) => ({
+export const mapWorkoutResponse = (workout: WorkoutDBResponse): IWorkoutBydateResponse => ({
   id: workout.id,
   date: workout.workout_date,
   routines: (workout.workout_routines ?? []).map((routine) => {
@@ -59,8 +66,8 @@ export const mapWorkoutResponse = (workout: WorkoutResponse) => ({
     return {
       id: routine.id,
       routineId: routine.routine_id,
-      name: routine.name ?? null,
-      note: routine.note,
+      name: routine.name ?? '',
+      note: routine.note ?? '',
       exercises: routineExercises.map(mapExercises),
     };
   }),
@@ -131,7 +138,7 @@ export async function GET(request: NextRequest) {
   return json(
     200,
     data
-      ? mapWorkoutResponse(data as unknown as WorkoutResponse)
+      ? mapWorkoutResponse(data as unknown as WorkoutDBResponse)
       : {
           routines: [],
           standalone_exercises: [],
@@ -279,5 +286,5 @@ export async function POST(request: NextRequest) {
     return json(500, { error: { code: 'DB_ERROR', message: workoutError.message } });
   }
 
-  return json(201, workout ? mapWorkoutResponse(workout as unknown as WorkoutResponse) : null);
+  return json(201, workout ? mapWorkoutResponse(workout as unknown as WorkoutDBResponse) : null);
 }

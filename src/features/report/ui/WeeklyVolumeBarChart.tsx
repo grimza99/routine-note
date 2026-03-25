@@ -40,9 +40,8 @@ export function WeeklyVolumeBarChart({ data }: WeeklyVolumeBarChartProps) {
             yAxisId="cardio"
             type="monotone"
             dataKey="cardioValue"
-            stroke="var(--text-primary)"
+            stroke="var(--error)"
             strokeWidth={2}
-            dot={{ r: 3, fill: 'var(--text-primary)' }}
             activeDot={{ r: 5 }}
             connectNulls={false}
           />
